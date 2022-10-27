@@ -1,4 +1,4 @@
-<p align="center"><a href="https://laravel.com" target="_blank">CV. Ayyub Tani</a></p>
+<h1 align="center">CV. Ayyub Tani</h1>
 
 <p align="center">
 <a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
