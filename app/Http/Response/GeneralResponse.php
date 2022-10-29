@@ -11,6 +11,6 @@ class GeneralResponse
             'message' => $message,
             'data' => $data,
             'code' => $code,
-        ]);
+        ], $code);
     }
 }

@@ -18,8 +18,7 @@
     <link rel="stylesheet" href="{{ asset('css/owl.carousel.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/slicknav.min.css') }}">
     <!-- amchart css -->
-    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css"
-        media="all" />
+    <link rel="stylesheet" href="{{ asset('css/amchart.css') }}" type="text/css" media="all" />
     <!-- others css -->
     <link rel="stylesheet" href="{{ asset('css/typography.css') }}">
     <link rel="stylesheet" href="{{ asset('css/default-css.css') }}">
@@ -283,18 +282,19 @@
     <script src="{{ asset('js/jquery.slicknav.min.js') }}"></script>
 
     <!-- start chart js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+    <script src="{{ asset('js/startchart.js') }}"></script>
     <!-- start highcharts js -->
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="{{ asset('js/highcharts.js') }}"></script>
+    <script src="{{ asset('js/highchartsexporting.js') }}"></script>
+    <script src="{{ asset('js/highchartsexportdata.js') }}"></script>
     <!-- start amcharts -->
-    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
-    <script src="https://www.amcharts.com/lib/3/ammap.js"></script>
-    <script src="https://www.amcharts.com/lib/3/maps/js/worldLow.js"></script>
-    <script src="https://www.amcharts.com/lib/3/serial.js"></script>
-    <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
-    <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+    <script src="{{ asset('js/amcharts.js') }}"></script>
+    <script src="{{ asset('js/amchartsexport.js') }}"></script>
+    <script src="{{ asset('js/amchartsthemelight.js') }}"></script>
+    <script src="{{ asset('js/ammap.js') }}"></script>
+    <script src="{{ asset('js/serial.js') }}"></script>
+    <script src="{{ asset('js/statrchart.js') }}"></script>
+    <script src="{{ asset('js/worldLow.js') }}"></script>
     <!-- all line chart activation -->
     <script src="{{ asset('js/line-chart.js') }}"></script>
     <!-- all pie chart -->
