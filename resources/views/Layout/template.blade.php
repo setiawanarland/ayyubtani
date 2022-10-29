@@ -4,10 +4,10 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>srtdash - SEO Dashboard</title>
+    <title>@yield('title', $page_title ?? 'Ayyub Tani')</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {{-- <meta name="description" content="@yield('page_description', $page_description ?? '')" /> --}}
+    <meta name="description" content="@yield('page_description', $page_description ?? 'Ayyub Tani page describtion')" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/icon/favicon.ico') }}">
@@ -282,19 +282,18 @@
     <script src="{{ asset('js/jquery.slicknav.min.js') }}"></script>
 
     <!-- start chart js -->
-    <script src="{{ asset('js/startchart.js') }}"></script>
+    <script src="{{ asset('js/Chart.min.js') }}"></script>
     <!-- start highcharts js -->
     <script src="{{ asset('js/highcharts.js') }}"></script>
-    <script src="{{ asset('js/highchartsexporting.js') }}"></script>
-    <script src="{{ asset('js/highchartsexportdata.js') }}"></script>
+    <script src="{{ asset('js/exporting.js') }}"></script>
+    <script src="{{ asset('js/export-data.js') }}"></script>
     <!-- start amcharts -->
     <script src="{{ asset('js/amcharts.js') }}"></script>
-    <script src="{{ asset('js/amchartsexport.js') }}"></script>
-    <script src="{{ asset('js/amchartsthemelight.js') }}"></script>
     <script src="{{ asset('js/ammap.js') }}"></script>
-    <script src="{{ asset('js/serial.js') }}"></script>
-    <script src="{{ asset('js/statrchart.js') }}"></script>
     <script src="{{ asset('js/worldLow.js') }}"></script>
+    <script src="{{ asset('js/serial.js') }}"></script>
+    <script src="{{ asset('js/export.min.js') }}"></script>
+    <script src="{{ asset('js/light.js') }}"></script>
     <!-- all line chart activation -->
     <script src="{{ asset('js/line-chart.js') }}"></script>
     <!-- all pie chart -->

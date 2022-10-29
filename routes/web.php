@@ -22,4 +22,12 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('set-logout');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::prefix('kios')->group(function () {
+        Route::get('/', [KiosController::class, 'index'])->name('kios-list');
+    });
+
+    Route::prefix('barang')->group(function () {
+        Route::get('/', [BarangController::class, 'index'])->name('barang-list');
+    });
 });
