@@ -49,15 +49,24 @@
                     <div class="login-form-body">
                         <div class="form-gp">
                             <label for="username">Username</label>
-                            <input type="text" id="username" name="username" autocomplete="off">
+                            <input class="is-invalid" type="text" id="username" name="username" autocomplete="off"
+                                autofocus>
                             <i class="ti-user"></i>
-                            <div class="text-danger"></div>
+                            <div class="text-danger">
+                                @error('username')
+                                    {{ $message }}
+                                @enderror
+                            </div>
                         </div>
                         <div class="form-gp">
                             <label for="password">Password</label>
                             <input type="password" id="password" name="password" autocomplete="off">
                             <i class="ti-lock"></i>
-                            <div class="text-danger"></div>
+                            <div class="text-danger">
+                                @error('password')
+                                    {{ $message }}
+                                @enderror
+                            </div>
                         </div>
 
                         <div class="submit-btn-area">

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\KiosController;
 use Illuminate\Support\Facades\Route;
 
 /*

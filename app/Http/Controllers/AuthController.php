@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Auth;
+use Validator;
 
 class AuthController extends Controller
 {
@@ -21,6 +22,11 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        $validator = $request->validate([
+            'username' => 'required',
+            'password' => 'required|string|min:8',
+        ]);
+
         $request = Request::create("/api/login", 'POST', [
             'username' => $request->username,
             'password' => $request->password
