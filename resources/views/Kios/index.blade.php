@@ -42,14 +42,14 @@
 @endsection
 
 @section('offset-area')
-    <div class="offset-area slimscroll">
+    <div id="testDiv" class="offset-area">
         <div class="offset-close"><i class="ti-close"></i></div>
         <ul class="nav offset-menu-tab">
             <li>
                 <h6>Tambah Data</h6>
             </li>
         </ul>
-        <div class="offset-content tab-content">
+        <div class="offset-content tab-content slimscroll">
             <form action="#">
                 <div class="form-group">
                     <label for="example-search-input" class="col-form-label">Search</label>
@@ -64,7 +64,7 @@
                     <input class="form-control" type="url" value="https://getbootstrap.com" id="example-url-input">
                 </div>
 
-                <div class="form-group" style="margin-top: 10%">
+                <div class="form-group" style="margin-top: 790%">
                     <button class="btn btn-primary" type="submit">Save</button>
                     <button class="btn btn-danger btn-cancel" type="reset">Cancel</button>
                 </div>
@@ -154,6 +154,14 @@
             $('.offset-area').toggleClass('show_hide');
             $('.settings-btn').toggleClass('active');
         });
+
+        // $('#testDiv').slimscroll({
+        //     height: '100%',
+        //     width: '300px',
+        //     disableFadeOut: true
+        // });
+
+
 
 
         $(document).ready(function() {

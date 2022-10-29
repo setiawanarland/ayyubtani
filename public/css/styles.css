@@ -2664,7 +2664,6 @@ table.dataTable thead td {
     -webkit-transition: right 0.3s cubic-bezier(0.62, -0.01, 0.2, 0.83) 0s;
     transition: right 0.3s cubic-bezier(0.62, -0.01, 0.2, 0.83) 0s;
     overflow-y: scroll;
-    height: 100%;
 }
 
 .show_hide.offset-area {

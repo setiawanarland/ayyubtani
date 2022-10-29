@@ -115,8 +115,8 @@
     <!-- Start datatable js -->
     <script src="{{ asset('js/datatables.min.js') }}"></script>
     <!-- Start slimscroll js -->
-    <script src="{{ asset('js/slimscrollBar.js') }}"></script>
-    <script src="{{ asset('js/slimscroll.js') }}"></script>
+    <script src="{{ asset('js/jquery.slimscroll.js') }}"></script>
+    {{-- <script src="{{ asset('js/slimscroll.js') }}"></script> --}}
 
     <!-- start chart js -->
     <script src="{{ asset('js/Chart.min.js') }}"></script>
