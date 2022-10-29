@@ -10,7 +10,7 @@
                         <div class="card">
                             <div class="seo-fact sbg1">
                                 <div class="p-4 d-flex justify-content-between align-items-center">
-                                    <div class="seofct-icon"><i class="ti-thumb-up"></i> Likes</div>
+                                    <div class="seofct-icon"><i class="ti-user"></i> Daftar Kios</div>
                                     <h2>2,315</h2>
                                 </div>
                                 <canvas id="seolinechart" height="50"></canvas>
@@ -21,8 +21,8 @@
                         <div class="card">
                             <div class="seo-fact sbg2">
                                 <div class="p-4 d-flex justify-content-between align-items-center">
-                                    <div class="seofct-icon"><i class="ti-share"></i> Share</div>
-                                    <h2>3,984</h2>
+                                    <div class="seofct-icon"><i class="ti-view-list-alt"></i> Barang</div>
+                                    <h2>2,315</h2>
                                 </div>
                                 <canvas id="seolinechart" height="50"></canvas>
                             </div>
@@ -32,7 +32,7 @@
                         <div class="card">
                             <div class="seo-fact sbg3">
                                 <div class="p-4 d-flex justify-content-between align-items-center">
-                                    <div class="seofct-icon"><i class="ti-thumb-up"></i> Likes</div>
+                                    <div class="seofct-icon"><i class="ti-shopping-cart-full"></i> Pembelian</div>
                                     <h2>2,315</h2>
                                 </div>
                                 <canvas id="seolinechart" height="50"></canvas>
@@ -43,8 +43,8 @@
                         <div class="card">
                             <div class="seo-fact sbg4">
                                 <div class="p-4 d-flex justify-content-between align-items-center">
-                                    <div class="seofct-icon"><i class="ti-share"></i> Share</div>
-                                    <h2>3,984</h2>
+                                    <div class="seofct-icon"><i class="ti-shopping-cart"></i> Penjualan</div>
+                                    <h2>2,315</h2>
                                 </div>
                                 <canvas id="seolinechart" height="50"></canvas>
                             </div>
