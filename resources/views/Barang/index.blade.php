@@ -7,10 +7,10 @@
             <div class="col-12 mt-5">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="header-title">Data Kios</h4>
+                        <h4 class="header-title">Data Barang</h4>
                         <button type="button" class="btn d-flex btn-primary mb-3 pull-right tambahData">Tambah Data</button>
                         <div class="data-tables">
-                            <table id="kiosTable" class="text-center">
+                            <table id="barangTable" class="text-center">
                                 <thead class="bg-light text-capitalize">
                                     <tr>
                                         <th>Name</th>
@@ -46,7 +46,7 @@
         <div class="offset-close"><i class="ti-close"></i></div>
         <ul class="nav offset-menu-tab">
             <li>
-                <h6 class="active">Tambah Data Kios</h6>
+                <h6 class="active">Tambah Data Barang</h6>
             </li>
         </ul>
         <div class="offset-content tab-content">
@@ -184,7 +184,7 @@
     <script>
         var dataRow = function() {
             var init = function() {
-                let table = $('#kiosTable');
+                let table = $('#barangTable');
                 table.DataTable({
                     processing: true,
                     ordering: false,

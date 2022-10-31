@@ -98,6 +98,7 @@
         <!-- footer area end-->
     </div>
     <!-- page container area end -->
+
     <!-- offset area start -->
     @yield('offset-area')
     <!-- offset area end -->
@@ -115,7 +116,7 @@
     <!-- Start datatable js -->
     <script src="{{ asset('js/datatables.min.js') }}"></script>
     <!-- Start slimscroll js -->
-    <script src="{{ asset('js/jquery.slimscroll.js') }}"></script>
+    {{-- <script src="{{ asset('js/jquery.slimscroll.js') }}"></script> --}}
     {{-- <script src="{{ asset('js/slimscroll.js') }}"></script> --}}
 
     <!-- start chart js -->
