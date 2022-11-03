@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\BarangController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KiosController;
+use App\Http\Controllers\ProdukController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,7 +29,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [KiosController::class, 'index'])->name('kios-list');
     });
 
-    Route::prefix('barang')->group(function () {
-        Route::get('/', [BarangController::class, 'index'])->name('barang-list');
+    Route::prefix('produk')->group(function () {
+        Route::get('/', [ProdukController::class, 'index'])->name('produk');
+        Route::get('/list', [ProdukController::class, 'list'])->name('produk-list');
+        Route::post('/produk-create', [ProdukController::class, 'store'])->name('produk-store');
     });
 });

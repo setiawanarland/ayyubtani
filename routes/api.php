@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthApiController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProdukController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,9 @@ Route::get('/', function (Request $request) {
     return "ok api";
 });
 Route::post('/login', [AuthController::class, 'setLogin']);
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('produk')->group(function () {
+        Route::get('/list', [ProdukController::class, 'getList'])->name('get-list');
+        Route::post('/create', [ProdukController::class, 'create'])->name('produk-create');
+    });
 });

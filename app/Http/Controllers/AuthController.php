@@ -32,9 +32,9 @@ class AuthController extends Controller
             'password' => $request->password
         ]);
 
+        // return Auth::user()->username;
         $response = Route::dispatch($request);
 
-        // return Auth::user()->username;
         if ($response->status() == 200) {
             $data = response()->json($response);
             session(['user' => $data->original]);

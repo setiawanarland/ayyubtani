@@ -13,8 +13,8 @@
                             href="{{ route('dashboard') }}"><i class="ti-dashboard"></i><span>dashboard</span></a></li>
                     <li class="{{ Request::path() == 'kios' ? 'active' : '' }}"><a href="{{ url('/kios') }}"><i
                                 class="ti-user"></i><span>daftar kios</span></a></li>
-                    <li class="{{ Request::path() == 'barang' ? 'active' : '' }}"><a href="{{ url('/barang') }}"><i
-                                class="ti-view-list-alt"></i><span>daftar barang</span></a></li>
+                    <li class="{{ Request::path() == 'produk' ? 'active' : '' }}"><a href="{{ url('/produk') }}"><i
+                                class="ti-view-list-alt"></i><span>daftar produk</span></a></li>
                     <li class="{{ Request::path() == 'barang-list' ? 'active' : '' }}"><a
                             href="{{ url('/dashboard') }}"><i
                                 class="ti-shopping-cart-full"></i><span>pembelian</span></a></li>

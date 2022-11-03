@@ -113,11 +113,12 @@
     <script src="{{ asset('js/jquery.slimscroll.min.js') }}"></script>
     <script src="{{ asset('js/jquery.slicknav.min.js') }}"></script>
 
+    <!-- Start axios -->
+    <script src="{{ asset('js/axios.min.js') }}"></script>
     <!-- Start datatable js -->
     <script src="{{ asset('js/datatables.min.js') }}"></script>
-    <!-- Start slimscroll js -->
-    {{-- <script src="{{ asset('js/jquery.slimscroll.js') }}"></script> --}}
-    {{-- <script src="{{ asset('js/slimscroll.js') }}"></script> --}}
+    <!-- Start Format Rupiah js -->
+    <script src="{{ asset('js/rupiahFormat.js') }}"></script>
 
     <!-- start chart js -->
     <script src="{{ asset('js/Chart.min.js') }}"></script>
