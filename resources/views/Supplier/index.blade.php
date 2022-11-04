@@ -7,14 +7,13 @@
             <div class="col-12 mt-5">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="header-title">Data Kios</h4>
+                        <h4 class="header-title">Data Supplier</h4>
                         <button type="button" class="btn d-flex btn-primary mb-3 pull-right tambahData">Tambah Data</button>
                         <div class="data-tables">
-                            <table id="kiosTable" class="text-cente">
+                            <table id="supplierTable" class="text-cente">
                                 <thead class="bg-light text-capitalize">
                                     <tr>
-                                        <th>Nama Kios</th>
-                                        <th>Pemilik</th>
+                                        <th>Nama Supplier</th>
                                         <th>Alamat</th>
                                         <th>NPWP</th>
                                         <th>NIK</th>
@@ -38,31 +37,21 @@
         <div class="offset-close"><i class="ti-close"></i></div>
         <ul class="nav offset-menu-tab">
             <li>
-                <h6 class="active">Tambah Data Kios</h6>
+                <h6 class="active">Tambah Data Supplier</h6>
             </li>
         </ul>
         <div class="offset-content tab-content">
             <div id="activity" class="tab-pane fade in show active">
                 <div class="recent-activity">
 
-                    <form id="kiosForm" data-type="submit">
+                    <form id="supplierForm" data-type="submit">
                         @csrf
 
                         <input class="form-control" type="hidden" name="id" id="id">
 
                         <div class="form-group" style="margin-bottom: 0px;">
-                            <label for="nama_kios" class="col-form-label">Nama Kios</label>
-                            <input class="form-control" type="text" name="nama_kios" id="nama_kios" autofocus>
-                            <div class="invalid-feedback"></div>
-                        </div>
-                        <div class="form-group" style="margin-bottom: 0px;">
-                            <label for="pemilik" class="col-form-label">Nama Pemilik</label>
-                            <input class="form-control" type="text" name="pemilik" id="pemilik" autofocus>
-                            <div class="invalid-feedback"></div>
-                        </div>
-                        <div class="form-group" style="margin-bottom: 0px;">
-                            <label for="kabupaten" class="col-form-label">Wil. Kabupaten</label>
-                            <input class="form-control" type="text" name="kabupaten" id="kabupaten" autofocus>
+                            <label for="nama_supplier" class="col-form-label">Nama Supplier</label>
+                            <input class="form-control" type="text" name="nama_supplier" id="nama_supplier" autofocus>
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="form-group" style="margin-bottom: 0px;">
@@ -98,19 +87,13 @@
         // datatable produk list
         var dataRow = function() {
             var init = function() {
-                let table = $('#kiosTable');
+                let table = $('#supplierTable');
                 table.DataTable({
                     processing: true,
                     ordering: false,
-                    ajax: "{{ route('kios-list') }}",
+                    ajax: "{{ route('supplier-list') }}",
                     columns: [{
-                            data: 'nama_kios',
-                            render: function(data, type, row) {
-                                return data.toUpperCase();
-                            }
-                        },
-                        {
-                            data: 'pemilik',
+                            data: 'nama_supplier',
                             render: function(data, type, row) {
                                 return data.toUpperCase();
                             }
@@ -118,7 +101,7 @@
                         {
                             data: 'alamat',
                             render: function(data, type, row) {
-                                return data.toUpperCase() + ", " + row.kabupaten.toUpperCase();
+                                return data.toUpperCase();
                             }
                         },
                         {
@@ -145,8 +128,8 @@
                         class: "wrapok",
                         render: function(data, type, row, full, meta) {
                             return `
-                            <a role="button" href="javascript:;" type="button" data-id="${row.id}" class="btn btn-warning btn-sm kiosUpdate"><i class="fa fa-edit"></i></a>
-                            <button type="button" class="btn btn-danger btn-sm btn-delete kiosDelete" data-id="${row.id}"><i class="fa fa-trash"></i></button>
+                            <a role="button" href="javascript:;" type="button" data-id="${row.id}" class="btn btn-warning btn-sm supplierUpdate"><i class="fa fa-edit"></i></a>
+                            <button type="button" class="btn btn-danger btn-sm btn-delete supplierDelete" data-id="${row.id}"><i class="fa fa-trash"></i></button>
                     `;
                         },
                     }],
@@ -155,7 +138,7 @@
             };
 
             var destroy = function() {
-                var table = $('#kiosTable').DataTable();
+                var table = $('#supplierTable').DataTable();
                 table.destroy();
             };
 
@@ -204,7 +187,7 @@
                                 }).then(function() {
                                     $('.offset-area').toggleClass('show_hide');
                                     $('.settings-btn').toggleClass('active');
-                                    var form = $('#kiosForm');
+                                    var form = $('#supplierForm');
                                     form[0].reset();
                                     dataRow.destroy();
                                     dataRow.init();
@@ -252,7 +235,7 @@
                                 }).then(function() {
                                     $('.offset-area').toggleClass('show_hide');
                                     $('.settings-btn').toggleClass('active');
-                                    var form = $('#kiosForm');
+                                    var form = $('#supplierForm');
                                     form[0].reset();
                                     dataRow.destroy();
                                     dataRow.init();
@@ -278,34 +261,34 @@
         $('.tambahData, .btn-cancel').on('click', function() {
             $('.offset-area').toggleClass('show_hide');
             $('.settings-btn').toggleClass('active');
-            var form = $('#kiosForm');
+            var form = $('#supplierForm');
             form.attr('data-type', 'submit');
             form[0].reset();
         });
 
         // create supplier
-        $(document).on('submit', "#kiosForm[data-type='submit']", function(e) {
+        $(document).on('submit', "#supplierForm[data-type='submit']", function(e) {
             e.preventDefault();
 
             var form = document.querySelector('form');
             var formData = new FormData(this);
 
-            AxiosCall.post("{{ route('kios-store') }}", formData,
-                "#kiosForm");
+            AxiosCall.post("{{ route('supplier-store') }}", formData,
+                "#supplierForm");
         });
 
 
         // show update supplier
-        $(document).on('click', '.kiosUpdate', function() {
+        $(document).on('click', '.supplierUpdate', function() {
             console.log($(this));
             $('.offset-area').toggleClass('show_hide');
             $('.settings-btn').toggleClass('active');
             var key = $(this).data('id');
-            var form = $('#kiosForm');
+            var form = $('#supplierForm');
             form.attr('data-type', 'update');
 
             var key = $(this).data('id');
-            axios.get('kios/show/' + key)
+            axios.get('supplier/show/' + key)
                 .then(function(res) {
                     let data = res.data;
                     // console.log(data);
@@ -327,7 +310,7 @@
 
 
         // edit supplier
-        $(document).on('submit', "#kiosForm[data-type='update']", function(e) {
+        $(document).on('submit', "#supplierForm[data-type='update']", function(e) {
             e.preventDefault();
             console.log($(this));
 
@@ -335,13 +318,13 @@
             var form = document.querySelector('form');
             var formData = new FormData(this);
 
-            AxiosCall.update("{{ route('kios-update') }}", formData,
-                "#kiosForm");
+            AxiosCall.update("{{ route('supplier-update') }}", formData,
+                "#supplierForm");
         });
 
 
         // delete supplier
-        $(document).on('click', '.kiosDelete', function(e) {
+        $(document).on('click', '.supplierDelete', function(e) {
             e.preventDefault()
             let id = $(this).attr('data-id');
             console.log(id);
@@ -356,7 +339,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `/kios/delete/${id}`,
+                        url: `/supplier/delete/${id}`,
                         type: 'POST',
                         data: {
                             '_method': 'DELETE',
@@ -399,6 +382,8 @@
                 return value.replace(/(\d{2})(\d{3})(\d{3})(\d{1})(\d{3})(\d{3})/, '$1.$2.$3.$4-$5.$6');
             }
         };
+
+
 
         $(document).ready(function() {
             dataRow.init();

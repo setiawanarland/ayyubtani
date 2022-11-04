@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Kios;
 use App\Models\Produk;
+use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -30,6 +32,22 @@ class DatabaseSeeder extends Seeder
             'harga_beli' => 21400,
             'harga_jual' => 22700,
             'harga_perdos' => 1089600,
+        ]);
+
+        Supplier::create([
+            'nama_supplier'    => 'pt. tiga madiri',
+            'alamat'    => 'jl. veteran',
+            'npwp' => '09.254.294.3-407.000',
+            'nik' => '7304072610950002',
+        ]);
+
+        Kios::create([
+            'nama_kios'    => 'tani beru',
+            'pemilik'    => 'h. ridwan',
+            'kabupaten'    => 'bantaeng',
+            'alamat'    => 'jl. somba upu',
+            'npwp' => '09.254.294.3-407.000',
+            'nik' => '7304072610950002',
         ]);
     }
 }

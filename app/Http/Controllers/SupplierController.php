@@ -2,37 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Response\GeneralResponse;
-use App\Models\Kios;
 use Illuminate\Http\Request;
 use DB;
-use Validator;
+use App\Http\Response\GeneralResponse;
+use App\Models\Supplier;
 use Illuminate\Support\Facades\Route;
+use Validator;
 
-class KiosController extends Controller
+class SupplierController extends Controller
 {
     public function index()
     {
         $page_title = 'Ayyub Tani';
         $page_description = 'Dashboard Admin Ayyub Tani';
-        $breadcrumbs = ['Daftar Kios'];
+        $breadcrumbs = ['Daftar Supplier'];
 
-        return view('kios.index', compact('page_title', 'page_description', 'breadcrumbs'));
+        return view('supplier.index', compact('page_title', 'page_description', 'breadcrumbs'));
     }
 
     public function list()
     {
-        $response = (new KiosController)->getList();
+        $response = (new SupplierController)->getList();
         return $response;
     }
 
     public function getList()
     {
-        $kios = DB::table("kios")
+        $supplier = DB::table("suppliers")
             ->get();
 
-        if ($kios) {
-            return (new GeneralResponse)->default_json(true, 'success', $kios, 200);
+        if ($supplier) {
+            return (new GeneralResponse)->default_json(true, 'success', $supplier, 200);
         } else {
             return (new GeneralResponse)->default_json(false, 'error', null, 401);
         }
@@ -41,9 +41,7 @@ class KiosController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nama_kios' => 'required',
-            'pemilik' => 'required',
-            'kabupaten' => 'required',
+            'nama_supplier' => 'required',
             'alamat' => 'required',
             'npwp' => 'required',
             'nik' => 'required',
@@ -65,7 +63,7 @@ class KiosController extends Controller
             ARRAY_FILTER_USE_KEY
         );
 
-        $request = Request::create("/api/kios/create", 'POST', $filtered);
+        $request = Request::create("/api/supplier/create", 'POST', $filtered);
         $response = Route::dispatch($request);
 
         return $response;
@@ -73,10 +71,8 @@ class KiosController extends Controller
 
     public function create(Request $request)
     {
-        $data = new Kios();
-        $data->nama_kios = $request->nama_kios;
-        $data->pemilik = $request->pemilik;
-        $data->kabupaten = $request->kabupaten;
+        $data = new Supplier();
+        $data->nama_supplier = $request->nama_supplier;
         $data->alamat = $request->alamat;
         $data->npwp = $request->npwp;
         $data->nik = $request->nik;
@@ -92,7 +88,7 @@ class KiosController extends Controller
 
     public function show(Request $request, $id)
     {
-        $data = Kios::where('id', $id)->first();
+        $data = Supplier::where('id', $id)->first();
         if ($data) {
             return (new GeneralResponse)->default_json(true, "Success", $data, 201);
         } else {
@@ -104,9 +100,7 @@ class KiosController extends Controller
     {
         $id = request('id');
         $validator = Validator::make($request->all(), [
-            'nama_kios' => 'required',
-            'pemilik' => 'required',
-            'kabupaten' => 'required',
+            'nama_supplier' => 'required',
             'alamat' => 'required',
             'npwp' => 'required',
             'nik' => 'required',
@@ -128,7 +122,7 @@ class KiosController extends Controller
             ARRAY_FILTER_USE_KEY
         );
 
-        $request = Request::create("/api/kios/edit/$id", 'POST', $filtered);
+        $request = Request::create("/api/supplier/edit/$id", 'POST', $filtered);
         $response = Route::dispatch($request);
 
         return $response;
@@ -136,10 +130,8 @@ class KiosController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $data = Kios::where('id', $id)->first();
-        $data->nama_kios = $request->nama_kios;
-        $data->pemilik = $request->pemilik;
-        $data->kabupaten = $request->kabupaten;
+        $data = Supplier::where('id', $id)->first();
+        $data->nama_supplier = $request->nama_supplier;
         $data->alamat = $request->alamat;
         $data->npwp = $request->npwp;
         $data->nik = $request->nik;
@@ -155,7 +147,7 @@ class KiosController extends Controller
 
     public function delete(Request $request, $id)
     {
-        $data = Kios::where('id', $id)->first();
+        $data = Supplier::where('id', $id)->first();
         $data->delete();
 
         if ($data) {
