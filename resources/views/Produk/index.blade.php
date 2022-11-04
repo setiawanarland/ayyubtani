@@ -48,6 +48,10 @@
                 <div class="recent-activity">
 
                     <form id="produkForm" data-type="submit">
+                        @csrf
+
+                        <input class="form-control" type="hidden" name="id" id="id">
+
                         <div class="form-group" style="margin-bottom: 0px;">
                             <label for="nama_produk" class="col-form-label">Nama Produk</label>
                             <input class="form-control" type="text" name="nama_produk" id="nama_produk" autofocus>
@@ -236,6 +240,56 @@
                             })
                         });
                 },
+                update: function(_url, _data, _element) {
+                    console.log(_url);
+                    console.log(_data);
+                    console.log(_element);
+                    axios.post(_url, _data)
+                        .then(function(res) {
+                            var data = res.data;
+                            console.log(data);
+                            if (data.failed) {
+                                swal.fire({
+                                    text: "Maaf Terjadi Kesalahan",
+                                    title: "Error",
+                                    timer: 2000,
+                                    icon: "danger",
+                                    showConfirmButton: false,
+                                });
+                            } else if (data.invalid) {
+                                $.each(data.invalid, function(key, value) {
+                                    console.log(key);
+                                    $("input[name='" + key + "']").addClass('is-invalid').siblings(
+                                        '.invalid-feedback').html(value[0]);
+                                });
+                            } else if (data.success) {
+                                swal.fire({
+                                    text: "Data anda berhasil disimpan",
+                                    title: "Sukses",
+                                    icon: "success",
+                                    showConfirmButton: true,
+                                    confirmButtonText: "OK, Siip",
+                                }).then(function() {
+                                    $('.offset-area').toggleClass('show_hide');
+                                    $('.settings-btn').toggleClass('active');
+                                    var form = $('#produkForm');
+                                    form[0].reset();
+                                    dataRow.destroy();
+                                    dataRow.init();
+                                });
+                            }
+                        }).catch(function(res) {
+                            var data = res.data;
+                            console.log(data);
+                            swal.fire({
+                                text: "Terjadi Kesalahan Sistem",
+                                title: "Error",
+                                icon: "error",
+                                showConfirmButton: true,
+                                confirmButtonText: "OK",
+                            })
+                        });
+                },
             };
         }();
 
@@ -260,6 +314,7 @@
                 "#produkForm");
         });
 
+
         // show update produk
         $(document).on('click', '.produkUpdate', function() {
 
@@ -269,25 +324,88 @@
             var form = $('#produkForm');
             form.attr('data-type', 'update');
 
-            // $.ajax({
-            //     url: `profile/jabatan/${key}`,
-            //     method: "GET",
-            //     success: function(data) {
-            //         let result = JSON.parse(data);
+            var key = $(this).data('id');
+            axios.get('produk/show/' + key)
+                .then(function(res) {
+                    let data = res.data;
+                    // console.log(data);
+                    $.map(data.data, function(val, i) {
+                        let value = val;
+                        if ((i == 'harga_beli') || (i == 'harga_jual') || (i == 'harga_perdos')) {
+                            $("input[name=" + i + "]").val(formatRupiah(value.toString()));
+                        } else {
+                            $("input[name=" + i + "]").val(val);
+                            $("input[name=" + i + "]").attr('style', 'text-transform: uppercase');
+                            $("input[name=" + i + "]").attr('readonly', '');
+                        }
 
-            //         if (result.status) {
-            //             var res = result.data;
+                    })
+                })
+                .catch(function(err) {
 
-            //             $.each(res, function(key, value) {
-            //                 $("select[name='" + key + "']").val(value);
-            //                 $("input[name='" + key + "']").val(value);
-            //                 $(`#${key}`).attr("src",
-            //                     `{{ asset('storage/${value}') }}`);
-            //             });
-            //         }
-            //     }
-            // });
+                });
         });
+
+
+        // edit produk
+        $(document).on('submit', "#produkForm[data-type='update']", function(e) {
+            e.preventDefault();
+            console.log($(this));
+
+            var _id = $("input[name='id']").val();
+            var form = document.querySelector('form');
+            var formData = new FormData(this);
+
+            AxiosCall.update("{{ route('produk-update') }}", formData,
+                "#produkForm");
+        });
+
+
+        // delete produk
+        $(document).on('click', '.produkDelete', function(e) {
+            e.preventDefault()
+            let id = $(this).attr('data-id');
+            console.log(id);
+            Swal.fire({
+                title: 'Apakah kamu yakin akan menghapus data ini ?',
+                text: "Data akan di hapus permanen",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/produk/delete/${id}`,
+                        type: 'POST',
+                        data: {
+                            '_method': 'DELETE',
+                            '_token': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.status !== false) {
+                                Swal.fire('Deleted!',
+                                        'Data berhasil dihapus.',
+                                        'success')
+                                    .then(function() {
+                                        dataRow.destroy();
+                                        dataRow.init();
+                                    });
+                            } else {
+                                swal.fire({
+                                    title: "Failed!",
+                                    text: `${res.message}`,
+                                    icon: "warning",
+                                });
+                            }
+                        }
+                    })
+                }
+            })
+        });
+
+
 
 
         // format rupiah

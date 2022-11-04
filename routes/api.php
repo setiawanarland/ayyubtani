@@ -25,5 +25,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('produk')->group(function () {
         Route::get('/list', [ProdukController::class, 'getList'])->name('get-list');
         Route::post('/create', [ProdukController::class, 'create'])->name('produk-create');
+        Route::post('/edit/{id}', [ProdukController::class, 'edit'])->name('produk-edit');
     });
 });

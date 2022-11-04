@@ -33,5 +33,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ProdukController::class, 'index'])->name('produk');
         Route::get('/list', [ProdukController::class, 'list'])->name('produk-list');
         Route::post('/produk-create', [ProdukController::class, 'store'])->name('produk-store');
+        Route::get('/show/{id}', [ProdukController::class, 'show'])->name('get-produk');
+        Route::post('/produk-update', [ProdukController::class, 'update'])->name('produk-update');
+        Route::delete('/delete/{id}', [ProdukController::class, 'delete'])->name('produk-delete');
     });
 });
