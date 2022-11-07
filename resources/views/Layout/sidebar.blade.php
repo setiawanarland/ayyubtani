@@ -33,16 +33,15 @@
                             href="{{ url('/dashboard') }}"><i class="ti-shopping-cart"></i><span>penjualan</span></a>
                     </li> --}}
 
-                    {{-- <li>
-                        <a href="javascript:void(0)" aria-expanded="true"><i
-                                class="ti-layout-sidebar-left"></i><span>Sidebar
-                                Types
+                    <li>
+                        <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-cog"></i><span>Settings
                             </span></a>
                         <ul class="collapse">
-                            <li><a href="index.html">Left Sidebar</a></li>
-                            <li><a href="index3-horizontalmenu.html">Horizontal Sidebar</a></li>
+                            <li class="{{ Request::path() == 'pajak' ? 'active' : '' }}"><a
+                                    href="{{ url('/pajak') }}"><i class="fa fa-credit-card"></i><span>pajak</span></a>
+                            </li>
                         </ul>
-                    </li> --}}
+                    </li>
 
                 </ul>
             </nav>

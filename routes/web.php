@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KiosController;
+use App\Http\Controllers\PajakController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SupplierController;
@@ -58,5 +59,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [PembelianController::class, 'index'])->name('pembelian');
         Route::get('/list', [PembelianController::class, 'list'])->name('pembeliantemp-list');
         Route::post('/temp', [PembelianController::class, 'temp'])->name('temp');
+    });
+
+    Route::prefix('pajak')->group(function () {
+        Route::get('/', [PajakController::class, 'index'])->name('pajak');
+        Route::get('/list', [PajakController::class, 'list'])->name('pajak-list');
+        Route::post('/pajak-create', [PajakController::class, 'store'])->name('pajak-store');
+        Route::get('/show/{id}', [PajakController::class, 'show'])->name('get-pajak');
+        Route::post('/pajak-update', [PajakController::class, 'update'])->name('pajak-update');
+        Route::delete('/delete/{id}', [PajakController::class, 'delete'])->name('pajak-delete');
+        Route::post('/active/{id}', [PajakController::class, 'active'])->name('pajak-active');
     });
 });

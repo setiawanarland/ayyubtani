@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthApiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KiosController;
+use App\Http\Controllers\PajakController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Http\Request;
@@ -41,5 +42,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/list', [KiosController::class, 'getList'])->name('get-list');
         Route::post('/create', [KiosController::class, 'create'])->name('kios-create');
         Route::post('/edit/{id}', [KiosController::class, 'edit'])->name('kios-edit');
+    });
+
+    Route::prefix('pajak')->group(function () {
+        Route::get('/list', [PajakController::class, 'getList'])->name('get-list');
+        Route::post('/create', [PajakController::class, 'create'])->name('pajak-create');
+        Route::post('/edit/{id}', [PajakController::class, 'edit'])->name('pajak-edit');
     });
 });

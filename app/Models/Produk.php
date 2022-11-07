@@ -23,6 +23,6 @@ class Produk extends Model
 
     public function pembelianTemp()
     {
-        return $this->hasOne('App\Models\PembelianTemp', 'id_produk', 'id');
+        return $this->hasOne('App\Models\DetailPembelianTemp', 'id_produk', 'id');
     }
 }

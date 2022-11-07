@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Response\GeneralResponse;
 use App\Models\Pembelian;
+use App\Models\DetailPembelianTemp;
 use App\Models\PembelianTemp;
 use App\Models\Produk;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use DB;
 
@@ -41,8 +43,8 @@ class PembelianController extends Controller
 
     public function getList()
     {
-        $temp = PembelianTemp::select('pembelians_temp.*', 'produks.nama_produk', 'produks.kemasan', 'produks.satuan', 'produks.harga_jual')
-            ->join('produks', 'pembelians_temp.produk_id', 'produks.id')
+        $temp = DetailPembelianTemp::select('detail_pembelians_temp.*', 'produks.nama_produk', 'produks.kemasan', 'produks.satuan', 'produks.harga_jual')
+            ->join('produks', 'detail_pembelians_temp.produk_id', 'produks.id')
             ->get();
 
         if ($temp) {
@@ -59,7 +61,18 @@ class PembelianController extends Controller
         $jumlah = $produk->harga_perdos * $request->ket;
         // return $jumlah;
 
-        $data = new PembelianTemp();
+        $dataPembelian = new PembelianTemp();
+        $dataPembelian->supplier_id = $request->supplier_id;
+        $dataPembelian->invoice = '';
+        $dataPembelian->tanggal_beli = Carbon::now();
+        $dataPembelian->dpp = 0;
+        $dataPembelian->ppn = 0;
+        $dataPembelian->disc = 0;
+        $dataPembelian->grand_total = 0;
+        $dataPembelian->save();
+
+        $data = new DetailPembelianTemp();
+        $data->pembelian_temp_id = $dataPembelian->id;
         $data->produk_id = $request->produk_id;
         $data->qty = $qty;
         $data->ket = $request->ket;

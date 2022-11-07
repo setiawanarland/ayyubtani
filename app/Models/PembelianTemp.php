@@ -9,17 +9,14 @@ class PembelianTemp extends Model
 {
     use HasFactory;
 
-    protected $table = 'pembelians_temp';
+    protected $table = 'pembelian_temps';
     protected $fillable = [
-        'produk_id',
-        'qty',
-        'ket',
+        'supplier_id',
+        'invoice',
+        'tanggal_beli',
+        'dpp',
+        'ppn',
         'disc',
-        'jumlah',
+        'grand_total',
     ];
-
-    public function produk()
-    {
-        return $this->hasOne('App\Models\Produk', 'id', 'id_produk');
-    }
 }

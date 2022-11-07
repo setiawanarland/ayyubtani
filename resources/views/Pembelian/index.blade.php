@@ -63,13 +63,13 @@
                                 <thead class="bg-light text-capitalize">
                                     <tr>
                                         <th>No.</th>
-                                        <th>Nama Produk</th>
+                                        <th width="25%">Nama Produk</th>
                                         <th>Qty</th>
                                         <th>Satuan</th>
-                                        <th>Harga Stn.</th>
-                                        <th>Ket.</th>
-                                        <th>Disc.</th>
-                                        <th>Jumlah</th>
+                                        <th width="15%">Harga Stn.</th>
+                                        <th width="8%">Ket.</th>
+                                        <th width="5%">Disc.</th>
+                                        <th width="15%">Jumlah</th>
                                         <th>#</th>
                                     </tr>
                                 </thead>
@@ -83,22 +83,22 @@
                                     <tr>
                                         <td>DPP</td>
                                         <td style="padding-left:130px; padding-right:3px;">:</td>
-                                        <td>123.456.789</td>
+                                        <td class="dpp">123.456.789</td>
                                     </tr>
                                     <tr>
                                         <td>PPN</td>
                                         <td style="padding-left:130px; padding-right:3px;">:</td>
-                                        <td>123.456.789</td>
+                                        <td class="ppn">123.456.789</td>
                                     </tr>
                                     <tr>
                                         <td>Discount</td>
                                         <td style="padding-left:130px; padding-right:3px;">:</td>
-                                        <td>0</td>
+                                        <td class="disc">0</td>
                                     </tr>
                                     <tr>
                                         <th>GRAND TOTAL</th>
                                         <th style="padding-left:130px; padding-right:3px;">:</th>
-                                        <th>123.456.789</th>
+                                        <th class="grand_total">123.456.789</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -138,32 +138,56 @@
                         },
                         {
                             data: 'qty',
+                            render: function(data, type, row) {
+                                return `
+                                    <input type="text" class="form-control qty" id="qty" name="qty[]" value="` + data + `">
+                                `;
+                            }
                         },
                         {
                             data: 'satuan',
                             render: function(data, type, row) {
-                                return data.toUpperCase();
+                                return `
+                                    <input type="text" class="form-control satuan" id="satuan" name="satuan[]" value="` +
+                                    data.toUpperCase() + `">
+                                `;
                             }
                         },
                         {
                             data: 'harga_jual',
                             render: function(data, type, row) {
-                                return formatRupiah(data.toString(), '');
+                                return `
+                                    <input type="text" class="form-control harga_jual" id="harga_jual" name="harga_jual[]" value="` +
+                                    formatRupiah(data.toString(), '') + `">
+                                `;
                             }
                         },
                         {
                             data: 'ket',
                             render: function(data, type, row) {
-                                return data + ' Dos';
+                                return `
+                                <input type="text" class="form-control ket" id="ket" name="ket[]" value="` +
+                                    data.toUpperCase() + " Dos" +
+                                    `">
+                                `;
                             }
                         },
                         {
                             data: 'disc',
+                            render: function(data, type, row) {
+                                return `
+                                <input type="text" class="form-control disc" id="disc" name="disc[]" value="` +
+                                    data + `">
+                                `;
+                            }
                         },
                         {
                             data: 'jumlah',
                             render: function(data, type, row) {
-                                return formatRupiah(data.toString(), '');
+                                return `
+                                    <input type="text" class="form-control jumlah" id="jumlah" name="jumlah[]" value="` +
+                                    formatRupiah(data.toString(), '') + `">
+                                `;
                             }
                         },
                         {
@@ -174,7 +198,7 @@
                         targets: -1,
                         title: 'Actions',
                         orderable: false,
-                        width: '10rem',
+                        width: '5rem',
                         class: "wrapok",
                         render: function(data, type, row, full, meta) {
                             return `
@@ -212,7 +236,27 @@
             console.log(supplier_id);
             console.log(produk_id);
 
-            if ((supplier_id != 'null') && (produk_id != 'null')) {
+            if ((supplier_id == 'null') || (produk_id == 'null')) {
+                swal.fire({
+                    text: "Silakan Pilih Supplier dan Produk",
+                    title: "Error",
+                    icon: "error",
+                    showConfirmButton: true,
+                    confirmButtonText: "OK",
+                });
+            }
+
+            if (ket == 0) {
+                swal.fire({
+                    text: "Silakan masukkan quality Produk",
+                    title: "Error",
+                    icon: "error",
+                    showConfirmButton: true,
+                    confirmButtonText: "OK",
+                });
+            }
+
+            if ((supplier_id != 'null') && (produk_id != 'null') && (ket != 0)) {
                 $.ajax({
                     url: `/pembelian/temp`,
                     type: 'POST',
@@ -231,21 +275,21 @@
 
                             $('#supplier').val('null').trigger('change');
                             $('#produk').val('null').trigger('change');
+                            $('#ket').val(0);
                         } else {
 
                         }
                     }
-                })
-            } else {
-                swal.fire({
-                    text: "Silakan Pilih Supplier dan Produk",
-                    title: "Error",
-                    icon: "error",
-                    showConfirmButton: true,
-                    confirmButtonText: "OK",
-                })
+                });
             }
+
         });
+
+        let jumlah = $('input[name="jumlah[]"]');
+        console.log(jumlah.val());
+        for (var i = 0; i < jumlah.length; i++) {
+            console.log($(jumlah[i]).val());
+        }
 
 
         $(document).ready(function() {
