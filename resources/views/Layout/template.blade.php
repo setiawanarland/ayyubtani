@@ -21,6 +21,8 @@
     <link rel="stylesheet" href="{{ asset('css/amchart.css') }}" type="text/css" media="all" />
     <!-- Start datatable css -->
     <link rel="stylesheet" href="{{ asset('css/datatables.min.css') }}">
+    <!-- Start select2 css -->
+    <link rel="stylesheet" href="{{ asset('css/select2.min.css') }}">
     <!-- others css -->
     <link rel="stylesheet" href="{{ asset('css/typography.css') }}">
     <link rel="stylesheet" href="{{ asset('css/default-css.css') }}">
@@ -117,6 +119,8 @@
     <script src="{{ asset('js/axios.min.js') }}"></script>
     <!-- Start datatable js -->
     <script src="{{ asset('js/datatables.min.js') }}"></script>
+    <!-- Start select2 js -->
+    <script src="{{ asset('js/select2.min.js') }}"></script>
     <!-- Start Format Rupiah js -->
     <script src="{{ asset('js/rupiahFormat.js') }}"></script>
 

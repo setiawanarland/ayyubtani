@@ -20,4 +20,9 @@ class Produk extends Model
         'harga_perdos',
         'stok',
     ];
+
+    public function pembelianTemp()
+    {
+        return $this->hasOne('App\Models\PembelianTemp', 'id_produk', 'id');
+    }
 }

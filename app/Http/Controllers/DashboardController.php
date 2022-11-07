@@ -26,8 +26,8 @@ class DashboardController extends Controller
         $dataProduk = count($data[1]['data']);
 
         $data = [];
-        $produk = (new KiosController)->getList();
-        foreach ($produk as $key => $value) {
+        $kios = (new KiosController)->getList();
+        foreach ($kios as $key => $value) {
             $data[] = $value;
         }
 

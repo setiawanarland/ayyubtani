@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KiosController;
+use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
@@ -51,5 +52,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/show/{id}', [KiosController::class, 'show'])->name('get-kios');
         Route::post('/kios-update', [KiosController::class, 'update'])->name('kios-update');
         Route::delete('/delete/{id}', [KiosController::class, 'delete'])->name('kios-delete');
+    });
+
+    Route::prefix('pembelian')->group(function () {
+        Route::get('/', [PembelianController::class, 'index'])->name('pembelian');
+        Route::get('/list', [PembelianController::class, 'list'])->name('pembeliantemp-list');
+        Route::post('/temp', [PembelianController::class, 'temp'])->name('temp');
     });
 });
