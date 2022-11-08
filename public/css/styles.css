@@ -2818,3 +2818,9 @@ table.dataTable thead td {
 }
 
 /*-------------------- END Offset Sidebar ------------------- */
+
+
+.datepicker td, .datepicker th {
+    width: 1.5em;
+    height: 1.5em;
+}

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Kios;
+use App\Models\pajak;
 use App\Models\Produk;
 use App\Models\Supplier;
 use App\Models\User;
@@ -22,6 +23,13 @@ class DatabaseSeeder extends Seeder
             'username'    => 'arlandsetiawan',
             'email'    => 'john_smith@gmail.com',
             'password'   =>  Hash::make('password'),
+        ]);
+
+        pajak::create([
+            'nama_pajak' => 'pajak 10%',
+            'satuan_pajak' => 10,
+            'active' => '1',
+
         ]);
 
         Produk::create([

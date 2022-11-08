@@ -15,7 +15,7 @@ class CreateDetailPembeliansTempTable extends Migration
     {
         Schema::create('detail_pembelians_temp', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pembelian_temp_id')->constrained('pembelian_temps');
+            // $table->foreignId('pembelian_temp_id')->default(1)->constrained('pembelian_temps');
             $table->foreignId('produk_id')->constrained('produks');
             $table->integer('qty');
             $table->string('ket', 50);

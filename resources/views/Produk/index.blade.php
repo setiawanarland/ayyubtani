@@ -336,7 +336,7 @@
                         } else {
                             $("input[name=" + i + "]").val(val);
                             $("input[name=" + i + "]").attr('style', 'text-transform: uppercase');
-                            $("input[name=" + i + "]").attr('readonly', '');
+                            // $("input[name=" + i + "]").attr('readonly', '');
                         }
 
                     })
