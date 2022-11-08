@@ -396,39 +396,114 @@
                     axios.post(_url, _data)
                         .then(function(res) {
                             console.log(res.data);
-                            // var data = res.data;
-                            // if (data.fail) {
-                            //     swal.fire({
-                            //         text: "Maaf Terjadi Kesalahan",
-                            //         title: "Error",
-                            //         timer: 2000,
-                            //         icon: "danger",
-                            //         showConfirmButton: false,
-                            //     });
-                            // } else if (data.invalid) {
-                            //     console.log(data);
-                            //     $.each(data.invalid, function(key, value) {
-                            //         console.log(key);
-                            //         console.log('errorType', typeof error);
-                            //         $("input[name='" + key + "']").addClass('is-invalid').siblings(
-                            //             '.invalid-feedback').html(value[0]);
-                            //     });
-                            // } else if (data.success) {
-                            //     swal.fire({
-                            //         text: "Data anda berhasil disimpan",
-                            //         title: "Sukses",
-                            //         icon: "success",
-                            //         showConfirmButton: true,
-                            //         confirmButtonText: "OK, Siip",
-                            //     }).then(function() {
-                            //         $('.offset-area').toggleClass('show_hide');
-                            //         $('.settings-btn').toggleClass('active');
-                            //         var form = $('#produkForm');
-                            //         form[0].reset();
-                            //         dataRow.destroy();
-                            //         dataRow.init();
-                            //     });
-                            // }
+                            var data = res.data;
+                            var html = `
+                                        <style>
+                                            #item tr th,
+                                            #item tr td{
+                                                border-top: 1px solid black;
+                                                border-right: 1px solid black;
+                                                border-bottom: 1px solid black;
+                                                border-left: 1px solid black;
+                                            }
+                                            #item {
+                                                border-collapse: collapse;
+                                            }
+                                        </style>
+
+                                        <table id="" class="text-cente" style="width: 100%;">
+                                            <tr>
+                                                <td colspan="6" style="font-size: 30px;">
+                                                    fsfsf
+                                                </td>
+                                                <td colspan="3">
+                                                    Makassar, 5-10-2022
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6" style="padding-bottom: 20px;">JL. VETERAN UTARA</td>
+                                                <td colspan="3" style="padding-bottom:20px">Kepada Yth,</td>
+                                            </tr>
+                                            
+
+                                            <tr>
+                                                <td colspan="2">NO. INVOICE </td>
+                                                <td colspan="4">: qwewerwe</td>
+                                                <td colspan="3">CV. AYYUB TANI</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">PEMBAYARAN </td>
+                                                <td colspan="4">: KREDIT</td>
+                                                <td colspan="3">SALAMATARA KARELOE BONTORAMBA</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">JATUH TEMPO</td>
+                                                <td colspan="4">: 03-Oct-2022</td>
+                                                <td colspan="3">JENEPONTO SULAWESI SELATAN</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="width: 2%;">GUDANG</td>
+                                                <td colspan="4">: 1</td>
+                                                <td>NPWP</td>
+                                                <td colspan="2">: 12343546576879875645</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="padding-top:-20px;padding-bottom: 20px;width: 2%;">PO. NO. </td>
+                                                <td colspan="4" style="width: 55%;padding-top:-20px;padding-bottom: 20px;">: 13243546443</td>
+                                                <td style="padding-top:-20px;padding-bottom: 20px;">NIK</td>
+                                                <td colspan="2" style="padding-top:-20px;padding-bottom: 20px;">: 23245467675445</td>
+                                            </tr>
+                                        </table>
+                                        
+                                        <table id="item">
+                                            <tr class="">
+                                                <th style="width: 1%;">No.</th>
+                                                <th colspan="2" style="width: 20%;">Nama Produk</th>
+                                                <th style="width: 5%;">Qty</th>
+                                                <th style="width: 10%;">Satuan</th>
+                                                <th style="width: 20%;">Harga Stn.</th>
+                                                <th style="width: 5%;">Ket.</th>
+                                                <th style="width: 8%;">Disc.</th>
+                                                <th style="width: 20%;">Jumlah</th>
+                                            </tr>
+                                            <tr class="">
+                                                <td style="width: 1%;">No.</td>
+                                                <td colspan="2" style="width: 20%;">Nama Produk</td>
+                                                <td style="width: 5%;">Qty</td>
+                                                <td style="width: 10%;">Satuan</td>
+                                                <td style="width: 13%;">Harga Stn.</td>
+                                                <td style="width: 5%;">Ket.</td>
+                                                <td style="width: 8%;">Disc.</td>
+                                                <td style="width: 13%;">Jumlah</td>
+                                            </tr>
+                                        </table>
+                                        <table width="20%" style="float:right;margin-top: -1px;">
+                                            <tr style="outline: thin solid black;">
+                                                <td style="width:20%;">DPP </td>
+                                                <td style="width:1%;">:</td>
+                                                <td class="dpp" style="width:10%;text-align: right;">123.456</td>
+                                            </tr>
+                                            <tr style="outline: thin solid black;">
+                                                <td style="width: 20%;">PPN</td>
+                                                <td style="width:1%;">:</td>
+                                                <td class="ppn" style="width:10%;text-align: right;">123.456.789</td>
+                                            </tr>
+                                            <tr style="outline: thin solid black;">
+                                                <td style="width: 20%;">Discount</td>
+                                                <td style="width:1%;">:</td>
+                                                <td class="disc" style="width:10%;text-align: right;">123.456.789</td>
+                                            </tr>
+                                            <tr style="outline: thin solid black;">
+                                                <th style="width: 20%;">GRAND TOTAL</th>
+                                                <th style="width:1%;">:</th>
+                                                <th class="grand_total" style="width:10%;text-align: right;">123</th>
+                                            </tr>
+                                        </table>
+                                `;
+                            var popupWin = window.open('', '_blank', 'width=500,height=500');
+                            popupWin.document.open();
+                            popupWin.document.write('<html><body onload="window.print()">' + html + '</html>');
+                            popupWin.document.close();
                         }).catch(function(error) {
                             swal.fire({
                                 text: "Terjadi Kesalahan Sistem",
@@ -623,72 +698,6 @@
 
             AxiosCall.print("{{ route('pembelian-preview') }}", formData,
                 "#produkForm");
-
-            var html = `
-
-                            <table id="" class="text-cente">
-                                <tr>
-                                    <td>PT. TIGA GENERASI</td>
-                                </tr>
-                                
-                                    <tr>
-                                        <th>No.</th>
-                                        <th width="25%">Nama Produk</th>
-                                        <th>Qty</th>
-                                        <th>Satuan</th>
-                                        <th width="15%">Harga Stn.</th>
-                                        <th width="9%">Ket.</th>
-                                        <th width="8%">Disc.</th>
-                                        <th width="15%">Jumlah</th>
-                                        <th>#</th>
-                                    </tr>
-                                
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="data-tables pull-right">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <td>DPP</td>
-                                        <td style="padding-left:130px; padding-right:3px;">:</td>
-                                        <td class="dpp">
-                                            <input type="text" class="form-control" id="dpp" name="dpp"
-                                                value="">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>PPN</td>
-                                        <td style="padding-left:130px; padding-right:3px;">:</td>
-                                        <td class="ppn">
-                                            <input type="text" class="form-control" id="ppn" name="ppn"
-                                                value="">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Discount</td>
-                                        <td style="padding-left:130px; padding-right:3px;">:</td>
-                                        <td class="disc">
-                                            <input type="text" class="form-control" id="total_disc"
-                                                name="total_disc" value="">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>GRAND TOTAL</th>
-                                        <th style="padding-left:130px; padding-right:3px;">:</th>
-                                        <th class="grand_total">
-                                            <input type="text" class="form-control" id="grand_total"
-                                                name="grand_total" value="">
-                                        </th>
-                                    </tr>
-                                </thead>
-                            </table>
-                   `;
-            var popupWin = window.open('', '_blank', 'width=500,height=500');
-            popupWin.document.open();
-            popupWin.document.write('<html><body onload="window.print()">' + html + '</h1></html>');
-            popupWin.document.close();
         });
 
 
