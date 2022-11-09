@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/tempdelete/{id}', [PembelianController::class, 'tempDelete'])->name('temp-delete');
         Route::delete('/tempreset', [PembelianController::class, 'tempReset'])->name('temp-reset');
         Route::post('/preview', [PembelianController::class, 'preview'])->name('pembelian-preview');
+        Route::post('/store', [PembelianController::class, 'store'])->name('pembelian-store');
     });
 
     Route::prefix('pajak')->group(function () {

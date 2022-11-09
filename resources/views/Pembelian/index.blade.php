@@ -193,10 +193,12 @@
                             }
                         },
                         {
-                            data: 'id_produk',
+                            data: 'produk_id',
                             render: function(data, type, row) {
                                 return `
-                                <input type="text" class="form-control" id="produk_id" name="produk_id[]" value="` +
+                                <input type="hidden" name="produk_id[]" value="` + data +
+                                    `">
+                                <input type="text" class="form-control" id="nama_produk" name="nama_produk[]" value="` +
                                     row.nama_produk.toUpperCase() + ", " + row.kemasan
                                     .toUpperCase() + `">`;
                             }
@@ -219,10 +221,10 @@
                             }
                         },
                         {
-                            data: 'harga_jual',
+                            data: 'harga_beli',
                             render: function(data, type, row) {
                                 return `
-                                    <input type="text" class="form-control harga_jual" id="harga_jual" name="harga_jual[]" value="` +
+                                    <input type="text" class="form-control harga_beli" id="harga_beli" name="harga_beli[]" value="` +
                                     formatRupiah(data.toString(), '') + `">
                                 `;
                             }
@@ -300,6 +302,7 @@
                     axios.post(_url, _data)
                         .then(function(res) {
                             var data = res.data;
+                            console.log(data);
                             if (data.fail) {
                                 swal.fire({
                                     text: "Maaf Terjadi Kesalahan",
@@ -324,17 +327,14 @@
                                     showConfirmButton: true,
                                     confirmButtonText: "OK, Siip",
                                 }).then(function() {
-                                    $('.offset-area').toggleClass('show_hide');
-                                    $('.settings-btn').toggleClass('active');
-                                    var form = $('#produkForm');
-                                    form[0].reset();
                                     dataRow.destroy();
                                     dataRow.init();
                                 });
                             }
                         }).catch(function(error) {
+                            console.log(error);
                             swal.fire({
-                                text: "Terjadi Kesalahan Sistem",
+                                text: "Pilih Supplier dan masukkan invoice terlebih dahulu",
                                 title: "Error",
                                 icon: "error",
                                 showConfirmButton: true,
@@ -395,10 +395,21 @@
                 print: function(_url, _data, _element) {
                     axios.post(_url, _data)
                         .then(function(res) {
-                            console.log(res.data);
+                            // console.log(res.data);
                             var data = res.data;
+
                             var html = `
                                         <style>
+                                            @print {
+                                                @page :footer {
+                                                    display: none
+                                                }
+                                            
+                                                @page :header {
+                                                    display: none
+                                                }
+                                            }
+
                                             #item tr th,
                                             #item tr td{
                                                 border-top: 1px solid black;
@@ -414,21 +425,22 @@
                                         <table id="" class="text-cente" style="width: 100%;">
                                             <tr>
                                                 <td colspan="6" style="font-size: 30px;">
-                                                    fsfsf
+                                                    ` + data.supplier.nama_supplier.toUpperCase() + `
                                                 </td>
                                                 <td colspan="3">
-                                                    Makassar, 5-10-2022
+                                                    Makassar, ` + data.tanggal_beli + `
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td colspan="6" style="padding-bottom: 20px;">JL. VETERAN UTARA</td>
+                                                <td colspan="6" style="padding-bottom: 20px;">` + data.supplier.alamat
+                                .toUpperCase() + `</td>
                                                 <td colspan="3" style="padding-bottom:20px">Kepada Yth,</td>
                                             </tr>
                                             
 
                                             <tr>
                                                 <td colspan="2">NO. INVOICE </td>
-                                                <td colspan="4">: qwewerwe</td>
+                                                <td colspan="4">: ` + data.invoice.toUpperCase() + `</td>
                                                 <td colspan="3">CV. AYYUB TANI</td>
                                             </tr>
                                             <tr>
@@ -438,7 +450,7 @@
                                             </tr>
                                             <tr>
                                                 <td colspan="2">JATUH TEMPO</td>
-                                                <td colspan="4">: 03-Oct-2022</td>
+                                                <td colspan="4">: ` + data.jatuh_tempo + `</td>
                                                 <td colspan="3">JENEPONTO SULAWESI SELATAN</td>
                                             </tr>
                                             <tr>
@@ -458,55 +470,74 @@
                                         <table id="item">
                                             <tr class="">
                                                 <th style="width: 1%;">No.</th>
-                                                <th colspan="2" style="width: 20%;">Nama Produk</th>
+                                                <th colspan="2" style="width: 25%;">Nama Produk</th>
                                                 <th style="width: 5%;">Qty</th>
                                                 <th style="width: 10%;">Satuan</th>
-                                                <th style="width: 20%;">Harga Stn.</th>
+                                                <th style="width: 15%;">Harga Stn.</th>
                                                 <th style="width: 5%;">Ket.</th>
                                                 <th style="width: 8%;">Disc.</th>
-                                                <th style="width: 20%;">Jumlah</th>
+                                                <th style="width: 15%;">Jumlah</th>
+                                                </tr>
+                                                `;
+                            data.produks.map(function(value, index) {
+                                console.log(value);
+                                no = index + 1;
+                                html += `
+                                <tr class="">
+                                                <td style="width: 1%;">` + no + `</td>
+                                                <td colspan="2" style="width: 20%;">` +
+                                    value.nama_produk.toUpperCase() + " " + value.kemasan
+                                    .toUpperCase() +
+                                    `</td>
+                                                <td style="width: 5%;text-align:center">` + value.qty + `</td>
+                                                <td style="width: 10%;text-align:center">` + value.satuan + `</td>
+                                                <td style="width: 13%;text-align:right">` + formatRupiah(value
+                                        .harga_jual.toString(),
+                                        '') + `</td>
+                                                <td style="width: 5%;text-align:center">` + value.ket + `</td>
+                                                <td style="width: 8%;text-align:center">` + value.disc + `</td>
+                                                <td style="width: 13%;text-align:right">` + value.jumlah + `</td>
                                             </tr>
-                                            <tr class="">
-                                                <td style="width: 1%;">No.</td>
-                                                <td colspan="2" style="width: 20%;">Nama Produk</td>
-                                                <td style="width: 5%;">Qty</td>
-                                                <td style="width: 10%;">Satuan</td>
-                                                <td style="width: 13%;">Harga Stn.</td>
-                                                <td style="width: 5%;">Ket.</td>
-                                                <td style="width: 8%;">Disc.</td>
-                                                <td style="width: 13%;">Jumlah</td>
-                                            </tr>
+                                `;
+                            })
+                            html += `
                                         </table>
                                         <table width="20%" style="float:right;margin-top: -1px;">
                                             <tr style="outline: thin solid black;">
                                                 <td style="width:20%;">DPP </td>
                                                 <td style="width:1%;">:</td>
-                                                <td class="dpp" style="width:10%;text-align: right;">123.456</td>
+                                                <td class="dpp" style="width:10%;text-align: right;">` + data.dpp + `</td>
                                             </tr>
                                             <tr style="outline: thin solid black;">
                                                 <td style="width: 20%;">PPN</td>
                                                 <td style="width:1%;">:</td>
-                                                <td class="ppn" style="width:10%;text-align: right;">123.456.789</td>
+                                                <td class="ppn" style="width:10%;text-align: right;">` + data.ppn + `</td>
                                             </tr>
                                             <tr style="outline: thin solid black;">
                                                 <td style="width: 20%;">Discount</td>
                                                 <td style="width:1%;">:</td>
-                                                <td class="disc" style="width:10%;text-align: right;">123.456.789</td>
+                                                <td class="disc" style="width:10%;text-align: right;">` + data
+                                .total_disc + `</td>
                                             </tr>
                                             <tr style="outline: thin solid black;">
                                                 <th style="width: 20%;">GRAND TOTAL</th>
                                                 <th style="width:1%;">:</th>
-                                                <th class="grand_total" style="width:10%;text-align: right;">123</th>
+                                                <th class="grand_total" style="width:10%;text-align: right;">` + data
+                                .grand_total + `</th>
                                             </tr>
                                         </table>
                                 `;
                             var popupWin = window.open('', '_blank', 'width=500,height=500');
                             popupWin.document.open();
-                            popupWin.document.write('<html><body onload="window.print()">' + html + '</html>');
+                            popupWin.document.write(
+                                '<html><body onload="document.title=`Ayyub Tani`;document.footer=`Ayyub Tani`;window.print()">' +
+                                html + '</html>');
                             popupWin.document.close();
+
                         }).catch(function(error) {
+                            console.log(error);
                             swal.fire({
-                                text: "Terjadi Kesalahan Sistem",
+                                text: "Pilih supplier dan masukkan invoice terlebih dahulu",
                                 title: "Error",
                                 icon: "error",
                                 showConfirmButton: true,
@@ -687,11 +718,21 @@
             })
         });
 
+        $(document).on('submit', "#pembelianForm[data-type='submit']", function(e) {
+            e.preventDefault();
+
+            var dataForm = document.querySelector('#pembelianForm');
+            var formData = new FormData(dataForm);
+
+            AxiosCall.post("{{ route('pembelian-store') }}", formData,
+                "#pembelianForm");
+        });
+
 
         $(document).on('click', '.printPreview', function(e) {
             e.preventDefault();
-            var form = $('#pembelianForm');
-            form.attr('data-type', 'print');
+            // var form = $('#pembelianForm');
+            // form.attr('data-type', 'print');
 
             var dataForm = document.querySelector('#pembelianForm');
             var formData = new FormData(dataForm);

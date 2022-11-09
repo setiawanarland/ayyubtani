@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Response\GeneralResponse;
+use App\Models\DetailPembelian;
 use App\Models\Pembelian;
 use App\Models\DetailPembelianTemp;
+use App\Models\Hutang;
 use App\Models\pajak;
 use App\Models\PembelianTemp;
 use App\Models\Produk;
+use App\Models\Supplier;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use DB;
@@ -46,7 +49,7 @@ class PembelianController extends Controller
 
     public function getList()
     {
-        $temp = DetailPembelianTemp::select('detail_pembelians_temp.*', 'produks.nama_produk', 'produks.kemasan', 'produks.satuan', 'produks.harga_jual')
+        $temp = DetailPembelianTemp::select('detail_pembelians_temp.*', 'produks.nama_produk', 'produks.kemasan', 'produks.satuan', 'produks.harga_beli')
             ->join('produks', 'detail_pembelians_temp.produk_id', 'produks.id')
             ->get();
 
@@ -69,20 +72,9 @@ class PembelianController extends Controller
     {
         $produk = Produk::where('id', $request->produk_id)->first();
         $qty = $produk->jumlah_perdos * $request->ket;
-        $jumlah = $produk->harga_perdos * $request->ket;
+        $jumlah = ($produk->harga_beli * $qty) * $request->ket;
         $jumlahDisc = $jumlah * $request->disc / 100;
         $jumlahAfterDisc = $jumlah - $jumlahDisc;
-        // return $jumlah;
-
-        // $dataPembelian = new PembelianTemp();
-        // $dataPembelian->supplier_id = $request->supplier_id;
-        // $dataPembelian->invoice = '';
-        // $dataPembelian->tanggal_beli = Carbon::now();
-        // $dataPembelian->dpp = 0;
-        // $dataPembelian->ppn = 0;
-        // $dataPembelian->disc = 0;
-        // $dataPembelian->grand_total = 0;
-        // $dataPembelian->save();
 
         $dataDetail = DetailPembelianTemp::where('produk_id', $request->produk_id)->first();
         if ($dataDetail != null) {
@@ -90,7 +82,6 @@ class PembelianController extends Controller
         }
 
         $data = new DetailPembelianTemp();
-        // $data->pembelian_temp_id = $dataPembelian->id;
         $data->produk_id = $request->produk_id;
         $data->qty = $qty;
         $data->ket = $request->ket;
@@ -131,7 +122,45 @@ class PembelianController extends Controller
 
     public function preview(Request $request)
     {
-        return $request->all();
+        $data = [];
+
+        // get supplier information
+        $supplier = DB::table('suppliers')
+            ->select('nama_supplier', 'alamat')
+            ->where('id', $request->supplier)
+            ->first();
+        $data['supplier'] = $supplier;
+
+        // get produks information
+        $produks = [];
+        foreach ($request->produk_id as $key => $value) {
+            $produks[] = DB::table('produks')
+                ->where('id', $value)
+                ->first();
+        }
+
+        // add qty, ket, jumlah by produk
+        foreach ($produks as $key => $value) {
+            $value->qty = $request->qty[$key];
+            $value->ket = $request->ket[$key];
+            $value->disc = $request->disc[$key];
+            $value->jumlah = $request->jumlah[$key];
+        }
+        $data['produks'] = $produks;
+
+        // set jatuhTempo 
+        $jatuhTempo = date('d/m/Y', strtotime('+1 months', strtotime($request->tanggal_beli)));
+
+        // set data
+        $data['invoice'] = $request->invoice;
+        $data['tanggal_beli'] = $request->tanggal_beli;
+        $data['jatuh_tempo'] = $jatuhTempo;
+        $data['dpp'] = $request->dpp;
+        $data['ppn'] = $request->ppn;
+        $data['total_disc'] = $request->total_disc;
+        $data['grand_total'] = $request->grand_total;
+
+        return $data;
     }
 
     // public function print($data, $type)
@@ -386,7 +415,61 @@ class PembelianController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $dataPembelian = [];
+        $dataPembelian['bulan'] = date('m', strtotime(date('d/m/Y', strtotime($request->tanggal_beli))));
+        $dataPembelian['tahun'] = date('Y', strtotime(date('d/m/Y', strtotime($request->tanggal_beli))));
+
+        $pembelian = new Pembelian();
+        $pembelian->supplier_id = $request->supplier;
+        $pembelian->invoice = $request->invoice;
+        $pembelian->tanggal_beli = date('Y-m-d', strtotime($request->tanggal_beli));
+        $pembelian->bulan = $dataPembelian['bulan'];
+        $pembelian->tahun = $dataPembelian['tahun'];
+        $pembelian->dpp = intval(preg_replace("/\D/", "", $request->dpp));
+        $pembelian->ppn = intval(preg_replace("/\D/", "", $request->ppn));
+        $pembelian->total_disc = intval(preg_replace("/\D/", "", $request->total_disc));
+        $pembelian->grand_total = intval(preg_replace("/\D/", "", $request->grand_total));
+        $pembelian->save();
+
+        foreach ($request->produk_id as $key => $value) {
+            $detailPembelian = new DetailPembelian();
+            $detailPembelian->pembelian_id = $pembelian->id;
+            $detailPembelian->produk_id = $value;
+            $detailPembelian->qty = $request->qty[$key];
+            $detailPembelian->ket = $request->ket[$key];
+            $detailPembelian->disc = $request->disc[$key];
+            $detailPembelian->jumlah = intval(preg_replace("/\D/", "", $request->jumlah[$key]));
+            $detailPembelian->save();
+
+            $produk = Produk::where('id', $value)->first();
+            $stok = $produk->stok;
+            $jumlahPerdos = $produk->jumlah_perdos;
+            $stokMasuk = $request->qty[$key] / $jumlahPerdos;
+            $produk->stok = $stok + $stokMasuk;
+            $produk->save();
+        }
+
+        $dataHutang = [];
+        $dataHutang['bulan'] = date('m', strtotime(date('d/m/Y', strtotime($request->tanggal_beli))));
+        $dataHutang['tahun'] = date('Y', strtotime(date('d/m/Y', strtotime($request->tanggal_beli))));
+
+        $hutang = new Hutang();
+        $hutang->pembelian_id = $pembelian->id;
+        $hutang->bulan = $dataHutang['bulan'];
+        $hutang->tahun = $dataHutang['tahun'];
+        $hutang->ket = '';
+        $hutang->debet = intval(preg_replace("/\D/", "", $request->grand_total));
+        $hutang->kredit = 0;
+        $hutang->sisa = intval(preg_replace("/\D/", "", $request->grand_total)) - $hutang->kredit;
+        $hutang->save();
+
+        $temp = DetailPembelianTemp::truncate();
+
+        if ($temp) {
+            return (new GeneralResponse)->default_json(true, "Success", null, 201);
+        } else {
+            return (new GeneralResponse)->default_json(false, "Error", null, 404);
+        }
     }
 
     /**

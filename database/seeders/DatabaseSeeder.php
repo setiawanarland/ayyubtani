@@ -32,15 +32,31 @@ class DatabaseSeeder extends Seeder
 
         ]);
 
-        Produk::create([
-            'nama_produk'    => 'abolisi 865 sl',
-            'kemasan'    => '200 ml x 48',
-            'satuan' => 'pcs',
-            'jumlah_perdos' => 48,
-            'harga_beli' => 21400,
-            'harga_jual' => 22700,
-            'harga_perdos' => 1089600,
-        ]);
+        Produk::create(
+            [
+                'nama_produk'    => 'abolisi 865 sl',
+                'kemasan'    => '200 ml x 48',
+                'satuan' => 'pcs',
+                'jumlah_perdos' => 48,
+                'harga_beli' => 21400,
+                'harga_jual' => 22700,
+                'harga_perdos' => 1089600,
+            ],
+
+        );
+
+        Produk::create(
+            [
+                'nama_produk'    => 'abolisi 865 sl',
+                'kemasan'    => '400 ml x 24',
+                'satuan' => 'pcs',
+                'jumlah_perdos' => 24,
+                'harga_beli' => 40600,
+                'harga_jual' => 43000,
+                'harga_perdos' => 1032000,
+            ]
+
+        );
 
         Supplier::create([
             'nama_supplier'    => 'pt. tiga madiri',

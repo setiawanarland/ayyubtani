@@ -20,7 +20,7 @@ class CreatePembelianTempsTable extends Migration
             $table->date('tanggal_beli');
             $table->integer('dpp');
             $table->integer('ppn');
-            $table->integer('disc');
+            $table->integer('total_disc');
             $table->integer('grand_total');
             $table->timestamps();
         });
