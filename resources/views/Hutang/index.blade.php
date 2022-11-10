@@ -10,7 +10,7 @@
                         <h4 class="header-title">Data Hutang</h4>
 
                         <div class="data-tables">
-                            <table id="hutangTable" class="text-cente">
+                            <table id="hutangTable" class="text-center table table-bordered">
                                 <thead class="bg-light text-capitalize">
                                     <tr>
                                         <th>Tanggal Beli</th>
@@ -24,6 +24,56 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @foreach ($data['data'] as $key => $value)
+                                        @foreach ($value['detail'] as $index => $val)
+                                            <tr style="background-color: aquamarine">
+                                                <td>{{ date('d-m-Y', strtotime($val->tanggal_beli)) }}</td>
+                                                <td>{{ $val->invoice }}</td>
+                                                <td class="text-right">{{ number_format($val->debet) }}</td>
+                                                <td>
+                                                    @if ($val->tanggal_bayar != null)
+                                                        {{ date('d-m-Y', strtotime($val->tanggal_bayar)) }}
+                                                    @endif
+                                                </td>
+                                                <td>{{ $val->ket }}</td>
+                                                <td class="text-right">{{ number_format($val->kredit) }}</td>
+                                                <td class="text-right">{{ number_format($val->sisa) }}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm bayarHutang"
+                                                        data-toggle="modal" data-target="#bayarHutangModal"
+                                                        data-id="{{ $val->id }}}" style="background-color:forestgreen"
+                                                        {{ $val->sisa <= 0 ? 'disabled' : '' }}><i
+                                                            class="fa fa-money"></i></button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        <tr class="text-uppercase"
+                                            style="background-color: {{ $value['sisa'] != 0 ? 'lightsalmon' : 'green' }} ">
+                                            <th colspan="2">total hutang bulan {{ $key }}</th>
+                                            <th class="text-right">{{ number_format($value['debet']) }}</th>
+                                            <th colspan="3">total sisa bulan {{ $key }}</th>
+                                            <th class="text-right">{{ number_format($value['sisa']) }}</th>
+                                            @if ($value['sisa'] != 0)
+                                                <th>belum lunas</th>
+                                            @else
+                                                <th>lunas</th>
+                                            @endif
+                                        </tr>
+                                    @endforeach
+
+                                    <tr class="text-uppercase pt-5"
+                                        style="background-color: {{ $data['total_hutang'] != 0 ? 'gold' : 'lightgreen' }} ">
+                                        <th colspan="2">total hutang </th>
+                                        <th class="text-right">{{ number_format($data['total_hutang']) }}</th>
+                                        <th colspan="3">total sisa </th>
+                                        <th class="text-right">{{ number_format($data['total_sisa']) }}</th>
+                                        @if ($data['total_sisa'] != 0)
+                                            <th>belum lunas</th>
+                                        @else
+                                            <th>lunas</th>
+                                        @endif
+                                    </tr>
+
                                 </tbody>
                             </table>
                         </div>
@@ -53,17 +103,20 @@
                         <input class="form-control" type="hidden" name="id" id="id">
 
                         <div class="form-group" style="margin-bottom: 0px;">
-                            <label for="nama_kios" class="col-form-label">Nama Kios</label>
+                            <label for="nama_kios" class="col-form-label">Nama
+                                Kios</label>
                             <input class="form-control" type="text" name="nama_kios" id="nama_kios" autofocus>
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="form-group" style="margin-bottom: 0px;">
-                            <label for="pemilik" class="col-form-label">Nama Pemilik</label>
+                            <label for="pemilik" class="col-form-label">Nama
+                                Pemilik</label>
                             <input class="form-control" type="text" name="pemilik" id="pemilik" autofocus>
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="form-group" style="margin-bottom: 0px;">
-                            <label for="kabupaten" class="col-form-label">Wil. Kabupaten</label>
+                            <label for="kabupaten" class="col-form-label">Wil.
+                                Kabupaten</label>
                             <input class="form-control" type="text" name="kabupaten" id="kabupaten" autofocus>
                             <div class="invalid-feedback"></div>
                         </div>
@@ -101,80 +154,12 @@
         var dataRow = function() {
             var init = function() {
                 let table = $('#hutangTable');
+                var tahun = null;
+                var bulan = null;
+                var totalHutang = 0;
+
                 table.DataTable({
-                    processing: true,
                     ordering: false,
-                    ajax: "{{ route('hutang-list') }}",
-                    columns: [{
-                            data: 'tanggal_beli',
-                            render: function(data, type, row) {
-                                var date = new Date(data);
-                                return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date
-                                    .getFullYear();
-                            }
-                        },
-                        {
-                            data: 'pembelian_id',
-                            render: function(data, type, row) {
-                                return row.invoice.toUpperCase();
-                            }
-                        },
-                        {
-                            data: 'debet',
-                            render: function(data, type, row) {
-                                return formatRupiah(data.toString(), '');
-                            }
-                        },
-                        {
-                            data: 'tanggal_bayar',
-                            render: function(data, type, row) {
-                                if (data != null) {
-                                    var date = new Date(data);
-                                    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date
-                                        .getFullYear();
-                                }
-
-                                return data;
-                            }
-                        },
-                        {
-                            data: 'ket',
-                            render: function(data, type, row) {
-                                if (data != null) {
-                                    return data.toUpperCase();
-                                }
-                                return data;
-                            }
-                        },
-                        {
-                            data: 'kredit',
-                            render: function(data, type, row) {
-                                return formatRupiah(data.toString(), '');
-                            }
-                        },
-                        {
-                            data: 'sisa',
-                            render: function(data, type, row) {
-                                return formatRupiah(data.toString(), '');
-                            }
-                        },
-
-                        {
-                            data: 'id'
-                        }
-                    ],
-                    columnDefs: [{
-                        targets: -1,
-                        title: 'Actions',
-                        orderable: false,
-                        width: '10rem',
-                        class: "wrapok",
-                        render: function(data, type, row, full, meta) {
-                            return `
-                            <button type="button" class="btn btn-primary btn-sm bayarHutang" data-toggle="modal" data-target="#bayarHutangModal" data-id="${row.id}"><i class="fa fa-money"></i></button>
-                    `;
-                        },
-                    }],
                 });
 
             };
@@ -201,10 +186,9 @@
 
 
         // format npwp
-        $('#npwp').on('keyup', function() {
-            $(this).val(formatNpwp($(this).val()));
-
-
+        $(document).on('click', '.bayarHutang', function() {
+            console.log('ok');
+            window.location = "{{ route('hutang') }}";
         });
 
         function formatNpwp(value) {

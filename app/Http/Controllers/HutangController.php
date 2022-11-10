@@ -16,7 +16,39 @@ class HutangController extends Controller
         $page_description = 'Dashboard Admin Ayyub Tani';
         $breadcrumbs = ['Daftar Hutang'];
 
-        return view('hutang.index', compact('page_title', 'page_description', 'breadcrumbs'));
+        $data = [];
+        $hutangs = $hutang = DB::table("hutangs")
+            ->join('pembelians', 'hutangs.pembelian_id', 'pembelians.id')
+            ->orderBy('hutangs.bulan', 'ASC')
+            ->orderBy('hutangs.tahun', 'ASC')
+            ->get();
+
+        $bulan = 0;
+        $bulanHutang = 0;
+        $bulanSisa = 0;
+        $totalHutang = 0;
+        $totalSisa = 0;
+        foreach ($hutangs as $key => $value) {
+            if ($bulan != $value->bulan) {
+                $bulan = $value->bulan;
+                $bulanHutang = 0;
+                $bulanSisa = 0;
+            }
+            $bulanHutang += $value->debet;
+            $bulanSisa += $value->sisa;
+
+            $totalHutang += $value->debet;
+            $totalSisa += $value->sisa;
+
+            $data['data'][$value->bulan]['detail'][] = $hutangs[$key];
+            $data['data'][$value->bulan]['debet'] = $bulanHutang;
+            $data['data'][$value->bulan]['sisa'] = $bulanSisa;
+        }
+        $data['total_hutang'] = $totalHutang;
+        $data['total_sisa'] = $totalSisa;
+        // return $data;
+
+        return view('hutang.index', compact('page_title', 'page_description', 'breadcrumbs', 'hutangs', 'data'));
     }
 
     public function list()

@@ -184,8 +184,8 @@ class PembelianController extends Controller
     public function store(Request $request)
     {
         $dataPembelian = [];
-        $dataPembelian['bulan'] = date('m', strtotime(date('d/m/Y', strtotime($request->tanggal_beli))));
-        $dataPembelian['tahun'] = date('Y', strtotime(date('d/m/Y', strtotime($request->tanggal_beli))));
+        $dataPembelian['bulan'] = date('m', strtotime($request->tanggal_beli));
+        $dataPembelian['tahun'] = date('Y', strtotime($request->tanggal_beli));
 
         $pembelian = new Pembelian();
         $pembelian->supplier_id = $request->supplier;
@@ -218,8 +218,8 @@ class PembelianController extends Controller
         }
 
         $dataHutang = [];
-        $dataHutang['bulan'] = date('m', strtotime(date('d/m/Y', strtotime($request->tanggal_beli))));
-        $dataHutang['tahun'] = date('Y', strtotime(date('d/m/Y', strtotime($request->tanggal_beli))));
+        $dataHutang['bulan'] = date('m', strtotime($request->tanggal_beli));
+        $dataHutang['tahun'] = date('Y', strtotime($request->tanggal_beli));
 
         $hutang = new Hutang();
         $hutang->pembelian_id = $pembelian->id;
@@ -259,8 +259,8 @@ class PembelianController extends Controller
     {
         $data = Pembelian::select('pembelians.*', 'suppliers.nama_supplier',)
             ->join('suppliers', 'pembelians.supplier_id', 'suppliers.id')
-            // ->orderBy('pembelians.bulan', 'ASC')
-            // ->orderBy('pembelians.tahun', 'ASC')
+            ->orderBy('pembelians.bulan', 'ASC')
+            ->orderBy('pembelians.tahun', 'ASC')
             ->get();
 
 

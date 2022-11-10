@@ -750,6 +750,7 @@
             $('#produk').select2();
 
             $('#tanggal_beli').datepicker({
+                format: "dd-mm-yyyy",
                 weekStart: 1,
                 daysOfWeekHighlighted: "6,0",
                 autoclose: true,

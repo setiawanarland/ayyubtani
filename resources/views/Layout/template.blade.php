@@ -121,6 +121,8 @@
     <script src="{{ asset('js/axios.min.js') }}"></script>
     <!-- Start datatable js -->
     <script src="{{ asset('js/datatables.min.js') }}"></script>
+    <script src="{{ asset('js/datatables.rowGroup.min.js') }}"></script>
+    <script src="{{ asset('js/datatables.fixedheader.min.js') }}"></script>
     <!-- Start datepicker js -->
     <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
     <!-- Start select2 js -->

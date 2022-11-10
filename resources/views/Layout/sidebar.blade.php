@@ -20,7 +20,7 @@
                     <li class="{{ Request::path() == 'pembelian' ? 'active' : '' }}"><a
                             href="{{ url('/pembelian') }}"><i
                                 class="ti-shopping-cart-full"></i><span>pembelian</span></a></li>
-                    <li class="{{ Request::path() == 'pembelian' ? 'active' : '' }}"><a
+                    <li class="{{ Request::path() == 'pembelian/daftar' ? 'active' : '' }}"><a
                             href="{{ url('/pembelian/daftar') }}"><i class="ti-shopping-cart-full"></i><span>daftar
                                 pembelian</span></a></li>
                     <li class="{{ Request::path() == 'barang-list' ? 'active' : '' }}"><a
