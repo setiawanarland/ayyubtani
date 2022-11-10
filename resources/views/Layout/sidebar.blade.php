@@ -17,9 +17,12 @@
                                 class="ti-view-list-alt"></i><span>daftar produk</span></a></li>
                     <li class="{{ Request::path() == 'kios' ? 'active' : '' }}"><a href="{{ url('/kios') }}"><i
                                 class="ti-user"></i><span>daftar kios</span></a></li>
-                    <li class="{{ Request::path() == 'barang-list' ? 'active' : '' }}"><a
+                    <li class="{{ Request::path() == 'pembelian' ? 'active' : '' }}"><a
                             href="{{ url('/pembelian') }}"><i
                                 class="ti-shopping-cart-full"></i><span>pembelian</span></a></li>
+                    <li class="{{ Request::path() == 'pembelian' ? 'active' : '' }}"><a
+                            href="{{ url('/pembelian/daftar') }}"><i class="ti-shopping-cart-full"></i><span>daftar
+                                pembelian</span></a></li>
                     <li class="{{ Request::path() == 'barang-list' ? 'active' : '' }}"><a
                             href="{{ url('/dashboard') }}"><i class="ti-shopping-cart"></i><span>penjualan</span></a>
                     </li>

@@ -20,7 +20,7 @@ class CreateDetailPembeliansTempTable extends Migration
             $table->integer('qty');
             $table->string('ket', 50);
             $table->integer('disc');
-            $table->integer('jumlah');
+            $table->bigInteger('jumlah');
             $table->timestamps();
         });
     }

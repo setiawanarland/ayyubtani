@@ -329,6 +329,7 @@
                                 }).then(function() {
                                     dataRow.destroy();
                                     dataRow.init();
+                                    window.location = "{{ route('daftar-pembelian') }}";
                                 });
                             }
                         }).catch(function(error) {

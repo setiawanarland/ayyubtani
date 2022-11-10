@@ -20,10 +20,10 @@ class CreatePembeliansTable extends Migration
             $table->date('tanggal_beli');
             $table->string('bulan', 10);
             $table->string('tahun', 10);
-            $table->integer('dpp');
-            $table->integer('ppn');
-            $table->integer('total_disc');
-            $table->integer('grand_total');
+            $table->bigInteger('dpp');
+            $table->bigInteger('ppn');
+            $table->bigInteger('total_disc');
+            $table->bigInteger('grand_total');
             $table->timestamps();
         });
     }

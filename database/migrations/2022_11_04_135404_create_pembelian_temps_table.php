@@ -18,10 +18,10 @@ class CreatePembelianTempsTable extends Migration
             $table->foreignId('supplier_id')->constrained('suppliers');
             $table->string('invoice', 100);
             $table->date('tanggal_beli');
-            $table->integer('dpp');
-            $table->integer('ppn');
-            $table->integer('total_disc');
-            $table->integer('grand_total');
+            $table->bigInteger('dpp');
+            $table->bigInteger('ppn');
+            $table->bigInteger('total_disc');
+            $table->bigInteger('grand_total');
             $table->timestamps();
         });
     }

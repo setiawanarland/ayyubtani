@@ -20,9 +20,9 @@ class CreateHutangsTable extends Migration
             $table->string('bulan', 10);
             $table->string('tahun', 10);
             $table->string('ket', 50);
-            $table->integer('debet');
-            $table->integer('kredit');
-            $table->integer('sisa');
+            $table->bigInteger('debet');
+            $table->bigInteger('kredit');
+            $table->bigInteger('sisa');
             $table->enum('status', ['lunas', 'belum'])->default('belum');
             $table->timestamps();
         });

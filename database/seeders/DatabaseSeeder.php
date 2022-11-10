@@ -58,6 +58,19 @@ class DatabaseSeeder extends Seeder
 
         );
 
+        Produk::create(
+            [
+                'nama_produk'    => 'supremo 480 sl',
+                'kemasan'    => '4 l x 6',
+                'satuan' => 'pcs',
+                'jumlah_perdos' => 6,
+                'harga_beli' => 399100,
+                'harga_jual' => 423000,
+                'harga_perdos' => 2538000,
+            ]
+
+        );
+
         Supplier::create([
             'nama_supplier'    => 'pt. tiga madiri',
             'alamat'    => 'jl. veteran',

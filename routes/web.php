@@ -63,6 +63,9 @@ Route::middleware('auth')->group(function () {
         Route::delete('/tempreset', [PembelianController::class, 'tempReset'])->name('temp-reset');
         Route::post('/preview', [PembelianController::class, 'preview'])->name('pembelian-preview');
         Route::post('/store', [PembelianController::class, 'store'])->name('pembelian-store');
+        Route::get('/daftar', [PembelianController::class, 'daftar'])->name('daftar-pembelian');
+        Route::get('/list-pembelian', [PembelianController::class, 'listPembelian'])->name('pembelian-list');
+        Route::get('/show/{id}', [PembelianController::class, 'show'])->name('pembelian-show');
     });
 
     Route::prefix('pajak')->group(function () {
