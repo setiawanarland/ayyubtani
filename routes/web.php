@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HutangController;
 use App\Http\Controllers\KiosController;
 use App\Http\Controllers\PajakController;
 use App\Http\Controllers\PembelianController;
@@ -66,6 +67,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/daftar', [PembelianController::class, 'daftar'])->name('daftar-pembelian');
         Route::get('/list-pembelian', [PembelianController::class, 'listPembelian'])->name('pembelian-list');
         Route::get('/show/{id}', [PembelianController::class, 'show'])->name('pembelian-show');
+    });
+
+    Route::prefix('hutang')->group(function () {
+        Route::get('/', [HutangController::class, 'index'])->name('hutang');
+        Route::get('/list', [HutangController::class, 'list'])->name('hutang-list');
     });
 
     Route::prefix('pajak')->group(function () {

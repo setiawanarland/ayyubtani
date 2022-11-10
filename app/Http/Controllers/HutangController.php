@@ -5,17 +5,39 @@ namespace App\Http\Controllers;
 use App\Models\Hutang;
 use App\Http\Requests\StoreHutangRequest;
 use App\Http\Requests\UpdateHutangRequest;
+use App\Http\Response\GeneralResponse;
+use DB;
 
 class HutangController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        $page_title = 'Ayyub Tani';
+        $page_description = 'Dashboard Admin Ayyub Tani';
+        $breadcrumbs = ['Daftar Hutang'];
+
+        return view('hutang.index', compact('page_title', 'page_description', 'breadcrumbs'));
+    }
+
+    public function list()
+    {
+        $response = (new HutangController)->getList();
+        return $response;
+    }
+
+    public function getList()
+    {
+        $hutang = DB::table("hutangs")
+            ->join('pembelians', 'hutangs.pembelian_id', 'pembelians.id')
+            ->orderBy('hutangs.bulan', 'ASC')
+            ->orderBy('hutangs.tahun', 'ASC')
+            ->get();
+
+        if ($hutang) {
+            return (new GeneralResponse)->default_json(true, 'success', $hutang, 200);
+        } else {
+            return (new GeneralResponse)->default_json(false, 'error', null, 401);
+        }
     }
 
     /**
