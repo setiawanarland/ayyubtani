@@ -82,10 +82,10 @@
                                         <tr>
                                             <th>No.</th>
                                             <th width="25%">Nama Produk</th>
-                                            <th>Qty</th>
-                                            <th>Satuan</th>
-                                            <th width="15%">Harga Stn.</th>
-                                            <th width="9%">Ket.</th>
+                                            <th width="10%">Qty</th>
+                                            <th width="10%">Satuan</th>
+                                            <th width="15%">Harga Stn. <br> ({{ $pajak->nama_pajak }})</th>
+                                            <th width="10%">Ket.</th>
                                             <th width="8%">Disc.</th>
                                             <th width="15%">Jumlah</th>
                                             <th>#</th>
@@ -98,7 +98,7 @@
                             <div class="data-tables pull-right">
                                 <table>
                                     <thead>
-                                        <tr>
+                                        {{-- <tr>
                                             <td>DPP</td>
                                             <td style="padding-left:130px; padding-right:3px;">:</td>
                                             <td class="dpp">
@@ -121,7 +121,7 @@
                                                 <input type="text" class="form-control" id="total_disc"
                                                     name="total_disc" value="">
                                             </td>
-                                        </tr>
+                                        </tr> --}}
                                         <tr>
                                             <th>GRAND TOTAL</th>
                                             <th style="padding-left:130px; padding-right:3px;">:</th>
@@ -474,7 +474,7 @@
                                                 <th colspan="2" style="width: 25%;">Nama Produk</th>
                                                 <th style="width: 5%;">Qty</th>
                                                 <th style="width: 10%;">Satuan</th>
-                                                <th style="width: 15%;">Harga Stn.</th>
+                                                <th style="width: 15%;">Harga Stn. (PPN 11%)</th>
                                                 <th style="width: 5%;">Ket.</th>
                                                 <th style="width: 8%;">Disc.</th>
                                                 <th style="width: 15%;">Jumlah</th>
@@ -493,7 +493,7 @@
                                                 <td style="width: 5%;text-align:center">` + value.qty + `</td>
                                                 <td style="width: 10%;text-align:center">` + value.satuan + `</td>
                                                 <td style="width: 13%;text-align:right">` + formatRupiah(value
-                                        .harga_jual.toString(),
+                                        .harga_beli.toString(),
                                         '') + `</td>
                                                 <td style="width: 5%;text-align:center">` + value.ket + `</td>
                                                 <td style="width: 8%;text-align:center">` + value.disc + `</td>
@@ -503,24 +503,24 @@
                             })
                             html += `
                                         </table>
-                                        <table width="20%" style="float:right;margin-top: -1px;">
-                                            <tr style="outline: thin solid black;">
-                                                <td style="width:20%;">DPP </td>
-                                                <td style="width:1%;">:</td>
-                                                <td class="dpp" style="width:10%;text-align: right;">` + data.dpp + `</td>
-                                            </tr>
-                                            <tr style="outline: thin solid black;">
-                                                <td style="width: 20%;">PPN</td>
-                                                <td style="width:1%;">:</td>
-                                                <td class="ppn" style="width:10%;text-align: right;">` + data.ppn + `</td>
-                                            </tr>
-                                            <tr style="outline: thin solid black;">
-                                                <td style="width: 20%;">Discount</td>
-                                                <td style="width:1%;">:</td>
-                                                <td class="disc" style="width:10%;text-align: right;">` + data
-                                .total_disc + `</td>
-                                            </tr>
-                                            <tr style="outline: thin solid black;">
+                                        <table width="20%" style="float:right;margin-top: -1px;">`;
+                            //             <tr style="outline: thin solid black;">
+                            //                 <td style="width:20%;">DPP </td>
+                            //                 <td style="width:1%;">:</td>
+                            //                 <td class="dpp" style="width:10%;text-align: right;">` + data.dpp + `</td>
+                            //             </tr>
+                            //             <tr style="outline: thin solid black;">
+                            //                 <td style="width: 20%;">PPN</td>
+                            //                 <td style="width:1%;">:</td>
+                            //                 <td class="ppn" style="width:10%;text-align: right;">` + data.ppn + `</td>
+                            //             </tr>
+                            //             <tr style="outline: thin solid black;">
+                            //                 <td style="width: 20%;">Discount</td>
+                            //                 <td style="width:1%;">:</td>
+                            //                 <td class="disc" style="width:10%;text-align: right;">` + data
+                        // .total_disc + `</td>
+                            //             </tr>
+                            html += `<tr style="outline: thin solid black;">
                                                 <th style="width: 20%;">GRAND TOTAL</th>
                                                 <th style="width:1%;">:</th>
                                                 <th class="grand_total" style="width:10%;text-align: right;">` + data

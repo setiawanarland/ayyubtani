@@ -38,7 +38,12 @@ class PembelianController extends Controller
             ->select('id', 'nama_produk', 'kemasan')
             ->get();
 
-        return view('pembelian.index', compact('page_title', 'page_description', 'breadcrumbs', 'supplier', 'produk'));
+        $pajak = DB::table('pajaks')
+            ->select('nama_pajak')
+            ->where('active', '1')
+            ->first();
+
+        return view('pembelian.index', compact('page_title', 'page_description', 'breadcrumbs', 'supplier', 'produk', 'pajak'));
     }
 
     public function list()
@@ -53,7 +58,7 @@ class PembelianController extends Controller
             ->join('produks', 'detail_pembelians_temp.produk_id', 'produks.id')
             ->get();
 
-        $pajak = pajak::select('satuan_pajak')
+        $pajak = pajak::select('nama_pajak', 'satuan_pajak')
             ->where('active', '1')
             ->first();
 
@@ -72,8 +77,8 @@ class PembelianController extends Controller
     {
         $produk = Produk::where('id', $request->produk_id)->first();
         $qty = $produk->jumlah_perdos * $request->ket;
-        // $jumlah = ($produk->harga_beli * $qty) * $request->ket;
-        $jumlah = $produk->harga_beli * $qty;
+        $hargaSatuan = $produk->harga_beli / $produk->jumlah_perdos;
+        $jumlah = $hargaSatuan * $qty;
         $jumlahDisc = $jumlah * $request->disc / 100;
         $jumlahAfterDisc = $jumlah - $jumlahDisc;
 
@@ -85,6 +90,7 @@ class PembelianController extends Controller
         $data = new DetailPembelianTemp();
         $data->produk_id = $request->produk_id;
         $data->qty = $qty;
+        $data->harga_satuan = $hargaSatuan;
         $data->ket = $request->ket;
         $data->disc = $request->disc;
         $data->jumlah = $jumlahAfterDisc;

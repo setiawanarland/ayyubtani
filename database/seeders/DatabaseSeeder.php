@@ -26,8 +26,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         pajak::create([
-            'nama_pajak' => 'pajak 10%',
-            'satuan_pajak' => 10,
+            'nama_pajak' => 'ppn 11%',
+            'satuan_pajak' => 11,
             'active' => '1',
 
         ]);
@@ -36,8 +36,8 @@ class DatabaseSeeder extends Seeder
             [
                 'nama_produk'    => 'abolisi 865 sl',
                 'kemasan'    => '200 ml x 48',
-                'satuan' => 'pcs',
                 'jumlah_perdos' => 48,
+                'satuan' => 'pcs',
                 'harga_beli' => 21400,
                 'harga_jual' => 22700,
                 'harga_perdos' => 1089600,
@@ -49,8 +49,8 @@ class DatabaseSeeder extends Seeder
             [
                 'nama_produk'    => 'abolisi 865 sl',
                 'kemasan'    => '400 ml x 24',
-                'satuan' => 'pcs',
                 'jumlah_perdos' => 24,
+                'satuan' => 'pcs',
                 'harga_beli' => 40600,
                 'harga_jual' => 43000,
                 'harga_perdos' => 1032000,

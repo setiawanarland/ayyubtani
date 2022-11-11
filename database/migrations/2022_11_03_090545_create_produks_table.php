@@ -17,11 +17,11 @@ class CreateProduksTable extends Migration
             $table->id();
             $table->string('nama_produk', 100);
             $table->string('kemasan', 50);
-            $table->string('satuan', 10);
             $table->integer('jumlah_perdos');
-            $table->integer('harga_beli');
-            $table->integer('harga_jual');
-            $table->integer('harga_perdos');
+            $table->string('satuan', 10);
+            $table->bigInteger('harga_beli');
+            $table->bigInteger('harga_jual');
+            $table->bigInteger('harga_perdos');
             $table->integer('stok')->default(0);
             $table->timestamps();
         });
