@@ -23,8 +23,8 @@
                     <li class="{{ Request::path() == 'pembelian/daftar' ? 'active' : '' }}"><a
                             href="{{ url('/pembelian/daftar') }}"><i class="ti-shopping-cart-full"></i><span>daftar
                                 pembelian</span></a></li>
-                    <li class="{{ Request::path() == 'barang-list' ? 'active' : '' }}"><a
-                            href="{{ url('/dashboard') }}"><i class="ti-shopping-cart"></i><span>penjualan</span></a>
+                    <li class="{{ Request::path() == 'penjualan' ? 'active' : '' }}"><a
+                            href="{{ url('/penjualan') }}"><i class="ti-shopping-cart"></i><span>penjualan</span></a>
                     </li>
                     <li class="{{ Request::path() == 'hutang' ? 'active' : '' }}"><a href="{{ url('/hutang') }}"><i
                                 class="ti-upload"></i><span>hutang</span></a>

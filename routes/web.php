@@ -6,6 +6,7 @@ use App\Http\Controllers\HutangController;
 use App\Http\Controllers\KiosController;
 use App\Http\Controllers\PajakController;
 use App\Http\Controllers\PembelianController;
+use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
@@ -72,6 +73,20 @@ Route::middleware('auth')->group(function () {
     Route::prefix('hutang')->group(function () {
         Route::get('/', [HutangController::class, 'index'])->name('hutang');
         Route::get('/list', [HutangController::class, 'list'])->name('hutang-list');
+    });
+
+    Route::prefix('penjualan')->group(function () {
+        Route::get('/', [PenjualanController::class, 'index'])->name('penjualan');
+        Route::get('/list', [PenjualanController::class, 'list'])->name('penjualantemp-list');
+        Route::post('/temp', [PenjualanController::class, 'temp'])->name('temp');
+        Route::delete('/tempdelete/{id}', [PenjualanController::class, 'tempDelete'])->name('temp-delete');
+        Route::delete('/tempreset', [PenjualanController::class, 'tempReset'])->name('temp-reset');
+        Route::post('/preview', [PenjualanController::class, 'preview'])->name('penjualan-preview');
+        Route::get('/get-stok/{produkId}', [PenjualanController::class, 'getStok'])->name('get-stok');
+        Route::post('/store', [PenjualanController::class, 'store'])->name('penjualan-store');
+        Route::get('/daftar', [PenjualanController::class, 'daftar'])->name('daftar-penjualan');
+        Route::get('/list-penjualan', [PenjualanController::class, 'listpenjualan'])->name('penjualan-list');
+        Route::get('/show/{id}', [PenjualanController::class, 'show'])->name('penjualan-show');
     });
 
     Route::prefix('pajak')->group(function () {

@@ -90,7 +90,7 @@ class PembelianController extends Controller
         $data = new DetailPembelianTemp();
         $data->produk_id = $request->produk_id;
         $data->qty = $qty;
-        $data->harga_satuan = $hargaSatuan;
+        // $data->harga_satuan = $hargaSatuan;
         $data->ket = $request->ket;
         $data->disc = $request->disc;
         $data->jumlah = $jumlahAfterDisc;
