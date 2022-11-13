@@ -32,6 +32,10 @@
     <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
     <!-- modernizr css -->
     <script src="{{ asset('js/vendor/modernizr-2.8.3.min.js') }}"></script>
+
+    <!-- style area start -->
+    @yield('styles')
+    <!-- style area end -->
 </head>
 
 <body>

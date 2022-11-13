@@ -6,8 +6,11 @@ use App\Models\Penjualan;
 use App\Http\Requests\StorePenjualanRequest;
 use App\Http\Requests\UpdatePenjualanRequest;
 use App\Http\Response\GeneralResponse;
+use App\Models\DetailPenjualan;
 use App\Models\DetailPenjualanTemp;
+use App\Models\Kios;
 use App\Models\pajak;
+use App\Models\Piutang;
 use App\Models\Produk;
 use DB;
 use Illuminate\Http\Request;
@@ -30,7 +33,7 @@ class PenjualanController extends Controller
             ->get();
 
         $produk = DB::table('produks')
-            ->select('id', 'nama_produk', 'kemasan')
+            ->select('id', 'nama_produk', 'kemasan', 'stok')
             ->get();
 
         $pajak = DB::table('pajaks')
@@ -38,7 +41,11 @@ class PenjualanController extends Controller
             ->where('active', '1')
             ->first();
 
-        return view('penjualan.index', compact('page_title', 'page_description', 'breadcrumbs', 'kios', 'produk', 'pajak'));
+        $lastPenjualan = Penjualan::max('id');
+
+        $invoice = "AT-" . substr(date('Y'), -2) . "/" . sprintf("%05s", abs($lastPenjualan + 1));
+
+        return view('penjualan.index', compact('page_title', 'page_description', 'breadcrumbs', 'kios', 'produk', 'pajak', 'invoice'));
     }
 
     public function list()
@@ -193,20 +200,122 @@ class PenjualanController extends Controller
      * @param  \App\Http\Requests\StorePenjualanRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StorePenjualanRequest $request)
+    public function store(Request $request)
     {
-        //
+        $dataPenjualan = [];
+        $dataPenjualan['bulan'] = date('m', strtotime($request->tanggal_jual));
+        $dataPenjualan['tahun'] = date('Y', strtotime($request->tanggal_jual));
+
+
+        $penjualan = new Penjualan();
+        $penjualan->kios_id = $request->kios;
+        $penjualan->invoice = $request->invoice;
+        $penjualan->tanggal_jual = date('Y-m-d', strtotime($request->tanggal_jual));
+        $penjualan->bulan = $dataPenjualan['bulan'];
+        $penjualan->tahun = $dataPenjualan['tahun'];
+        $penjualan->dpp = intval(preg_replace("/\D/", "", $request->dpp));
+        $penjualan->ppn = intval(preg_replace("/\D/", "", $request->ppn));
+        $penjualan->total_disc = intval(preg_replace("/\D/", "", $request->total_disc));
+        $penjualan->grand_total = intval(preg_replace("/\D/", "", $request->grand_total));
+        $penjualan->save();
+
+        foreach ($request->produk_id as $key => $value) {
+            $detailPenjualan = new DetailPenjualan();
+            $detailPenjualan->penjualan_id = $penjualan->id;
+            $detailPenjualan->produk_id = $value;
+            $detailPenjualan->qty = $request->qty[$key];
+            $detailPenjualan->ket = $request->ket[$key];
+            $detailPenjualan->disc = $request->disc[$key];
+            $detailPenjualan->jumlah = intval(preg_replace("/\D/", "", $request->jumlah[$key]));
+            $detailPenjualan->save();
+
+            $produk = Produk::where('id', $value)->first();
+            $stok = $produk->stok;
+            $jumlahPerdos = $produk->jumlah_perdos;
+            $stokkeluar = $request->qty[$key] / $jumlahPerdos;
+            $produk->stok = $stok - $stokkeluar;
+            $produk->save();
+        }
+
+        $dataPiutang = [];
+        $dataPiutang['bulan'] = date('m', strtotime($request->tanggal_jual));
+        $dataPiutang['tahun'] = date('Y', strtotime($request->tanggal_jual));
+
+        $piutang = new Piutang();
+        $piutang->penjualan_id = $penjualan->id;
+        $piutang->bulan = $dataPiutang['bulan'];
+        $piutang->tahun = $dataPiutang['tahun'];
+        $piutang->ket = '';
+        $piutang->debet = intval(preg_replace("/\D/", "", $request->grand_total));
+        $piutang->kredit = 0;
+        $piutang->sisa = intval(preg_replace("/\D/", "", $request->grand_total)) - $piutang->kredit;
+        $piutang->save();
+
+        $temp = DetailPenjualanTemp::truncate();
+
+        if ($temp) {
+            return (new GeneralResponse)->default_json(true, "Success", null, 201);
+        } else {
+            return (new GeneralResponse)->default_json(false, "Error", null, 404);
+        }
+    }
+
+    public function daftar()
+    {
+        $page_title = 'Ayyub Tani';
+        $page_description = 'Dashboard Admin Ayyub Tani';
+        $breadcrumbs = ['Daftar Penjualan'];
+
+        return view('penjualan.daftar', compact('page_title', 'page_description', 'breadcrumbs',));
+    }
+
+    public function listPenjualan()
+    {
+        $response = (new PenjualanController)->getListPenjualan();
+        return $response;
+    }
+
+    public function getListPenjualan()
+    {
+        $data = Penjualan::select('penjualans.*', 'kios.nama_kios',)
+            ->join('kios', 'penjualans.kios_id', 'kios.id')
+            ->orderBy('penjualans.bulan', 'ASC')
+            ->orderBy('penjualans.tahun', 'ASC')
+            ->get();
+
+
+        if ($data) {
+            return (new GeneralResponse)->default_json(true, 'success', $data, 200);
+        } else {
+            return (new GeneralResponse)->default_json(false, 'error', null, 401);
+        }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Penjualan  $penjualan
+     * @param  \App\Models\pembelian  $penjualan
      * @return \Illuminate\Http\Response
      */
-    public function show(Penjualan $penjualan)
+    public function show(Request $request, $id)
     {
-        //
+        $data = [];
+
+        $penjualan = Penjualan::where('id', $id)->first();
+        $kios = Kios::select('nama_kios', 'alamat', 'kabupaten')->where('id', $penjualan->kios_id)->first();
+        $detailPenjualan = DetailPenjualan::where('penjualan_id', $penjualan->id)->get();
+
+        foreach ($detailPenjualan as $key => $value) {
+            $produk = Produk::select('nama_produk', 'kemasan')->where('id', $value->produk_id)->first();
+            $value->nama_produk = $produk->nama_produk;
+            $value->kemasan_produk = $produk->kemasan;
+        }
+
+        $data['penjualan'] = $penjualan;
+        $data['kios'] = $kios;
+        $data['detailPenjualan'] = $detailPenjualan;
+
+        return $data;
     }
 
     /**

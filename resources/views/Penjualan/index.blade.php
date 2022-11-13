@@ -1,5 +1,22 @@
 @extends('layout.template')
 
+@section('styles')
+    <style>
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            /* display: none; <- Crashes Chrome on hover */
+            -webkit-appearance: none;
+            margin: 0;
+            /* <-- Apparently some margin are still there even though it's hidden */
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+            /* Firefox */
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="main-content-inner">
         <div class="row">
@@ -12,13 +29,14 @@
                             @csrf
                             <div class="form-row align-items-center">
 
-                                <div class="col-sm-3 my-1">
+                                <div class="col-sm-5 my-1">
                                     <label class="" for="produk">Produk</label>
                                     <select class="form-control" id="produk" name="produk">
                                         <option value="null">Pilih Produk</option>
                                         @foreach ($produk as $index => $value)
                                             <option value="{{ $value->id }}">
-                                                {{ Str::upper($value->nama_produk) }} | {{ Str::upper($value->kemasan) }}
+                                                {{ Str::upper($value->nama_produk) }} {{ Str::upper($value->kemasan) }} |
+                                                Stok {{ $value->stok }} dos
                                             </option>
                                         @endforeach
                                     </select>
@@ -68,7 +86,8 @@
                                 </div>
                                 <div class="col-sm-3 col-md-3 my-3">
                                     <label class="" for="invoice">Invoice</label>
-                                    <input type="text" class="form-control" id="invoice" name="invoice">
+                                    <input type="text" class="form-control" id="invoice" name="invoice"
+                                        value="{{ $invoice }}">
                                 </div>
                                 <div class="col-sm-3 col-md-3 my-3">
                                     <label class="" for="tanggal_jual">Tanggal Jual</label>
@@ -329,17 +348,17 @@
                                 }).then(function() {
                                     dataRow.destroy();
                                     dataRow.init();
-                                    window.location = "{{ route('daftar-pembelian') }}";
+                                    window.location = "{{ route('daftar-penjualan') }}";
                                 });
                             }
                         }).catch(function(error) {
                             console.log(error);
                             swal.fire({
-                                text: "Pilih kios dan masukkan invoice terlebih dahulu",
+                                text: "Maaf Terjadi Kesalahan",
                                 title: "Error",
-                                icon: "error",
-                                showConfirmButton: true,
-                                confirmButtonText: "OK",
+                                timer: 2000,
+                                icon: "danger",
+                                showConfirmButton: false,
                             })
                         });
                 },
@@ -804,16 +823,6 @@
             })
         });
 
-        $(document).on('submit', "#penjualanForm[data-type='submit']", function(e) {
-            e.preventDefault();
-
-            var dataForm = document.querySelector('#penjualanForm');
-            var formData = new FormData(dataForm);
-
-            AxiosCall.post("{{ route('pembelian-store') }}", formData,
-                "#penjualanForm");
-        });
-
 
         $(document).on('click', '.previewPenjualan', function(e) {
             e.preventDefault();
@@ -827,9 +836,10 @@
                 "#penjualanForm");
         });
 
-        $(document).on('change', '.qty-jual', function(e) {
+        $(document).on('keyup', '.qty-jual', function(e) {
             let produkId = $('#produk').val();
             let qty = $('#ket').val();
+            console.log(qty);
             if (produkId == 'null') {
                 swal.fire({
                     title: "Warning!",
@@ -857,10 +867,33 @@
                             title: `${data.nama_produk.toUpperCase()} ${data.kemasan.toUpperCase()}`,
                             text: ` ${error.responseJSON.message}!`,
                             icon: "warning",
+                        }).then(function() {
+                            $('#ket').val(0);
                         });
                     }
                 })
             }
+        });
+
+        $(document).on('submit', "#penjualanForm[data-type='submit']", function(e) {
+            e.preventDefault();
+
+            if ($('#kios').val() == 'null') {
+                swal.fire({
+                    title: `Warning!`,
+                    text: `Pilih kios terlebih dahulu`,
+                    icon: "warning",
+                });
+            }
+
+            if ($('#kios').val() != 'null') {
+                var dataForm = document.querySelector('#penjualanForm');
+                var formData = new FormData(dataForm);
+
+                AxiosCall.post("{{ route('penjualan-store') }}", formData,
+                    "#penjualanForm");
+            }
+
         });
 
 
