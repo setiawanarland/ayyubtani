@@ -424,6 +424,45 @@
                                             .empty-list td{
                                                height: 20px !important;
                                             }
+
+                                            .flex-container {
+                                            display: flex;
+                                            height: 200px;
+                                            flex-direction: row;
+                                            text-align: left;
+                                            }
+
+                                            .flex-container h4 {
+                                                font-size: 20px;
+                                                text-transform: uppercase;
+                                            }
+
+                                            .flex-container p {
+                                                margin: 0;
+                                            }
+
+                                            .flex-container span {
+                                                margin-top: 100px;
+                                            }
+
+                                            .flex-item-left {
+                                            /* background-color: #f1f1f1; */
+                                            padding: 10px;
+                                            flex: 50%;
+                                            }
+
+                                            .flex-item-right {
+                                            /* background-color: dodgerblue; */
+                                            padding: 12px;
+                                            flex: 50%;
+                                            }
+
+                                            /* Responsive layout - makes a one column-layout instead of two-column layout */
+                                            @media (max-width: 800px) {
+                                            .flex-container {
+                                                flex-direction: column;
+                                            }
+                                            }
                                         </style>
 
                                         <table id="" class="text-cente" style="width: 100%;">
@@ -436,7 +475,7 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td colspan="6" style="padding-bottom: 20px;">SALAMATARA, KARELOE BONTORAMBA</td>
+                                                <td colspan="6" style="padding-bottom: 20px;">SALAMATARA, KARELOE BONTORAMBA JENEPONTO</td>
                                                 <td colspan="3" style="padding-bottom:20px">Kepada Yth,</td>
                                             </tr>
                                             
@@ -546,12 +585,40 @@
                                             </tr>
                                         </table>
                                 `;
+
+                            html += `
+                                <div class="flex-container">
+                                    <div class="flex-item-left">
+                                        <h4>transfer ke rekening:</h4>
+                                        <p>CV. AYYUB TANI</p>
+                                        <p>BANK BRI : 343853485774547</p>
+                                        <p style="margin-top: 150px;">Tanda terima</p>
+                                    </div>
+                                    <div class="flex-item-right">
+                                        <p style="margin-top: 260px;">Hormat Kami</p>
+                                    </div>
+                                </div>
+                                `;
+
+                            var document_focus = false;
                             var popupWin = window.open('', '_blank', 'width=500,height=500');
                             popupWin.document.open();
                             popupWin.document.write(
-                                '<html><body onload="document.title=`Ayyub Tani`;document.footer=`Ayyub Tani`;window.print()">' +
+                                '<html><body onload="document.title=`Ayyub Tani`;">' +
                                 html + '</html>');
-                            popupWin.document.close();
+
+                            var document_focus = false; // var we use to monitor document focused status.
+                            // Now our event handlers.
+                            $(document).ready(function() {
+                                popupWin.window.print();
+                                document_focus = true;
+                            });
+                            setInterval(function() {
+                                if (document_focus === true) {
+                                    popupWin.window.close();
+                                }
+                            }, 250);
+
 
                         }).catch(function(error) {
                             console.log(error);
