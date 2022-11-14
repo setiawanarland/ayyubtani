@@ -279,8 +279,9 @@ class PenjualanController extends Controller
     {
         $data = Penjualan::select('penjualans.*', 'kios.nama_kios',)
             ->join('kios', 'penjualans.kios_id', 'kios.id')
-            ->orderBy('penjualans.bulan', 'ASC')
-            ->orderBy('penjualans.tahun', 'ASC')
+            // ->orderBy('penjualans.bulan', 'ASC')
+            // ->orderBy('penjualans.tahun', 'ASC')
+            ->orderBy('penjualans.id', 'DESC')
             ->get();
 
 

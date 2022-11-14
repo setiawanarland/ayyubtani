@@ -7,6 +7,7 @@ use App\Http\Controllers\KiosController;
 use App\Http\Controllers\PajakController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PenjualanController;
+use App\Http\Controllers\PiutangController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
@@ -91,6 +92,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/list-penjualan-edit', [PenjualanController::class, 'listEditPenjualan'])->name('penjualan-edit-list');
         Route::post('/add-edit', [PenjualanController::class, 'addEdit'])->name('add-edit');
         Route::post('/update', [PenjualanController::class, 'update'])->name('penjualan-update');
+    });
+
+    Route::prefix('piutang')->group(function () {
+        Route::get('/', [PiutangController::class, 'index'])->name('piutang');
+        Route::get('/list', [PiutangController::class, 'list'])->name('piutang-list');
     });
 
     Route::prefix('pajak')->group(function () {
