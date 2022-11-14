@@ -21,8 +21,8 @@ class Produk extends Model
         'stok',
     ];
 
-    public function pembelianTemp()
+    public function detailPenjualan()
     {
-        return $this->hasOne('App\Models\DetailPembelianTemp', 'id_produk', 'id');
+        return $this->hasMany(DetailPenjualan::class, 'id', 'produk_id');
     }
 }

@@ -18,4 +18,14 @@ class DetailPenjualan extends Model
         'disc',
         'jumlah',
     ];
+
+    public function penjualan()
+    {
+        return $this->belongsTo(penjualan::class, 'id', 'penjualan_id');
+    }
+
+    public function produk()
+    {
+        return $this->belongsTo(produk::class, 'produk_id', 'id');
+    }
 }

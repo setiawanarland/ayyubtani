@@ -324,21 +324,130 @@ class PenjualanController extends Controller
      * @param  \App\Models\Penjualan  $penjualan
      * @return \Illuminate\Http\Response
      */
-    public function edit(Penjualan $penjualan)
+    public function edit(Request $request, $id)
     {
-        //
+        $page_title = 'Ayyub Tani';
+        $page_description = 'Dashboard Admin Ayyub Tani';
+        $breadcrumbs = ['Penjualan'];
+
+        $penjualan = Penjualan::with('detailPenjualan', 'kios')
+            ->where('penjualans.id', $id)
+            ->first();
+
+        $kios = DB::table('kios')
+            ->select('id', 'nama_kios',)
+            ->get();
+
+        $produk = DB::table('produks')
+            ->select('id', 'nama_produk', 'kemasan', 'stok')
+            ->get();
+
+        $pajak = DB::table('pajaks')
+            ->select('nama_pajak')
+            ->where('active', '1')
+            ->first();
+
+        // return $penjualan;
+        return view('penjualan.edit', compact('page_title', 'page_description', 'breadcrumbs', 'kios', 'produk', 'pajak', 'penjualan'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdatePenjualanRequest  $request
-     * @param  \App\Models\Penjualan  $penjualan
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdatePenjualanRequest $request, Penjualan $penjualan)
+    public function listEditPenjualan(Request $request)
     {
-        //
+        $response = (new PenjualanController)->getListEditPenjualan($request->id);
+        return $response;
+    }
+
+    public function getListEditPenjualan($id)
+    {
+        $data = DetailPenjualan::select('detail_penjualans.*', 'produks.nama_produk', 'produks.kemasan', 'produks.satuan', 'produks.harga_jual', 'produks.jumlah_perdos')
+            ->join('produks', 'detail_penjualans.produk_id', 'produks.id')
+            ->where('detail_penjualans.penjualan_id', $id)
+            ->get();
+
+        $pajak = pajak::select('nama_pajak', 'satuan_pajak')
+            ->where('active', '1')
+            ->first();
+
+        foreach ($data as $key => $value) {
+            $value->satuan_pajak = $pajak->satuan_pajak;
+        }
+
+        if ($data) {
+            return (new GeneralResponse)->default_json(true, 'success', $data, 200);
+        } else {
+            return (new GeneralResponse)->default_json(false, 'error', null, 401);
+        }
+    }
+
+    public function addEdit(Request $request)
+    {
+        $produk = Produk::where('id', $request->produk_id)->first();
+        $qty = $produk->jumlah_perdos * $request->ket;
+        $hargaSatuan = $produk->harga_jual / $produk->jumlah_perdos;
+        $jumlah = $hargaSatuan * $qty;
+        $jumlahDisc = $jumlah * $request->disc / 100;
+        $jumlahAfterDisc = $jumlah - $jumlahDisc;
+
+        $dataDetail = DetailPenjualan::where('produk_id', $request->produk_id)
+            ->where('penjualan_id', $request->penjualan_id)->first();
+        if ($dataDetail != null) {
+            return (new GeneralResponse)->default_json(false, "Barang sudah ada!", null, 422);
+        }
+
+        $data = new DetailPenjualan();
+        $data->penjualan_id = $request->penjualan_id;
+        $data->produk_id = $request->produk_id;
+        $data->qty = $qty;
+        // $data->harga_satuan = $hargaSatuan;
+        $data->ket = "$request->ket Dos";
+        $data->disc = $request->disc;
+        $data->jumlah = $jumlahAfterDisc;
+        $data->save();
+
+        $penjualan = Penjualan::where('id', $request->penjualan_id)->first();
+        $penjualan->grand_total = $penjualan->grand_total + $jumlahAfterDisc;
+        $penjualan->save();
+
+        if ($penjualan) {
+            return (new GeneralResponse)->default_json(true, "Success", $penjualan, 201);
+        } else {
+            return (new GeneralResponse)->default_json(false, "Error", $penjualan, 403);
+        }
+    }
+
+    public function update(Request $request, Penjualan $penjualan)
+    {
+        $penjualan = Penjualan::where('id', $request->id)->first();
+        $penjualan->grand_total = intval(preg_replace("/\D/", "", $request->grand_total));
+        $penjualan->save();
+
+        foreach ($request->produk_id as $key => $value) {
+            $detailPenjualan = DetailPenjualan::where('penjualan_id', $request->id)
+                ->where('produk_id', $value)
+                ->first();
+
+            $detailPenjualan->qty = $request->qty[$key];
+            $detailPenjualan->ket = $request->ket[$key];
+            $detailPenjualan->disc = $request->disc[$key];
+            $detailPenjualan->jumlah = intval(preg_replace("/\D/", "", $request->jumlah[$key]));
+            $detailPenjualan->save();
+
+            $produk = Produk::where('id', $value)->first();
+            $marginStok = intval(preg_replace('/([^\-0-9\.,])/i', "", $request->margin_ket[$key]));
+            $produk->stok = $produk->stok - $marginStok;
+            $produk->save();
+        }
+
+        $piutang = Piutang::where('penjualan_id', $request->id)->first();
+        $piutang->debet = $piutang->debet + intval(preg_replace('/([^\-0-9\.,])/i', "", $request->margin_grandtotal));
+        $piutang->sisa = $piutang->sisa + intval(preg_replace('/([^\-0-9\.,])/i', "", $request->margin_grandtotal));
+        $piutang->save();
+
+        if ($piutang) {
+            return (new GeneralResponse)->default_json(true, "Success", null, 201);
+        } else {
+            return (new GeneralResponse)->default_json(false, "Error", null, 404);
+        }
     }
 
     /**

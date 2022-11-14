@@ -18,4 +18,9 @@ class Kios extends Model
         'npwp',
         'nik',
     ];
+
+    public function penjualan()
+    {
+        return $this->hasMany(penjualan::class, 'id', 'kios_id');
+    }
 }

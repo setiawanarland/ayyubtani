@@ -100,6 +100,7 @@
                         render: function(data, type, row, full, meta) {
                             return `
                             <button type="button" class="btn btn-primary btn-sm penjualanShow" data-toggle="modal" data-target="#penjualanModal" data-id="${row.id}"><i class="fa fa-eye"></i></button>
+                            <button type="button" class="btn btn-warning btn-sm btn-edit penjualanEdit" data-id="${row.id}"><i class="fa fa-edit"></i></button>
                             `;
                             //         <a role="button" href="javascript:;" type="button" data-id="${row.id}" class="btn btn-warning btn-sm pembelianUpdate"><i class="fa fa-edit"></i></a>
                             //         <button type="button" class="btn btn-danger btn-sm btn-delete pembelianDelete" data-id="${row.id}"><i class="fa fa-trash"></i></button>
@@ -131,7 +132,6 @@
 
     // show penjualan
     $(document).on('click', '.penjualanShow', function() {
-        console.log($(this));
 
         var key = $(this).data('id');
         axios.get('/penjualan/show/' + key)
@@ -145,37 +145,46 @@
 
                 let element =
                     `
-                                        <table id="" class="text-cente" style="width: 100%;">
-                                            <tr>
-                                                <td colspan="6" style="font-size: 30px;">
-                                                    ` + data.kios.nama_kios.toUpperCase() + `
-                                                </td>
-                                                <td colspan="3">
-                                                    Jeneponto, ` + tanggal_jual + `
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="6" style="padding-bottom: 20px;">
-                                                    ` + data.kios.alamat.toUpperCase() + ` ` + data.kios.kabupaten
+                                                                                        <table id="" class="text-cente" style="width: 100%;">
+                                                                                            <tr>
+                                                                                                <td colspan="6" style="font-size: 30px;">
+                                                                                                    ` + data.kios.nama_kios
                     .toUpperCase() + `
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="2" style="padding-top:-20px;padding-bottom: 20px;">NO. INVOICE </td>
-                                                <td colspan="4" style="padding-top:-20px;padding-bottom: 20px;">
-                                                    : ` + data.penjualan.invoice.toUpperCase() + `
-                                                </td>
-                                            </tr>
-                                        </table>
-                                        
-                                        <table id="item">
-                                            <tr class="">
-                                                <th style="width: 1%;">No.</th>
-                                                <th colspan="2" style="width: 25%;">Nama Produk</th>
-                                                <th style="width: 5%;">Ket.</th>
-                                                <th style="width: 8%;">Disc.</th>
-                                                <th style="width: 15%;">Jumlah</th>
-                                            </tr>`;
+                                                                                                </td>
+                                                                                                <td colspan="3">
+                                                                                                    Jeneponto, ` +
+                    tanggal_jual + `
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td colspan="6" style="padding-bottom: 20px;">
+                                                                                                    ` + data.kios.alamat
+                    .toUpperCase() +
+                    ` ` +
+                    data
+                    .kios
+                    .kabupaten
+                    .toUpperCase() + `
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td colspan="2" style="padding-top:-20px;padding-bottom: 20px;">NO. INVOICE </td>
+                                                                                                <td colspan="4" style="padding-top:-20px;padding-bottom: 20px;">
+                                                                                                    : ` + data.penjualan
+                    .invoice
+                    .toUpperCase() + `
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        </table>
+                                                                                        
+                                                                                        <table id="item">
+                                                                                            <tr class="">
+                                                                                                <th style="width: 1%;">No.</th>
+                                                                                                <th colspan="2" style="width: 25%;">Nama Produk</th>
+                                                                                                <th style="width: 5%;">Ket.</th>
+                                                                                                <th style="width: 8%;">Disc.</th>
+                                                                                                <th style="width: 15%;">Jumlah</th>
+                                                                                            </tr>`;
 
                 data.detailPenjualan.map(function(value, index) {
                     console.log(value);
@@ -183,25 +192,42 @@
 
                     element +=
                         `
-                                            <tr class="">
-                                                <td style="width: 1%;">` + no + `</td>
-                                                <td colspan="2" style="width: 25%;">
-                                                    ` + value.nama_produk.toUpperCase() + ` ` + value.kemasan_produk
+                                                                                            <tr class="">
+                                                                                                <td style="width: 1%;">` +
+                        no + `</td>
+                                                                                                <td colspan="2" style="width: 25%;">
+                                                                                                    ` + value.nama_produk
+                        .toUpperCase() +
+                        ` ` +
+                        value
+                        .kemasan_produk
                         .toUpperCase() + `
-                                                </td>
-                                                <td style="width: 10%;">` + value.ket.toUpperCase() + `</td>
-                                                <td style="width: 8%;">` + formatRupiah(value.disc.toString(), "") + `</td>
-                                                <td style="width: 15%;text-align: right;">` + formatRupiah(value.jumlah
+                                                                                                </td>
+                                                                                                <td style="width: 10%;">` +
+                        value
+                        .ket
+                        .toUpperCase() + `</td>
+                                                                                                <td style="width: 8%;">` +
+                        formatRupiah(
+                            value
+                            .disc
+                            .toString(),
+                            "") +
+                        `</td>
+                                                                                                <td style="width: 15%;text-align: right;">` +
+                        formatRupiah(
+                            value
+                            .jumlah
                             .toString(),
                             "") + `</td>
-                                            </tr>`;
+                                                                                            </tr>`;
                 });
 
                 element +=
                     `
-                                        </table>
-                                        
-                                        <table width="50%" style="float:right;margin-top: 10px;">`;
+                                                                                        </table>
+                                                                                        
+                                                                                        <table width="50%" style="float:right;margin-top: 10px;">`;
                 //                             <tr>
                 //                                 <td style="width:20%;">DPP </td>
                 //                                 <td style="width:1%;">:</td>
@@ -232,14 +258,14 @@
                 //                             </tr>
                 element +=
                     `<tr>
-                                        <th style="width: 20%;">GRAND TOTAL</th>
-                                        <th style="width:1%;">:</th>
-                                        <th class="grand_total" style="width:20%;text-align: right;font-weight:bold">` +
+                                                                                        <th style="width: 20%;">GRAND TOTAL</th>
+                                                                                        <th style="width:1%;">:</th>
+                                                                                        <th class="grand_total" style="width:20%;text-align: right;font-weight:bold">` +
                     formatRupiah(
                         data.penjualan.grand_total.toString(), '') + `</th>
-                                    </tr>
-                                </table>
-                                `;
+                                                                                    </tr>
+                                                                                </table>
+                                                                                `;
 
                 $('.modalDetail').children().remove();
                 $('.modalDetail').append(element);
@@ -251,78 +277,16 @@
     });
 
 
-    // edit supplier
-    $(document).on('submit', "#kiosForm[data-type='update']", function(e) {
-        e.preventDefault();
-
-        var _id = $("input[name='id']").val();
-        var form = document.querySelector('form');
-        var formData = new FormData(this);
-
-        AxiosCall.update("{{ route('kios-update') }}", formData,
-            "#kiosForm");
-    });
-
-
-    // delete supplier
-    $(document).on('click', '.pembelianDelete', function(e) {
-        e.preventDefault()
-        let id = $(this).attr('data-id');
+    $(document).on('click', '.penjualanEdit', function() {
+        var id = $(this).data('id');
         console.log(id);
-        Swal.fire({
-            title: 'Apakah kamu yakin akan menghapus data ini ?',
-            text: "Data akan di hapus permanen",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: `/kios/delete/${id}`,
-                    type: 'POST',
-                    data: {
-                        '_method': 'DELETE',
-                        '_token': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        if (response.status !== false) {
-                            Swal.fire('Deleted!',
-                                    'Data berhasil dihapus.',
-                                    'success')
-                                .then(function() {
-                                    dataRow.destroy();
-                                    dataRow.init();
-                                });
-                        } else {
-                            swal.fire({
-                                title: "Failed!",
-                                text: `${res.message}`,
-                                    icon: "warning",
-                                });
-                            }
-                        }
-                    })
-                }
-            })
+
+        url = `/penjualan/edit/${id}`;
+            window.location = url;
         });
 
 
 
-
-        // format npwp
-        $('#npwp').on('keyup', function() {
-            $(this).val(formatNpwp($(this).val()));
-
-
-        });
-
-        function formatNpwp(value) {
-            if (typeof value === 'string') {
-                return value.replace(/(\d{2})(\d{3})(\d{3})(\d{1})(\d{3})(\d{3})/, '$1.$2.$3.$4-$5.$6');
-            }
-        };
 
         $(document).ready(function() {
             dataRow.init();

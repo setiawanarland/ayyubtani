@@ -87,6 +87,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/daftar', [PenjualanController::class, 'daftar'])->name('daftar-penjualan');
         Route::get('/list-penjualan', [PenjualanController::class, 'listpenjualan'])->name('penjualan-list');
         Route::get('/show/{id}', [PenjualanController::class, 'show'])->name('penjualan-show');
+        Route::get('/edit/{id}', [PenjualanController::class, 'edit'])->name('penjualan-edit');
+        Route::get('/list-penjualan-edit', [PenjualanController::class, 'listEditPenjualan'])->name('penjualan-edit-list');
+        Route::post('/add-edit', [PenjualanController::class, 'addEdit'])->name('add-edit');
+        Route::post('/update', [PenjualanController::class, 'update'])->name('penjualan-update');
     });
 
     Route::prefix('pajak')->group(function () {
