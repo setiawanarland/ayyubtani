@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HutangController;
 use App\Http\Controllers\KiosController;
@@ -26,6 +27,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('set-login');
 Route::get('/logout', [AuthController::class, 'logout'])->name('set-logout');
+Route::get('set-tahun', [Controller::class, 'setTahun'])->name('set-tahun');
 
 
 Route::middleware('auth')->group(function () {
