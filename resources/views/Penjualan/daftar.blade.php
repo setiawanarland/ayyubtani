@@ -137,7 +137,7 @@
         axios.get('/penjualan/show/' + key)
             .then(function(res) {
                 let data = res.data;
-                // console.log(data);
+                console.log(data);
 
                 let date = new Date(data.penjualan.tanggal_jual);
                 let tanggal_jual = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date
@@ -145,46 +145,55 @@
 
                 let element =
                     `
-                                                                                        <table id="" class="text-cente" style="width: 100%;">
-                                                                                            <tr>
-                                                                                                <td colspan="6" style="font-size: 30px;">
-                                                                                                    ` + data.kios.nama_kios
-                    .toUpperCase() + `
-                                                                                                </td>
-                                                                                                <td colspan="3">
-                                                                                                    Jeneponto, ` +
+                                                                                                        <table id="" class="text-cente" style="width: 100%;">
+                                                                                                            <tr>
+                                                                                                                <td colspan="6" style="font-size: 30px;">
+                                                                                                                    ` +
+                    data
+                    .kios
+                    .nama_kios
+                    .toUpperCase() +
+                    `
+                                                                                                                </td>
+                                                                                                                <td colspan="3">
+                                                                                                                    Jeneponto, ` +
                     tanggal_jual + `
-                                                                                                </td>
-                                                                                            </tr>
-                                                                                            <tr>
-                                                                                                <td colspan="6" style="padding-bottom: 20px;">
-                                                                                                    ` + data.kios.alamat
+                                                                                                                </td>
+                                                                                                            </tr>
+                                                                                                            <tr>
+                                                                                                                <td colspan="6" style="padding-bottom: 20px;">
+                                                                                                                    ` +
+                    data
+                    .kios
+                    .alamat
                     .toUpperCase() +
                     ` ` +
                     data
                     .kios
                     .kabupaten
                     .toUpperCase() + `
-                                                                                                </td>
-                                                                                            </tr>
-                                                                                            <tr>
-                                                                                                <td colspan="2" style="padding-top:-20px;padding-bottom: 20px;">NO. INVOICE </td>
-                                                                                                <td colspan="4" style="padding-top:-20px;padding-bottom: 20px;">
-                                                                                                    : ` + data.penjualan
+                                                                                                                </td>
+                                                                                                            </tr>
+                                                                                                            <tr>
+                                                                                                                <td colspan="2" style="padding-top:-20px;padding-bottom: 20px;">NO. INVOICE </td>
+                                                                                                                <td colspan="4" style="padding-top:-20px;padding-bottom: 20px;">
+                                                                                                                    : ` +
+                    data
+                    .penjualan
                     .invoice
                     .toUpperCase() + `
-                                                                                                </td>
-                                                                                            </tr>
-                                                                                        </table>
-                                                                                        
-                                                                                        <table id="item">
-                                                                                            <tr class="">
-                                                                                                <th style="width: 1%;">No.</th>
-                                                                                                <th colspan="2" style="width: 25%;">Nama Produk</th>
-                                                                                                <th style="width: 5%;">Ket.</th>
-                                                                                                <th style="width: 8%;">Disc.</th>
-                                                                                                <th style="width: 15%;">Jumlah</th>
-                                                                                            </tr>`;
+                                                                                                                </td>
+                                                                                                            </tr>
+                                                                                                        </table>
+                                                                                                        
+                                                                                                        <table id="item">
+                                                                                                            <tr class="">
+                                                                                                                <th style="width: 1%;">No.</th>
+                                                                                                                <th colspan="2" style="width: 25%;">Nama Produk</th>
+                                                                                                                <th style="width: 5%;">Ket.</th>
+                                                                                                                <th style="width: 8%;">Disc.</th>
+                                                                                                                <th style="width: 15%;">Jumlah</th>
+                                                                                                            </tr>`;
 
                 data.detailPenjualan.map(function(value, index) {
                     console.log(value);
@@ -192,80 +201,86 @@
 
                     element +=
                         `
-                                                                                            <tr class="">
-                                                                                                <td style="width: 1%;">` +
+                                                                                                            <tr class="">
+                                                                                                                <td style="width: 1%;">` +
                         no + `</td>
-                                                                                                <td colspan="2" style="width: 25%;">
-                                                                                                    ` + value.nama_produk
+                                                                                                                <td colspan="2" style="width: 25%;">
+                                                                                                                    ` +
+                        value
+                        .nama_produk
                         .toUpperCase() +
                         ` ` +
                         value
                         .kemasan_produk
-                        .toUpperCase() + `
-                                                                                                </td>
-                                                                                                <td style="width: 10%;">` +
+                        .toUpperCase() +
+                        `
+                                                                                                                </td>
+                                                                                                                <td style="width: 10%;">` +
                         value
                         .ket
-                        .toUpperCase() + `</td>
-                                                                                                <td style="width: 8%;">` +
+                        .toUpperCase() +
+                        `</td>
+                                                                                                                <td style="width: 8%;">` +
                         formatRupiah(
                             value
                             .disc
                             .toString(),
                             "") +
                         `</td>
-                                                                                                <td style="width: 15%;text-align: right;">` +
+                                                                                                                <td style="width: 15%;text-align: right;">` +
                         formatRupiah(
                             value
                             .jumlah
                             .toString(),
                             "") + `</td>
-                                                                                            </tr>`;
+                                                                                                            </tr>`;
                 });
 
                 element +=
                     `
-                                                                                        </table>
-                                                                                        
-                                                                                        <table width="50%" style="float:right;margin-top: 10px;">`;
-                //                             <tr>
-                //                                 <td style="width:20%;">DPP </td>
-                //                                 <td style="width:1%;">:</td>
-                //                                 <td class="dpp" style="width:20%;text-align: right;">` + formatRupiah(
-                    //     data
-                    //     .pembelian
-                    //     .dpp
-                    //     .toString(), '') + `</td>
-                //                             </tr>
-                //                             <tr>
-                //                                 <td style="width: 20%;">PPN</td>
-                //                                 <td style="width:1%;">:</td>
-                //                                 <td class="ppn" style="width:20%;text-align: right;">` + formatRupiah(
-                    //     data
-                    //     .pembelian
-                    //     .ppn
-                    //     .toString(), '') + `</td>
-                //                             </tr>
-                //                             <tr>
-                //                                 <td style="width: 20%;">Discount</td>
-                //                                 <td style="width:1%;">:</td>
-                //                                 <td class="disc" style="width:20%;text-align: right;">` + formatRupiah(
-                    //     data
-                    //     .pembelian
-                    //     .total_disc
-                    //     .toString(), '') +
-                    // `</td>
-                //                             </tr>
-                element +=
-                    `<tr>
-                                                                                        <th style="width: 20%;">GRAND TOTAL</th>
-                                                                                        <th style="width:1%;">:</th>
-                                                                                        <th class="grand_total" style="width:20%;text-align: right;font-weight:bold">` +
+                                                                                                        </table>
+                                                                                                        
+                                                                                                        <table width="50%" style="float:right;margin-top: 10px;">
+                                                        <tr>
+                                                            <td style="width:20%;">DPP </td>
+                                                            <td style="width:1%;">:</td>
+                                                            <td class="dpp" style="width:20%;text-align: right;">` +
+                    formatRupiah(
+                        data
+                        .penjualan
+                        .dpp
+                        .toString(), '') + `</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="width: 20%;">PPN</td>
+                                                            <td style="width:1%;">:</td>
+                                                            <td class="ppn" style="width:20%;text-align: right;">` +
+                    formatRupiah(
+                        data
+                        .penjualan
+                        .ppn
+                        .toString(), '') + `</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="width: 20%;">Discount</td>
+                                                            <td style="width:1%;">:</td>
+                                                            <td class="disc" style="width:20%;text-align: right;">` +
+                    formatRupiah(
+                        data
+                        .penjualan
+                        .total_disc
+                        .toString(), '') +
+                    `</td>
+                                                        </tr>
+                            <tr>
+                                                                                                        <th style="width: 20%;">GRAND TOTAL</th>
+                                                                                                        <th style="width:1%;">:</th>
+                                                                                                        <th class="grand_total" style="width:20%;text-align: right;font-weight:bold">` +
                     formatRupiah(
                         data.penjualan.grand_total.toString(), '') + `</th>
-                                                                                    </tr>
-                                                                                </table>
-                                                                                `;
+                                                                                                    </tr>
+                                                                                                </table>
+                                                                                                `;
 
                 $('.modalDetail').children().remove();
                 $('.modalDetail').append(element);
