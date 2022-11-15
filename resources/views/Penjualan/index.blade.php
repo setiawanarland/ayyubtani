@@ -117,7 +117,7 @@
                             <div class="data-tables pull-right">
                                 <table>
                                     <thead>
-                                        <tr>
+                                        {{-- <tr>
                                             <td>DPP</td>
                                             <td style="padding-left:130px; padding-right:3px;">:</td>
                                             <td class="dpp">
@@ -140,7 +140,7 @@
                                                 <input type="text" class="form-control" id="total_disc"
                                                     name="total_disc" value="">
                                             </td>
-                                        </tr>
+                                        </tr> --}}
                                         <tr>
                                             <th>GRAND TOTAL</th>
                                             <th style="padding-left:130px; padding-right:3px;">:</th>
@@ -154,8 +154,7 @@
 
                                 <div class="form-group" style="margin-top: 10px;">
                                     <button class="btn btn-primary" type="submit">Save</button>
-                                    <button class="btn btn-danger btn-cancel previewPenjualan"
-                                        type="">Print</button>
+                                    <button class="btn btn-danger btn-cancel previewPenjualan" type="">Print</button>
                                 </div>
                             </div>
 
@@ -196,8 +195,8 @@
                                 grand_total += data.jumlah;
                                 satuan_pajak = data.satuan_pajak;
                             });
-                            dpp = Math.round(grand_total / 1.1);
-                            ppn = Math.round(grand_total - dpp);
+                            ppn = grand_total * satuan_pajak / 100;
+                            dpp = grand_total - ppn;
                             total_disc = 0;
                             $('#dpp').val(formatRupiah(dpp.toString(), ''));
                             $('#ppn').val(formatRupiah(ppn.toString(), ''));
@@ -421,9 +420,6 @@
 
                             var html = `
                                         <style>
-                                            body {
-                                                width: 8.5in;
-                                            }
                                             @print {
                                                 @page :footer {
                                                     display: none
@@ -457,7 +453,6 @@
 
                                             .flex-container h4 {
                                                 font-size: 20px;
-                                                margin-top: 5px;
                                                 text-transform: uppercase;
                                             }
 
@@ -466,7 +461,7 @@
                                             }
 
                                             .flex-container span {
-                                                margin-top: 50px;
+                                                margin-top: 100px;
                                             }
 
                                             .flex-item-left {
@@ -499,8 +494,8 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td colspan="6" style="padding-bottom: 0px;">SALAMATARA, KARELOE BONTORAMBA JENEPONTO</td>
-                                                <td colspan="3" style="padding-bottom:0px">Kepada Yth,</td>
+                                                <td colspan="6" style="padding-bottom: 20px;">SALAMATARA, KARELOE BONTORAMBA JENEPONTO</td>
+                                                <td colspan="3" style="padding-bottom:20px">Kepada Yth,</td>
                                             </tr>
                                             
 
@@ -526,25 +521,24 @@
                                                 <td colspan="2">: ` + data.kios.npwp + `</td>
                                             </tr>
                                             <tr>
-                                                <td colspan="2" style="padding-top:-20px;padding-bottom: 5px;width: 2%;"></td>
-                                                <td colspan="4" style="width: 55%;padding-top:-20px;padding-bottom: 5px;"></td>
-                                                `;
-                            //                 <td style="padding-top:-20px;padding-bottom: 5px;">NIK</td>
-                            //                 <td colspan="2" style="padding-top:-20px;padding-bottom: 5px;">: ` +
-                        // data.kios.nik + `</td>
-                            html += `</tr>
+                                                <td colspan="2" style="padding-top:-20px;padding-bottom: 20px;width: 2%;"></td>
+                                                <td colspan="4" style="width: 55%;padding-top:-20px;padding-bottom: 20px;"></td>
+                                                <td style="padding-top:-20px;padding-bottom: 20px;">NIK</td>
+                                                <td colspan="2" style="padding-top:-20px;padding-bottom: 20px;">: ` +
+                                data.kios.nama_nik + `</td>
+                                            </tr>
                                         </table>
                                         
-                                        <table id="item" width:100%>
+                                        <table id="item">
                                             <tr class="">
                                                 <th style="width: 1%;">No.</th>
-                                                <th colspan="2" style="width: 43%;">Nama Produk</th>
+                                                <th colspan="2" style="width: 25%;">Nama Produk</th>
                                                 <th style="width: 5%;">Qty</th>
-                                                <th style="width: 5%;">Satuan</th>
-                                                <th style="width: 10%;">Harga Stn. (PPN 11%)</th>
+                                                <th style="width: 10%;">Satuan</th>
+                                                <th style="width: 15%;">Harga Stn. (PPN 11%)</th>
                                                 <th style="width: 5%;">Ket.</th>
-                                                <th style="width: 5%;">Disc.</th>
-                                                <th style="width: 10%;">Jumlah</th>
+                                                <th style="width: 8%;">Disc.</th>
+                                                <th style="width: 15%;">Jumlah</th>
                                                 </tr>
                                                 `;
                             data.produks.map(function(value, index) {
@@ -553,24 +547,24 @@
                                 html += `
                                 <tr class="">
                                                 <td style="width: 1%;text-align:center">` + no + `</td>
-                                                <td colspan="2" style="width: 25%;">` +
+                                                <td colspan="2" style="width: 20%;">` +
                                     value.nama_produk.toUpperCase() + " " + value.kemasan
                                     .toUpperCase() +
                                     `</td>
                                                 <td style="width: 5%;text-align:center">` + value.qty + `</td>
-                                                <td style="width: 6%;text-align:center">` + value.satuan
+                                                <td style="width: 10%;text-align:center">` + value.satuan
                                     .toUpperCase() + `</td>
                                                 <td style="width: 13%;text-align:right">` + formatRupiah(value
                                         .harga_jual.toString(),
                                         '') + `</td>
                                                 <td style="width: 5%;text-align:center">` + value.ket.toUpperCase() + `</td>
-                                                <td style="width: 5%;text-align:center">` + value.disc + `</td>
+                                                <td style="width: 8%;text-align:center">` + value.disc + `</td>
                                                 <td style="width: 13%;text-align:right">` + value.jumlah + `</td>
                                             </tr>
                                 `;
                             });
 
-                            for (let index = 0; index < (15 - data.produks.length); index++) {
+                            for (let index = 0; index < (16 - data.produks.length); index++) {
                                 html += `<tr class="empty-list" style="line-height:15px;">
                                                 <td style="width: 1%;text-align:center;"></td>
                                                 <td colspan="2" style="width: 20%;"></td>
@@ -585,24 +579,24 @@
                             }
                             html += `
                                         </table>
-                                        <table width="20%" style="float:right;margin-top: -1px;">
-                                        <tr style="outline: thin solid black;">
-                                            <td style="width:20%;">DPP </td>
-                                            <td style="width:1%;">:</td>
-                                            <td class="dpp" style="width:10%;text-align: right;">` + data.dpp + `</td>
-                                        </tr>
-                                        <tr style="outline: thin solid black;">
-                                            <td style="width: 20%;">PPN</td>
-                                            <td style="width:1%;">:</td>
-                                            <td class="ppn" style="width:10%;text-align: right;">` + data.ppn + `</td>
-                                        </tr>
-                                        <tr style="outline: thin solid black;">
-                                            <td style="width: 20%;">Discount</td>
-                                            <td style="width:1%;">:</td>
-                                            <td class="disc" style="width:10%;text-align: right;">` + data
-                                .total_disc + `</td>
-                                        </tr>
-                            <tr style="outline: thin solid black;">
+                                        <table width="20%" style="float:right;margin-top: -1px;">`;
+                            //             <tr style="outline: thin solid black;">
+                            //                 <td style="width:20%;">DPP </td>
+                            //                 <td style="width:1%;">:</td>
+                            //                 <td class="dpp" style="width:10%;text-align: right;">` + data.dpp + `</td>
+                            //             </tr>
+                            //             <tr style="outline: thin solid black;">
+                            //                 <td style="width: 20%;">PPN</td>
+                            //                 <td style="width:1%;">:</td>
+                            //                 <td class="ppn" style="width:10%;text-align: right;">` + data.ppn + `</td>
+                            //             </tr>
+                            //             <tr style="outline: thin solid black;">
+                            //                 <td style="width: 20%;">Discount</td>
+                            //                 <td style="width:1%;">:</td>
+                            //                 <td class="disc" style="width:10%;text-align: right;">` + data
+                        // .total_disc + `</td>
+                            //             </tr>
+                            html += `<tr style="outline: thin solid black;">
                                                 <th style="width: 20%;">GRAND TOTAL</th>
                                                 <th style="width:1%;">:</th>
                                                 <th class="grand_total" style="width:10%;text-align: right;">` + data

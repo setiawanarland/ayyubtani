@@ -77,7 +77,7 @@ class PembelianController extends Controller
     {
         $produk = Produk::where('id', $request->produk_id)->first();
         $qty = $produk->jumlah_perdos * $request->ket;
-        $hargaSatuan = $produk->harga_beli;
+        $hargaSatuan = $produk->harga_beli / $produk->jumlah_perdos;
         $jumlah = $hargaSatuan * $qty;
         $jumlahDisc = $jumlah * $request->disc / 100;
         $jumlahAfterDisc = $jumlah - $jumlahDisc;

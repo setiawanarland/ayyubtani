@@ -79,7 +79,7 @@ class PenjualanController extends Controller
     {
         $produk = Produk::where('id', $request->produk_id)->first();
         $qty = $produk->jumlah_perdos * $request->ket;
-        $hargaSatuan = $produk->harga_jual;
+        $hargaSatuan = $produk->harga_jual / $produk->jumlah_perdos;
         $jumlah = $hargaSatuan * $qty;
         $jumlahDisc = $jumlah * $request->disc / 100;
         $jumlahAfterDisc = $jumlah - $jumlahDisc;
