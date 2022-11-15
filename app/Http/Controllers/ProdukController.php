@@ -29,6 +29,7 @@ class ProdukController extends Controller
     public function getList()
     {
         $produk = DB::table("produks")
+            ->orderBy('nama_produk', 'ASC')
             ->get();
 
         if ($produk) {
