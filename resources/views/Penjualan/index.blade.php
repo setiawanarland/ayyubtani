@@ -509,13 +509,15 @@
                                             </tr>
                                             <tr>
                                                 <td colspan="2">PEMBAYARAN </td>
-                                                <td colspan="4">: KREDIT</td>
-                                                <td colspan="3">` + data.kios.alamat.toUpperCase() + `</td>
+                                                <td colspan="4">: </td>
+                                                <td colspan="3">` + data.kios.alamat.toUpperCase() + `, ` + data.kios
+                                .kabupaten
+                                .toUpperCase() + `</td>
                                             </tr>
                                             <tr>
                                                 <td colspan="2">JATUH TEMPO</td>
                                                 <td colspan="4">: ` + data.jatuh_tempo + `</td>
-                                                <td colspan="3">` + data.kios.kabupaten.toUpperCase() + ` SULAWESI SELATAN</td>
+                                                <td colspan="3">SULAWESI SELATAN</td>
                                             </tr>
                                             <tr>
                                                 <td colspan="2" style="width: 2%;"></td>
@@ -610,11 +612,13 @@
                                     <div class="flex-item-left">
                                         <h4>transfer ke rekening:</h4>
                                         <p>CV. AYYUB TANI</p>
-                                        <p>BANK BRI : 343853485774547</p>
-                                        <p style="margin-top: 150px;">Tanda terima</p>
-                                    </div>
-                                    <div class="flex-item-right">
-                                        <p style="margin-top: 260px;">Hormat Kami</p>
+                                        <p>BANK BRI : 025201001055504</p>
+                                        <p style="margin-top: 20px; text-align:center;">Tanda terima</p>
+                                        <p style="margin-top: 50px; text-align:center;">_____________</p>
+                                        </div>
+                                        <div class="flex-item-right">
+                                            <p style="margin-top: 120px; text-align:center;">Hormat Kami</p>
+                                            <p style="margin-top: 50px; text-align:center;">_____________</p>
                                     </div>
                                 </div>
                                 `;
