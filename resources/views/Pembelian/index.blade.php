@@ -40,6 +40,14 @@
                                 </div>
                             </div>
                         </form>
+
+                        <div class="col-auto my-1 pl-0">
+                            <button type="button" class="btn btn-primary btn-xs newProduk" data-toggle="modal"
+                                data-target="#newProduk">
+                                <i class="fa fa-plus"></i> Produk Baru
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -128,6 +136,7 @@
                                             <th class="grand_total">
                                                 <input type="text" class="form-control" id="grand_total"
                                                     name="grand_total" value="">
+                                                <div class="invalid-feedback">Masukkan grand total.</div>
                                             </th>
                                         </tr>
                                     </thead>
@@ -140,6 +149,81 @@
                             </div>
 
                     </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('offset-area')
+    <!-- Modal -->
+    <div class="modal fade" id="newProduk">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detail Pembelian</h5>
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                </div>
+                <div class="modal-body modalDetail">
+
+                    <form id="newProdukForm" data-type="submit">
+                        @csrf
+
+                        <input class="form-control" type="hidden" name="id" id="id">
+
+                        <div class="form-group" style="margin-bottom: 0px;">
+                            <label for="nama_produk" class="col-form-label">Nama Produk</label>
+                            <input class="form-control" type="text" name="nama_produk" id="nama_produk" autofocus>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0px;">
+                            <label for="kemasan" class="col-form-label">Kemasan</label>
+                            <input class="form-control" type="text" name="kemasan" id="kemasan">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0px;">
+                            <label for="satuan" class="col-form-label">Satuan</label>
+                            <input class="form-control" type="text" name="satuan" id="satuan">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0px;">
+                            <label for="jumlah_perdos" class="col-form-label">Jumlah Perdos</label>
+                            <input class="form-control" type="text" name="jumlah_perdos" id="jumlah_perdos"
+                                value="0">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0px;">
+                            <label for="harga_beli" class="col-form-label">Harga Beli</label>
+                            <input class="form-control" type="text" name="harga_beli" id="harga_beli">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0px;">
+                            <label for="harga_jual" class="col-form-label">Harga Jual</label>
+                            <input class="form-control" type="text" name="harga_jual" id="harga_jual">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="harga_perdos" class="col-form-label">Harga Perdos</label>
+                            <input class="form-control" type="text" name="harga_perdos" id="harga_perdos" readonly>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="stok_masuk" class="col-form-label">Stok Masuk</label>
+                            <input class="form-control" type="text" name="stok_masuk" id="stok_masuk">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="disc_harga" class="col-form-label">Disc.</label>
+                            <input class="form-control" type="text" name="disc_harga" id="disc_harga">
+                            <div class="invalid-feedback"></div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0px;">
+                            <button class="btn btn-primary" type="submit">Save</button>
+                            <button class="btn btn-danger btn-cancel" type="reset" data-dismiss="modal">Cancel</button>
+                        </div>
                     </form>
 
                 </div>
@@ -176,6 +260,7 @@
                                 grand_total += data.jumlah;
                                 satuan_pajak = data.satuan_pajak;
                             });
+                            grand_total = 0;
                             ppn = grand_total * satuan_pajak / 100;
                             dpp = grand_total - ppn;
                             total_disc = 0;
@@ -235,7 +320,6 @@
                         },
                         {
                             data: 'ket',
-                            width: '5%',
                             render: function(data, type, row) {
                                 return `
                                 <input type="text" class="form-control ket" id="ket" name="ket[]" value="` +
@@ -552,7 +636,52 @@
                                 confirmButtonText: "OK",
                             })
                         });
-                }
+                },
+                newProduk: function(_url, _data, _element) {
+                    axios.post(_url, _data)
+                        .then(function(res) {
+                            var data = res.data;
+                            console.log(data);
+                            if (data.fail) {
+                                swal.fire({
+                                    text: "Maaf Terjadi Kesalahan",
+                                    title: "Error",
+                                    timer: 2000,
+                                    icon: "danger",
+                                    showConfirmButton: false,
+                                });
+                            } else if (data.invalid) {
+                                console.log(data);
+                                $.each(data.invalid, function(key, value) {
+                                    console.log(key);
+                                    console.log('errorType', typeof error);
+                                    $("input[name='" + key + "']").addClass('is-invalid').siblings(
+                                        '.invalid-feedback').html(value[0]);
+                                });
+                            } else if (data.success) {
+                                swal.fire({
+                                    text: "Data anda berhasil disimpan",
+                                    title: "Sukses",
+                                    icon: "success",
+                                    showConfirmButton: true,
+                                    confirmButtonText: "OK, Siip",
+                                }).then(function() {
+                                    dataRow.destroy();
+                                    dataRow.init();
+                                    $('#newProduk').modal('hide');
+                                });
+                            }
+                        }).catch(function(error) {
+                            console.log(error);
+                            swal.fire({
+                                text: "Pilih Supplier dan masukkan invoice terlebih dahulu",
+                                title: "Error",
+                                icon: "error",
+                                showConfirmButton: true,
+                                confirmButtonText: "OK",
+                            })
+                        });
+                },
             };
         }();
 
@@ -726,8 +855,64 @@
             })
         });
 
+        // create new produk
+        $(document).on('click', ".newProduk", function(e) {
+            $("input").removeClass('is-invalid');
+            $("select").removeClass('is-invalid');
+            $("textarea").removeClass('is-invalid');
+            var form = $('#newProdukForm');
+            form[0].reset();
+
+            // const number = 3500;
+
+            // console.log(new Intl.NumberFormat("id-ID", {
+            //     style: "currency",
+            //     currency: "IDR",
+            //     minimumFractionDigits: 0,
+            // }).format(number));
+        });
+
+        // format rupiah
+        $('#harga_beli, #harga_jual, #harga_perdos').on('keyup', function() {
+            $(this).val(formatRupiah($(this).val(), 'Rp. '));
+
+            var jumlah_perdos = parseInt($('#jumlah_perdos').val());
+            var harga_jual = parseInt($('#harga_jual').val().replace(/[^0-9]/g, ''));
+            var harga_perdos = harga_jual * jumlah_perdos;
+
+            $('#harga_perdos').val(formatRupiah(harga_perdos.toString(), 'Rp. '));
+        });
+
+        $(document).on('submit', "#newProdukForm[data-type='submit']", function(e) {
+            e.preventDefault();
+
+            var form = document.querySelector('form');
+            var formData = new FormData(this);
+
+            AxiosCall.newProduk("{{ route('pembelian-produk-new') }}", formData,
+                "#newProdukForm");
+        });
+
+
+        // add pembelian
         $(document).on('submit', "#pembelianForm[data-type='submit']", function(e) {
             e.preventDefault();
+            let grand_total = $('#grand_total').val();
+
+            if (grand_total <= 0) {
+                return swal.fire({
+                    text: "Silakan masukkan grand total",
+                    title: "Error",
+                    icon: "error",
+                    showConfirmButton: true,
+                    confirmButtonText: "OK",
+                }).then(function() {
+                    $("input[name='grand_total']").addClass('is-invalid').siblings(
+                        '.invalid-feedback');
+                    $('#grand_total').focus();
+                    $('#grand_total').trigger('focus');
+                });
+            }
 
             var dataForm = document.querySelector('#pembelianForm');
             var formData = new FormData(dataForm);
@@ -751,6 +936,9 @@
 
 
         $('#grand_total').on('keyup', function() {
+            if ($(this).val() > 0) {
+                $(this).removeClass('is-invalid');
+            }
             $(this).val(formatRupiah($(this).val(), ''));
         });
 

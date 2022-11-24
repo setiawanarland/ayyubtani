@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use DB;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Validator;
 
 class PembelianController extends Controller
 {
@@ -176,9 +177,52 @@ class PembelianController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function produkNew(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'nama_produk' => 'required',
+            'kemasan' => 'required',
+            'satuan' => 'required',
+            'jumlah_perdos' => 'required|numeric|min:1',
+            'harga_beli' => 'required',
+            'harga_jual' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['invalid' => $validator->errors()]);
+        }
+
+        $produk = new Produk();
+        $produk->nama_produk = $request->nama_produk;
+        $produk->kemasan = $request->kemasan;
+        $produk->satuan = $request->satuan;
+        $produk->jumlah_perdos = intval($request->jumlah_perdos);
+        $produk->harga_beli = intval(preg_replace("/\D/", "", $request->harga_beli));
+        $produk->harga_jual = intval(preg_replace("/\D/", "", $request->harga_jual));
+        $produk->harga_perdos = intval(preg_replace("/\D/", "", $request->harga_perdos));
+        $produk->save();
+        // return $produk;
+
+        $qty = $request->jumlah_perdos * $request->stok_masuk;
+        $hargaSatuan = intval(preg_replace("/\D/", "", $request->harga_beli));
+        $jumlah = $hargaSatuan * $qty;
+        $jumlahDisc = $jumlah * intval(preg_replace("/\D/", "", $request->disc_harga)) / 100;
+        $jumlahAfterDisc = $jumlah - $jumlahDisc;
+
+        $data = new DetailPembelianTemp();
+        $data->produk_id = $produk->id;
+        $data->qty = $qty;
+        // $data->harga_satuan = $hargaSatuan;
+        $data->ket = $request->stok_masuk;
+        $data->disc = $request->disc_harga;
+        $data->jumlah = $jumlahAfterDisc;
+        $data->save();
+
+        if ($data) {
+            return (new GeneralResponse)->default_json(true, "Success", $data, 201);
+        } else {
+            return (new GeneralResponse)->default_json(false, "Error", $data, 403);
+        }
     }
 
     /**
