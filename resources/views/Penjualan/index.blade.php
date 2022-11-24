@@ -51,6 +51,16 @@
                                     <input type="number" class="form-control" id="disc" name="disc" value="0"
                                         min="0">
                                 </div>
+                                <div class="col-sm-3 col-md-2 my-1">
+                                    <label class="" for="harga_satuan">Harga Stn.</label>
+                                    <input type="hidden" class="form-control" id="jumlah_perdos" name="jumlah_perdos">
+                                    <input type="text" class="form-control" id="harga_satuan" name="harga_satuan">
+                                </div>
+                                <div class="col-sm-3 col-md-2 my-1">
+                                    <label class="" for="harga_perdos">Harga Perdos</label>
+                                    <input type="text" class="form-control" id="harga_perdos" name="harga_perdos"
+                                        readonly>
+                                </div>
                                 <div class="col-auto my-1" style="padding-top: 30px;">
                                     <button type="button" class="btn btn-success btn-xs addTemp">
                                         <i class="fa fa-cart-plus"></i>
@@ -877,6 +887,61 @@
                     }
                 })
             }
+        });
+
+        $(document).on('change', '#produk', function(e) {
+            let produkId = $('#produk').val();
+
+            $.ajax({
+                url: `/penjualan/get-produk/${produkId}`,
+                type: 'GET',
+                data: {
+                    '_method': 'GET',
+                    '_token': $('meta[name="csrf-token"]').attr('content'),
+                },
+                success: function(response) {
+                    console.log(response);
+                    $('#jumlah_perdos').val(formatRupiah(response.data.jumlah_perdos.toString(), ''));
+                    $('#harga_satuan').val(formatRupiah(response.data.harga_jual.toString(), ''));
+                    $('#harga_perdos').val(formatRupiah(response.data.harga_perdos.toString(), ''));
+                },
+                error: function(error) {
+                    console.log(error.responseJSON.data);
+                    let data = error.responseJSON.data;
+                    swal.fire({
+                        title: `${data.nama_produk.toUpperCase()} ${data.kemasan.toUpperCase()}`,
+                        text: ` ${error.responseJSON.message}!`,
+                        icon: "warning",
+                    });
+                }
+            })
+        });
+
+        $(document).on('keyup', '#harga_satuan', function(e) {
+            let jumlahPerdos = $('#jumlah_perdos').val();
+            let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
+            let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
+            hargaPerdos = hargaSatuan * jumlahPerdos;
+
+            $('#harga_perdos').val(formatRupiah(hargaPerdos.toString(), ''));
+            console.log('harga satuan');
+            console.log(jumlahPerdos);
+        });
+
+        $(document).on('keyup', '#harga_perdos', function(e) {
+            let jumlahPerdos = $('#jumlah_perdos').val();
+            let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
+            let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
+            hargaSatuan = hargaPerdos / jumlahPerdos;
+
+            $('#harga_satuan').val(formatRupiah(hargaSatuan.toString(), ''));
+            console.log('harga perdos');
+            console.log(jumlahPerdos);
+        });
+
+        // format rupiah
+        $('#harga_satuan, #harga_perdos').on('keyup', function() {
+            $(this).val(formatRupiah($(this).val(), ''));
         });
 
         $(document).on('submit', "#penjualanForm[data-type='submit']", function(e) {

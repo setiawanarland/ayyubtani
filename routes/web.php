@@ -86,6 +86,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/tempdelete/{id}', [PenjualanController::class, 'tempDelete'])->name('temp-delete');
         Route::delete('/tempreset', [PenjualanController::class, 'tempReset'])->name('temp-reset');
         Route::post('/preview', [PenjualanController::class, 'preview'])->name('penjualan-preview');
+        Route::get('/get-produk/{produkId}', [PenjualanController::class, 'getProduk'])->name('get-produk');
         Route::get('/get-stok/{produkId}', [PenjualanController::class, 'getStok'])->name('get-stok');
         Route::post('/store', [PenjualanController::class, 'store'])->name('penjualan-store');
         Route::get('/daftar', [PenjualanController::class, 'daftar'])->name('daftar-penjualan');

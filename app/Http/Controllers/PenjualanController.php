@@ -33,7 +33,7 @@ class PenjualanController extends Controller
             ->get();
 
         $produk = DB::table('produks')
-            ->select('id', 'nama_produk', 'kemasan', 'stok')
+            ->select('id', 'nama_produk', 'kemasan', 'stok', 'harga_jual', 'harga_perdos')
             ->get();
 
         $pajak = DB::table('pajaks')
@@ -171,6 +171,13 @@ class PenjualanController extends Controller
         return $data;
     }
 
+    public function getProduk(Request $request, $id)
+    {
+        $produk = Produk::where('id', $id)->first();
+
+        return (new GeneralResponse)->default_json(true, "success", $produk, 200);
+    }
+
     public function getStok(Request $request, $id)
     {
         $produk = Produk::select('nama_produk', 'kemasan', 'stok')->where('id', $id)->first();
@@ -184,22 +191,7 @@ class PenjualanController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StorePenjualanRequest  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $dataPenjualan = [];
