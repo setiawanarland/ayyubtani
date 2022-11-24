@@ -135,7 +135,7 @@
 
                                 <div class="form-group" style="margin-top: 10px;">
                                     <button class="btn btn-primary" type="submit">Save</button>
-                                    <button class="btn btn-danger btn-cancel printPreview" type="">Print</button>
+                                    {{-- <button class="btn btn-danger btn-cancel printPreview" type="">Print</button> --}}
                                 </div>
                             </div>
 
@@ -188,6 +188,7 @@
                     },
                     columns: [{
                             data: 'id',
+                            width: '1%',
                             render: function(data, type, row, meta) {
                                 return meta.row + 1;
                             }
@@ -205,6 +206,7 @@
                         },
                         {
                             data: 'qty',
+                            visible: false,
                             render: function(data, type, row) {
                                 return `
                                     <input type="text" class="form-control qty" id="qty" name="qty[]" value="` + data + `">
@@ -213,6 +215,7 @@
                         },
                         {
                             data: 'satuan',
+                            visible: false,
                             render: function(data, type, row) {
                                 return `
                                     <input type="text" class="form-control satuan" id="satuan" name="satuan[]" value="` +
@@ -222,6 +225,7 @@
                         },
                         {
                             data: 'harga_beli',
+                            visible: false,
                             render: function(data, type, row) {
                                 return `
                                     <input type="text" class="form-control harga_beli" id="harga_beli" name="harga_beli[]" value="` +
@@ -231,6 +235,7 @@
                         },
                         {
                             data: 'ket',
+                            width: '5%',
                             render: function(data, type, row) {
                                 return `
                                 <input type="text" class="form-control ket" id="ket" name="ket[]" value="` +
@@ -241,6 +246,7 @@
                         },
                         {
                             data: 'disc',
+                            visible: false,
                             render: function(data, type, row) {
                                 return `
                                 <input type="text" class="form-control disc" id="disc" name="disc[]" value="` +
@@ -250,6 +256,7 @@
                         },
                         {
                             data: 'jumlah',
+                            visible: false,
                             render: function(data, type, row) {
 
                                 return `
@@ -266,7 +273,7 @@
                         targets: -1,
                         title: 'Actions',
                         orderable: false,
-                        width: '5rem',
+                        width: '3%',
                         class: "wrapok",
                         render: function(data, type, row, full, meta) {
                             return `
@@ -740,6 +747,11 @@
 
             AxiosCall.print("{{ route('pembelian-preview') }}", formData,
                 "#produkForm");
+        });
+
+
+        $('#grand_total').on('keyup', function() {
+            $(this).val(formatRupiah($(this).val(), ''));
         });
 
 

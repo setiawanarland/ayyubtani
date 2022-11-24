@@ -209,16 +209,19 @@ class PembelianController extends Controller
             $detailPembelian = new DetailPembelian();
             $detailPembelian->pembelian_id = $pembelian->id;
             $detailPembelian->produk_id = $value;
-            $detailPembelian->qty = $request->qty[$key];
+            // $detailPembelian->qty = $request->qty[$key];
+            $detailPembelian->qty = 0;
             $detailPembelian->ket = $request->ket[$key];
-            $detailPembelian->disc = $request->disc[$key];
-            $detailPembelian->jumlah = intval(preg_replace("/\D/", "", $request->jumlah[$key]));
+            // $detailPembelian->disc = $request->disc[$key];
+            $detailPembelian->disc = 0;
+            // $detailPembelian->jumlah = intval(preg_replace("/\D/", "", $request->jumlah[$key]));
+            $detailPembelian->jumlah = 0;
             $detailPembelian->save();
 
             $produk = Produk::where('id', $value)->first();
             $stok = $produk->stok;
             $jumlahPerdos = $produk->jumlah_perdos;
-            $stokMasuk = $request->qty[$key] / $jumlahPerdos;
+            $stokMasuk = intval(preg_replace("/\D/", "", $request->ket[$key]));
             $produk->stok = $stok + $stokMasuk;
             $produk->save();
         }

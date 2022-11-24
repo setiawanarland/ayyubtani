@@ -24,42 +24,45 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($data['data'] as $key => $value)
-                                        @foreach ($value['detail'] as $index => $val)
-                                            <tr style="background-color: aquamarine">
-                                                <td>{{ date('d-m-Y', strtotime($val->tanggal_beli)) }}</td>
-                                                <td>{{ $val->invoice }}</td>
-                                                <td class="text-right">{{ number_format($val->debet) }}</td>
-                                                <td>
-                                                    @if ($val->tanggal_bayar != null)
-                                                        {{ date('d-m-Y', strtotime($val->tanggal_bayar)) }}
-                                                    @endif
-                                                </td>
-                                                <td>{{ $val->ket }}</td>
-                                                <td class="text-right">{{ number_format($val->kredit) }}</td>
-                                                <td class="text-right">{{ number_format($val->sisa) }}</td>
-                                                <td>
-                                                    <button type="button" class="btn btn-sm bayarHutang"
-                                                        data-toggle="modal" data-target="#bayarHutangModal"
-                                                        data-id="{{ $val->id }}}" style="background-color:forestgreen"
-                                                        {{ $val->sisa <= 0 ? 'disabled' : '' }}><i
-                                                            class="fa fa-money"></i></button>
-                                                </td>
+                                    @if (isset($data['data']))
+                                        @foreach ($data['data'] as $key => $value)
+                                            @foreach ($value['detail'] as $index => $val)
+                                                <tr style="background-color: aquamarine">
+                                                    <td>{{ date('d-m-Y', strtotime($val->tanggal_beli)) }}</td>
+                                                    <td>{{ $val->invoice }}</td>
+                                                    <td class="text-right">{{ number_format($val->debet) }}</td>
+                                                    <td>
+                                                        @if ($val->tanggal_bayar != null)
+                                                            {{ date('d-m-Y', strtotime($val->tanggal_bayar)) }}
+                                                        @endif
+                                                    </td>
+                                                    <td>{{ $val->ket }}</td>
+                                                    <td class="text-right">{{ number_format($val->kredit) }}</td>
+                                                    <td class="text-right">{{ number_format($val->sisa) }}</td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-sm bayarHutang"
+                                                            data-toggle="modal" data-target="#bayarHutangModal"
+                                                            data-id="{{ $val->id }}}"
+                                                            style="background-color:forestgreen"
+                                                            {{ $val->sisa <= 0 ? 'disabled' : '' }}><i
+                                                                class="fa fa-money"></i></button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                            <tr class="text-uppercase"
+                                                style="background-color: {{ $value['sisa'] != 0 ? 'lightsalmon' : 'green' }} ">
+                                                <th colspan="2">total hutang bulan {{ $key }}</th>
+                                                <th class="text-right">{{ number_format($value['debet']) }}</th>
+                                                <th colspan="3">total sisa bulan {{ $key }}</th>
+                                                <th class="text-right">{{ number_format($value['sisa']) }}</th>
+                                                @if ($value['sisa'] != 0)
+                                                    <th>belum lunas</th>
+                                                @else
+                                                    <th>lunas</th>
+                                                @endif
                                             </tr>
                                         @endforeach
-                                        <tr class="text-uppercase"
-                                            style="background-color: {{ $value['sisa'] != 0 ? 'lightsalmon' : 'green' }} ">
-                                            <th colspan="2">total hutang bulan {{ $key }}</th>
-                                            <th class="text-right">{{ number_format($value['debet']) }}</th>
-                                            <th colspan="3">total sisa bulan {{ $key }}</th>
-                                            <th class="text-right">{{ number_format($value['sisa']) }}</th>
-                                            @if ($value['sisa'] != 0)
-                                                <th>belum lunas</th>
-                                            @else
-                                                <th>lunas</th>
-                                            @endif
-                                        </tr>
-                                    @endforeach
+                                    @endif
 
                                     <tr class="text-uppercase pt-5"
                                         style="background-color: {{ $data['total_hutang'] != 0 ? 'gold' : 'lightgreen' }} ">

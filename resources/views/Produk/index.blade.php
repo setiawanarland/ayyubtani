@@ -15,9 +15,9 @@
                                     <tr>
                                         <th>Nama Produk</th>
                                         <th>Kemasan</th>
-                                        <th>Satuan</th>
-                                        <th>Harga Beli</th>
-                                        <th>Harga Jual</th>
+                                        {{-- <th>Satuan</th>
+                                        <th>Harga Beli</th> --}}
+                                        <th>Harga Satuan</th>
                                         <th>Harga Perdos</th>
                                         <th>Stok</th>
                                         <th>Action</th>
@@ -123,18 +123,18 @@
                                 return data.toUpperCase();
                             }
                         },
-                        {
-                            data: 'satuan',
-                            render: function(data, type, row) {
-                                return data.toUpperCase();
-                            }
-                        },
-                        {
-                            data: 'harga_beli',
-                            render: function(data, type, row) {
-                                return formatRupiah(data.toString(), '');
-                            }
-                        },
+                        // {
+                        //     data: 'satuan',
+                        //     render: function(data, type, row) {
+                        //         return data.toUpperCase();
+                        //     }
+                        // },
+                        // {
+                        //     data: 'harga_beli',
+                        //     render: function(data, type, row) {
+                        //         return formatRupiah(data.toString(), '');
+                        //     }
+                        // },
                         {
                             data: 'harga_jual',
                             render: function(data, type, row) {
