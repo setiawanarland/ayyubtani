@@ -53,6 +53,7 @@
                                 </div>
                                 <div class="col-sm-3 col-md-2 my-1">
                                     <label class="" for="harga_satuan">Harga Stn.</label>
+                                    <input type="hidden" class="form-control" id="harga_lama" name="harga_lama">
                                     <input type="hidden" class="form-control" id="jumlah_perdos" name="jumlah_perdos">
                                     <input type="text" class="form-control" id="harga_satuan" name="harga_satuan">
                                 </div>
@@ -672,6 +673,9 @@
         $(document).on('click', '.addTemp', function(e) {
             let kios_id = $('#kios').val();
             let produk_id = $('#produk').val();
+            let hargaLama = parseInt($('#harga_lama').val().replace(/[^0-9]/g, ''));
+            let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
+            let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
             let ket = $('#ket').val();
             let disc = $('#disc').val();
 
@@ -704,6 +708,9 @@
                         '_token': $('meta[name="csrf-token"]').attr('content'),
                         'kios_id': kios_id,
                         'produk_id': produk_id,
+                        'harga_lama': hargaLama,
+                        'harga_satuan': hargaSatuan,
+                        'harga_perdos': hargaPerdos,
                         'ket': ket,
                         'disc': disc,
                     },
@@ -715,6 +722,8 @@
                             $('#kios').val('null').trigger('change');
                             $('#produk').val('null').trigger('change');
                             $('#ket').val(0);
+                            $('#harga_satuan').val(0);
+                            $('#harga_perdos').val(0);
                         } else {
                             swal.fire({
                                 title: "Failed!",
@@ -902,6 +911,7 @@
                 success: function(response) {
                     console.log(response);
                     $('#jumlah_perdos').val(formatRupiah(response.data.jumlah_perdos.toString(), ''));
+                    $('#harga_lama').val(formatRupiah(response.data.harga_jual.toString(), ''));
                     $('#harga_satuan').val(formatRupiah(response.data.harga_jual.toString(), ''));
                     $('#harga_perdos').val(formatRupiah(response.data.harga_perdos.toString(), ''));
                 },

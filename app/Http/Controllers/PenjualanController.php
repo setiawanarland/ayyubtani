@@ -77,6 +77,13 @@ class PenjualanController extends Controller
 
     public function temp(Request $request)
     {
+        if ($request->harga_lama != $request->harga_satuan) {
+            $produk = Produk::where('id', $request->produk_id)->first();
+            $produk->harga_jual = intval(preg_replace("/\D/", "", $request->harga_satuan));
+            $produk->harga_perdos = intval(preg_replace("/\D/", "", $request->harga_perdos));
+            $produk->save();
+        }
+
         $produk = Produk::where('id', $request->produk_id)->first();
         $qty = $produk->jumlah_perdos * $request->ket;
         $hargaSatuan = $produk->harga_jual;
