@@ -22,6 +22,8 @@ class HutangController extends Controller
             ->where('hutangs.tahun', session('tahun'))
             ->orderBy('hutangs.bulan', 'ASC')
             ->orderBy('hutangs.tahun', 'ASC')
+            ->orderBy('pembelians.id', 'ASC')
+            ->orderBy('pembelians.tanggal_beli', 'ASC')
             ->get();
 
         $bulan = 0;
