@@ -20,9 +20,9 @@ class CreatePiutangsTable extends Migration
             $table->string('bulan', 10);
             $table->string('tahun', 10);
             $table->string('ket', 50);
-            $table->bigInteger('debet');
-            $table->bigInteger('kredit');
-            $table->bigInteger('sisa');
+            $table->decimal('debet', 15, 1);
+            $table->decimal('kredit', 15, 1);
+            $table->decimal('sisa', 15, 1);
             $table->enum('status', ['lunas', 'belum'])->default('belum');
             $table->timestamps();
         });

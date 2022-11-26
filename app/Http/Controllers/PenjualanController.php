@@ -41,11 +41,13 @@ class PenjualanController extends Controller
             ->where('active', '1')
             ->first();
 
+        $pembayaran = DB::table('pembayarans')->get();
+
         $lastPenjualan = Penjualan::max('id');
 
         $invoice = "AT-" . substr(date('Y'), -2) . "/" . sprintf("%05s", abs($lastPenjualan + 1));
 
-        return view('penjualan.index', compact('page_title', 'page_description', 'breadcrumbs', 'kios', 'produk', 'pajak', 'invoice'));
+        return view('penjualan.index', compact('page_title', 'page_description', 'breadcrumbs', 'kios', 'produk', 'pajak', 'pembayaran', 'invoice'));
     }
 
     public function list()
@@ -79,8 +81,8 @@ class PenjualanController extends Controller
     {
         if ($request->harga_lama != $request->harga_satuan) {
             $produk = Produk::where('id', $request->produk_id)->first();
-            $produk->harga_jual = intval(preg_replace("/\D/", "", $request->harga_satuan));
-            $produk->harga_perdos = intval(preg_replace("/\D/", "", $request->harga_perdos));
+            $produk->harga_jual = floatval(preg_replace('/[^\d\.]+/', '', $request->harga_satuan));
+            $produk->harga_perdos = floatval(preg_replace('/[^\d\.]+/', '', $request->harga_perdos));
             $produk->save();
         }
 
@@ -169,6 +171,7 @@ class PenjualanController extends Controller
         // set data
         $data['invoice'] = $request->invoice;
         $data['tanggal_jual'] = $request->tanggal_jual;
+        $data['pembayaran'] = $request->pembayaran;
         $data['jatuh_tempo'] = $jatuhTempo;
         $data['dpp'] = $request->dpp;
         $data['ppn'] = $request->ppn;
@@ -201,6 +204,7 @@ class PenjualanController extends Controller
 
     public function store(Request $request)
     {
+        // return $request->all();
         $dataPenjualan = [];
         $dataPenjualan['bulan'] = date('m', strtotime($request->tanggal_jual));
         $dataPenjualan['tahun'] = date('Y', strtotime($request->tanggal_jual));
@@ -208,14 +212,18 @@ class PenjualanController extends Controller
 
         $penjualan = new Penjualan();
         $penjualan->kios_id = $request->kios;
+        $penjualan->pembayaran_id = $request->pembayaran;
         $penjualan->invoice = $request->invoice;
         $penjualan->tanggal_jual = date('Y-m-d', strtotime($request->tanggal_jual));
         $penjualan->bulan = $dataPenjualan['bulan'];
         $penjualan->tahun = $dataPenjualan['tahun'];
-        $penjualan->dpp = intval(preg_replace("/\D/", "", $request->dpp));
-        $penjualan->ppn = intval(preg_replace("/\D/", "", $request->ppn));
-        $penjualan->total_disc = intval(preg_replace("/\D/", "", $request->total_disc));
-        $penjualan->grand_total = intval(preg_replace("/\D/", "", $request->grand_total));
+        $penjualan->dpp = floatval(preg_replace('/[^\d\.]+/', '', $request->dpp));
+        $penjualan->ppn = floatval(preg_replace('/[^\d\.]+/', '', $request->ppn));
+        $penjualan->grand_total = floatval(preg_replace('/[^\d\.]+/', '', $request->grand_total));
+        // $penjualan->dpp = intval(preg_replace("/\D/", "", $request->dpp));
+        // $penjualan->ppn = intval(preg_replace("/\D/", "", $request->ppn));
+        // $penjualan->grand_total = intval(preg_replace("/\D/", "", $request->grand_total));
+        $penjualan->total_disc = floatval(preg_replace('/[^\d\.]+/', '', $request->total_disc));
         $penjualan->save();
 
         foreach ($request->produk_id as $key => $value) {
@@ -225,7 +233,7 @@ class PenjualanController extends Controller
             $detailPenjualan->qty = $request->qty[$key];
             $detailPenjualan->ket = $request->ket[$key];
             $detailPenjualan->disc = $request->disc[$key];
-            $detailPenjualan->jumlah = intval(preg_replace("/\D/", "", $request->jumlah[$key]));
+            $detailPenjualan->jumlah = floatval(preg_replace('/[^\d\.]+/', '', $request->jumlah[$key]));
             $detailPenjualan->save();
 
             $produk = Produk::where('id', $value)->first();
@@ -240,15 +248,17 @@ class PenjualanController extends Controller
         $dataPiutang['bulan'] = date('m', strtotime($request->tanggal_jual));
         $dataPiutang['tahun'] = date('Y', strtotime($request->tanggal_jual));
 
-        $piutang = new Piutang();
-        $piutang->penjualan_id = $penjualan->id;
-        $piutang->bulan = $dataPiutang['bulan'];
-        $piutang->tahun = $dataPiutang['tahun'];
-        $piutang->ket = '';
-        $piutang->debet = intval(preg_replace("/\D/", "", $request->grand_total));
-        $piutang->kredit = 0;
-        $piutang->sisa = intval(preg_replace("/\D/", "", $request->grand_total)) - $piutang->kredit;
-        $piutang->save();
+        if ($request->pembayaran == 1) {
+            $piutang = new Piutang();
+            $piutang->penjualan_id = $penjualan->id;
+            $piutang->bulan = $dataPiutang['bulan'];
+            $piutang->tahun = $dataPiutang['tahun'];
+            $piutang->ket = '';
+            $piutang->debet = floatval(preg_replace('/[^\d\.]+/', '', $request->grand_total));
+            $piutang->kredit = 0;
+            $piutang->sisa = floatval(preg_replace('/[^\d\.]+/', '', $request->grand_total)) - $piutang->kredit;
+            $piutang->save();
+        }
 
         $temp = DetailPenjualanTemp::truncate();
 
@@ -278,7 +288,7 @@ class PenjualanController extends Controller
     {
         $data = Penjualan::select('penjualans.*', 'kios.nama_kios',)
             ->join('kios', 'penjualans.kios_id', 'kios.id')
-            // ->orderBy('penjualans.bulan', 'ASC')
+            ->where('penjualans.tahun', session('tahun'))
             // ->orderBy('penjualans.tahun', 'ASC')
             ->orderBy('penjualans.id', 'DESC')
             ->get();

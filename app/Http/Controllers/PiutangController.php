@@ -48,13 +48,16 @@ class PiutangController extends Controller
                 $piutang = DB::table("piutangs")
                     ->join('penjualans', 'piutangs.penjualan_id', 'penjualans.id')
                     ->where('piutangs.penjualan_id', $val->id)
+                    ->where('piutangs.tahun', session('tahun'))
                     ->orderBy('piutangs.bulan', 'ASC')
                     ->orderBy('piutangs.tahun', 'ASC')
                     ->first();
-
-                $debet += $piutang->debet;
-                $kredit += $piutang->kredit;
-                $sisa += $piutang->sisa;
+                // return $piutang;
+                if ($piutang) {
+                    $debet += $piutang->debet;
+                    $kredit += $piutang->kredit;
+                    $sisa += $piutang->sisa;
+                }
                 // return $sisa;
             }
 
@@ -84,6 +87,7 @@ class PiutangController extends Controller
     {
         $piutang = DB::table("piutangs")
             ->join('penjualans', 'piutangs.penjualan_id', 'penjualans.id')
+            ->where('piutangs.tahun', session('tahun'))
             ->orderBy('piutangs.bulan', 'ASC')
             ->orderBy('piutangs.tahun', 'ASC')
             ->get();

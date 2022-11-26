@@ -15,8 +15,9 @@
                                     <tr>
                                         <th>Nama Produk</th>
                                         <th>Kemasan</th>
-                                        {{-- <th>Satuan</th>
-                                        <th>Harga Beli</th> --}}
+                                        <th>Isi Perdos</th>
+                                        {{-- <th>Satuan</th> --}}
+                                        {{-- <th>Harga Beli</th> --}}
                                         <th>Harga Satuan</th>
                                         <th>Harga Perdos</th>
                                         <th>Stok</th>
@@ -121,6 +122,12 @@
                             data: 'kemasan',
                             render: function(data, type, row) {
                                 return data.toUpperCase();
+                            }
+                        },
+                        {
+                            data: 'jumlah_perdos',
+                            render: function(data, type, row) {
+                                return data;
                             }
                         },
                         // {

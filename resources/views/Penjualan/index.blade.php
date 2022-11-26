@@ -104,6 +104,16 @@
                                     <label class="" for="tanggal_jual">Tanggal Jual</label>
                                     <input type="text" class="form-control" id="tanggal_jual" name="tanggal_jual">
                                 </div>
+                                <div class="col-sm-3 col-md-3 my-3">
+                                    <label class="" for="pembayaran">Jenis pembayaran</label>
+                                    <select class="form-control" id="pembayaran" name="pembayaran">
+                                        <option value="null">{{ Str::upper('pilih pembayaran') }}</option>
+                                        @foreach ($pembayaran as $index => $value)
+                                            <option value="{{ $value->id }}">{{ Str::upper($value->nama_pembayaran) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="data-tables">
@@ -204,16 +214,21 @@
                             ppn = 0;
                             grand_total = 0;
                             data.data.map(function(data) {
-                                grand_total += data.jumlah;
+                                console.log(parseFloat(data.jumlah));
+                                grand_total += parseFloat(data.jumlah);
                                 satuan_pajak = data.satuan_pajak;
                             });
-                            dpp = Math.round(grand_total / 1.1);
-                            ppn = Math.round(grand_total - dpp);
+
+                            dpp = grand_total / 1.1;
+                            ppn = grand_total - dpp;
                             total_disc = 0;
-                            $('#dpp').val(formatRupiah(dpp.toString(), ''));
-                            $('#ppn').val(formatRupiah(ppn.toString(), ''));
+                            $('#dpp').val(number_format(dpp, 1));
+                            $('#ppn').val(number_format(ppn, 1));
+                            $('#grand_total').val(number_format(grand_total, 1));
+                            // $('#dpp').val(formatRupiah(dpp.toString(), ''));
+                            // $('#ppn').val(formatRupiah(ppn.toString(), ''));
                             $('#total_disc').val(formatRupiah(total_disc.toString(), ''));
-                            $('#grand_total').val(formatRupiah(grand_total.toString(), ''));
+                            // $('#grand_total').val(formatRupiah(grand_total.toString(), ''));
                             return data.data;
                         },
                     },
@@ -285,7 +300,7 @@
 
                                 return `
                                     <input type="text" class="form-control jumlah" id="jumlah" name="jumlah[]" value="` +
-                                    formatRupiah(data.toString(), '') + `">
+                                    number_format(data, 1) + `">
                                 `;
                             }
                         },
@@ -428,6 +443,7 @@
                     axios.post(_url, _data)
                         .then(function(res) {
                             var data = res.data;
+                            console.log(data);
                             console.log(data.produks.length);
 
                             var html = `
@@ -520,7 +536,7 @@
                                             </tr>
                                             <tr>
                                                 <td colspan="2">PEMBAYARAN </td>
-                                                <td colspan="4">: </td>
+                                                <td colspan="4">: ` + data.pembayaran.toUpperCase() + `</td>
                                                 <td colspan="3">` + data.kios.alamat.toUpperCase() + `, ` + data.kios
                                 .kabupaten
                                 .toUpperCase() + `</td>
@@ -657,7 +673,7 @@
                         }).catch(function(error) {
                             console.log(error);
                             swal.fire({
-                                text: "Pilih kios dan masukkan invoice terlebih dahulu",
+                                text: "Pilih kios, masukkan invoice dan pilih pembayaran terlebih dahulu",
                                 title: "Error",
                                 icon: "error",
                                 showConfirmButton: true,
@@ -965,7 +981,15 @@
                 });
             }
 
-            if ($('#kios').val() != 'null') {
+            if ($('#pembayaran').val() == 'null') {
+                swal.fire({
+                    title: `Warning!`,
+                    text: `Pilih pembayaran terlebih dahulu`,
+                    icon: "warning",
+                });
+            }
+
+            if ($('#kios').val() != 'null' && $('#pembayaran').val() != 'null') {
                 var dataForm = document.querySelector('#penjualanForm');
                 var formData = new FormData(dataForm);
 
@@ -974,6 +998,34 @@
             }
 
         });
+
+
+        function number_format(number, decimals, decPoint, thousandsSep) {
+            number = (number + '').replace(/[^0-9+\-Ee.]/g, '')
+            var n = !isFinite(+number) ? 0 : +number
+            var prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
+            var sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep
+            var dec = (typeof decPoint === 'undefined') ? '.' : decPoint
+            var s = ''
+
+            var toFixedFix = function(n, prec) {
+                var k = Math.pow(10, prec)
+                return '' + (Math.round(n * k) / k)
+                    .toFixed(prec)
+            }
+
+            // @todo: for IE parseFloat(0.55).toFixed(0) = 0;
+            s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.')
+            if (s[0].length > 3) {
+                s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep)
+            }
+            if ((s[1] || '').length < prec) {
+                s[1] = s[1] || ''
+                s[1] += new Array(prec - s[1].length + 1).join('0')
+            }
+
+            return s.join(dec)
+        }
 
 
         $(document).ready(function() {

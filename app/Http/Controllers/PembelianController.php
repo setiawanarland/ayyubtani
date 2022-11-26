@@ -312,6 +312,7 @@ class PembelianController extends Controller
     {
         $data = Pembelian::select('pembelians.*', 'suppliers.nama_supplier',)
             ->join('suppliers', 'pembelians.supplier_id', 'suppliers.id')
+            ->where('pembelians.tahun', session('tahun'))
             ->orderBy('pembelians.bulan', 'ASC')
             ->orderBy('pembelians.tahun', 'ASC')
             ->get();

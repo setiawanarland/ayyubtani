@@ -16,14 +16,15 @@ class CreatePenjualansTable extends Migration
         Schema::create('penjualans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('kios_id')->constrained('kios');
+            $table->integer('pembayaran_id')->unsigned();
             $table->string('invoice', 100);
             $table->date('tanggal_jual');
             $table->string('bulan', 10);
             $table->string('tahun', 10);
-            $table->bigInteger('dpp');
-            $table->bigInteger('ppn');
-            $table->bigInteger('total_disc');
-            $table->bigInteger('grand_total');
+            $table->decimal('dpp', 15, 1);
+            $table->decimal('ppn', 15, 1);
+            $table->decimal('total_disc', 15, 1);
+            $table->decimal('grand_total', 15, 1);
             $table->timestamps();
         });
     }

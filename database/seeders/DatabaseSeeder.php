@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Kios;
 use App\Models\pajak;
+use App\Models\Pembayaran;
 use App\Models\Produk;
 use App\Models\Supplier;
 use App\Models\User;
@@ -29,6 +30,15 @@ class DatabaseSeeder extends Seeder
             'nama_pajak' => 'ppn 11%',
             'satuan_pajak' => 11,
             'active' => '1',
+
+        ]);
+
+        Pembayaran::create([
+            'nama_pembayaran' => 'kredit',
+
+        ]);
+        Pembayaran::create([
+            'nama_pembayaran' => 'cash',
 
         ]);
 

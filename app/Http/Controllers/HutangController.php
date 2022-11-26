@@ -19,6 +19,7 @@ class HutangController extends Controller
         $data = [];
         $hutangs = $hutang = DB::table("hutangs")
             ->join('pembelians', 'hutangs.pembelian_id', 'pembelians.id')
+            ->where('hutangs.tahun', session('tahun'))
             ->orderBy('hutangs.bulan', 'ASC')
             ->orderBy('hutangs.tahun', 'ASC')
             ->get();
@@ -61,6 +62,7 @@ class HutangController extends Controller
     {
         $hutang = DB::table("hutangs")
             ->join('pembelians', 'hutangs.pembelian_id', 'pembelians.id')
+            ->where('hutangs.tahun', session('tahun'))
             ->orderBy('hutangs.bulan', 'ASC')
             ->orderBy('hutangs.tahun', 'ASC')
             ->get();

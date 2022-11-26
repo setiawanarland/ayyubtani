@@ -20,7 +20,7 @@ class CreateDetailPenjualansTable extends Migration
             $table->integer('qty');
             $table->string('ket', 50);
             $table->integer('disc');
-            $table->bigInteger('jumlah');
+            $table->decimal('jumlah', 15, 1);
             $table->timestamps();
         });
     }
