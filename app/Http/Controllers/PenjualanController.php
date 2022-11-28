@@ -9,6 +9,7 @@ use App\Http\Response\GeneralResponse;
 use App\Models\DetailPenjualan;
 use App\Models\DetailPenjualanTemp;
 use App\Models\Kios;
+use App\Models\LimitPutang;
 use App\Models\pajak;
 use App\Models\Piutang;
 use App\Models\Produk;
@@ -201,6 +202,29 @@ class PenjualanController extends Controller
         }
     }
 
+    public function getLimitPiutang(Request $request, $id)
+    {
+        $data = [];
+        $grand_total = floatval(preg_replace('/[^\d\.]+/', '', $request->grandTotal));
+
+        if ($request->pembayaran == 1) {
+            $penjualan = Penjualan::where('kios_id', $id)
+                ->where('status', 1)
+                ->sum('grand_total');
+
+            $limit = LimitPutang::first();
+
+            $data['total_hutang'] = $penjualan;
+            $data['tambahan_hutang'] = $grand_total;
+
+            if (($penjualan + $grand_total) > $limit->limit) {
+                return (new GeneralResponse)->default_json(false, "Limit terpenuhi", $data, 403);
+            } else {
+                return "no";
+            }
+        }
+    }
+
 
     public function store(Request $request)
     {
@@ -224,6 +248,7 @@ class PenjualanController extends Controller
         // $penjualan->ppn = intval(preg_replace("/\D/", "", $request->ppn));
         // $penjualan->grand_total = intval(preg_replace("/\D/", "", $request->grand_total));
         $penjualan->total_disc = floatval(preg_replace('/[^\d\.]+/', '', $request->total_disc));
+        $penjualan->status = $request->pembayaran;
         $penjualan->save();
 
         foreach ($request->produk_id as $key => $value) {

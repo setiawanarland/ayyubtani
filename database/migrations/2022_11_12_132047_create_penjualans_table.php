@@ -25,6 +25,7 @@ class CreatePenjualansTable extends Migration
             $table->decimal('ppn', 15, 1);
             $table->decimal('total_disc', 15, 1);
             $table->decimal('grand_total', 15, 1);
+            $table->integer('status');
             $table->timestamps();
         });
     }

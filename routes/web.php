@@ -88,6 +88,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/preview', [PenjualanController::class, 'preview'])->name('penjualan-preview');
         Route::get('/get-produk/{produkId}', [PenjualanController::class, 'getProduk'])->name('get-produk');
         Route::get('/get-stok/{produkId}', [PenjualanController::class, 'getStok'])->name('get-stok');
+        Route::get('/get-limit-piutang/{kiosId}', [PenjualanController::class, 'getLimitPiutang'])->name('get-limit-piutang');
         Route::post('/store', [PenjualanController::class, 'store'])->name('penjualan-store');
         Route::get('/daftar', [PenjualanController::class, 'daftar'])->name('daftar-penjualan');
         Route::get('/list-penjualan', [PenjualanController::class, 'listpenjualan'])->name('penjualan-list');

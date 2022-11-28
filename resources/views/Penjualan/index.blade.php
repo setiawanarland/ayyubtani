@@ -174,7 +174,7 @@
                                 </table>
 
                                 <div class="form-group" style="margin-top: 10px;">
-                                    <button class="btn btn-primary" type="submit">Save</button>
+                                    <button class="btn btn-primary savePenjualan" type="submit">Save</button>
                                     <button class="btn btn-danger btn-cancel previewPenjualan"
                                         type="">Print</button>
                                 </div>
@@ -968,6 +968,41 @@
         // format rupiah
         $('#harga_satuan, #harga_perdos').on('keyup', function() {
             $(this).val(formatRupiah($(this).val(), ''));
+        });
+
+        // get limit piutang
+        $(document).on('change', '#pembayaran', function(e) {
+            let pembayaran = $(this).val();
+            let kiosId = $('#kios').val();
+            let grandTotal = $('#grand_total').val();
+
+            (pembayaran != '1') ? $('.savePenjualan').prop("disabled", false): false;
+
+            $.ajax({
+                url: `/penjualan/get-limit-piutang/${kiosId}`,
+                type: 'GET',
+                data: {
+                    '_method': 'GET',
+                    '_token': $('meta[name="csrf-token"]').attr('content'),
+                    'pembayaran': pembayaran,
+                    'grandTotal': grandTotal,
+                },
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(error) {
+                    console.log(error.responseJSON.data);
+                    let data = error.responseJSON.data;
+                    swal.fire({
+                        title: `${error.responseJSON.message}!`,
+                        html: `Total hutang : ${number_format(data.total_hutang, 1)} <br> Hutang tambahan : ${number_format(data.tambahan_hutang, 1)}`,
+                        icon: "warning",
+                    }).then(function() {
+                        $('.savePenjualan').attr("disabled",
+                            "disabled")
+                    });
+                }
+            })
         });
 
         $(document).on('submit', "#penjualanForm[data-type='submit']", function(e) {
