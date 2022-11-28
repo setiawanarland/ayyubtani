@@ -170,7 +170,7 @@ class ProdukController extends Controller
     {
         $hasil = [];
         $data = [];
-        $produk = Produk::where('satuan', 'bks')->get();
+        $produk = Produk::where('satuan', 'btl')->get();
         foreach ($produk as $key => $value) {
             $data[] = explode(' ', $value->kemasan);
         }
@@ -184,8 +184,8 @@ class ProdukController extends Controller
             // return "ok";
             $baru = $hasil[$key];
             $dataProduk = Produk::where('id', $value->id)->first();
-            $dataProduk->satuan = "kg";
-            $dataProduk->jumlah_perdos = $baru;
+            $dataProduk->satuan = "ltr";
+            $dataProduk->qty_perdos = $baru;
             $dataProduk->save();
         }
 

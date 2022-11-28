@@ -291,7 +291,7 @@
                         },
                         {
                             data: 'qty',
-                            visible: false,
+                            // visible: false,
                             render: function(data, type, row) {
                                 return `
                                     <input type="text" class="form-control qty" id="qty" name="qty[]" value="` + data + `">
@@ -300,7 +300,7 @@
                         },
                         {
                             data: 'satuan',
-                            visible: false,
+                            // visible: false,
                             render: function(data, type, row) {
                                 return `
                                     <input type="text" class="form-control satuan" id="satuan" name="satuan[]" value="` +

@@ -77,7 +77,7 @@ class PembelianController extends Controller
     public function temp(Request $request)
     {
         $produk = Produk::where('id', $request->produk_id)->first();
-        $qty = $produk->jumlah_perdos * $request->ket;
+        $qty = $produk->qty_perdos * $request->ket;
         $hargaSatuan = $produk->harga_beli;
         $jumlah = $hargaSatuan * $qty;
         $jumlahDisc = $jumlah * $request->disc / 100;
@@ -196,7 +196,7 @@ class PembelianController extends Controller
         $produk->nama_produk = $request->nama_produk;
         $produk->kemasan = $request->kemasan;
         $produk->satuan = $request->satuan;
-        $produk->jumlah_perdos = intval($request->jumlah_perdos);
+        $produk->jumlah_perdos = floatval(preg_replace('/[^\d\.]+/', '', $request->jumlah_perdos));
         $produk->harga_beli = intval(preg_replace("/\D/", "", $request->harga_beli));
         $produk->harga_jual = intval(preg_replace("/\D/", "", $request->harga_jual));
         $produk->harga_perdos = intval(preg_replace("/\D/", "", $request->harga_perdos));
@@ -233,6 +233,7 @@ class PembelianController extends Controller
      */
     public function store(Request $request)
     {
+
         $dataPembelian = [];
         $dataPembelian['bulan'] = date('m', strtotime($request->tanggal_beli));
         $dataPembelian['tahun'] = date('Y', strtotime($request->tanggal_beli));
@@ -253,8 +254,8 @@ class PembelianController extends Controller
             $detailPembelian = new DetailPembelian();
             $detailPembelian->pembelian_id = $pembelian->id;
             $detailPembelian->produk_id = $value;
-            // $detailPembelian->qty = $request->qty[$key];
-            $detailPembelian->qty = 0;
+            $detailPembelian->qty = floatval(preg_replace('/[^\d\.]+/', '', $request->qty[$key]));
+            // $detailPembelian->qty = 0;
             $detailPembelian->ket = $request->ket[$key];
             // $detailPembelian->disc = $request->disc[$key];
             $detailPembelian->disc = 0;
@@ -264,8 +265,10 @@ class PembelianController extends Controller
 
             $produk = Produk::where('id', $value)->first();
             $stok = $produk->stok;
-            $jumlahPerdos = $produk->jumlah_perdos;
+            $qty = $produk->qty;
+            $qtyMasuk = floatval(preg_replace('/[^\d\.]+/', '', $request->qty[$key]));
             $stokMasuk = intval(preg_replace("/\D/", "", $request->ket[$key]));
+            $produk->qty = $qty + $qtyMasuk;
             $produk->stok = $stok + $stokMasuk;
             $produk->save();
         }

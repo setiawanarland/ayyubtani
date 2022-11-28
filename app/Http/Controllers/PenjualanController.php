@@ -88,9 +88,9 @@ class PenjualanController extends Controller
         }
 
         $produk = Produk::where('id', $request->produk_id)->first();
-        $qty = $produk->jumlah_perdos * $request->ket;
-        $hargaSatuan = $produk->harga_jual;
-        $jumlah = $hargaSatuan * $qty;
+        $qty = $produk->qty_perdos * $request->ket;
+        // $hargaSatuan = $produk->harga_jual;
+        $jumlah = $produk->harga_perdos * $request->ket;
         $jumlahDisc = $jumlah * $request->disc / 100;
         $jumlahAfterDisc = $jumlah - $jumlahDisc;
 
@@ -258,7 +258,7 @@ class PenjualanController extends Controller
             $detailPenjualan = new DetailPenjualan();
             $detailPenjualan->penjualan_id = $penjualan->id;
             $detailPenjualan->produk_id = $value;
-            $detailPenjualan->qty = $request->qty[$key];
+            $detailPenjualan->qty = floatval(preg_replace('/[^\d\.]+/', '', $request->qty[$key]));
             $detailPenjualan->ket = $request->ket[$key];
             $detailPenjualan->disc = $request->disc[$key];
             $detailPenjualan->jumlah = floatval(preg_replace('/[^\d\.]+/', '', $request->jumlah[$key]));
@@ -266,9 +266,12 @@ class PenjualanController extends Controller
 
             $produk = Produk::where('id', $value)->first();
             $stok = $produk->stok;
+            $qty = $produk->qty;
             $jumlahPerdos = $produk->jumlah_perdos;
-            $stokkeluar = $request->qty[$key] / $jumlahPerdos;
+            $stokkeluar = intval(preg_replace("/\D/", "", $request->ket[$key]));
+            $qtykeluar = floatval(preg_replace('/[^\d\.]+/', '', $request->qty[$key]));
             $produk->stok = $stok - $stokkeluar;
+            $produk->qty = $qty - $qtykeluar;
             $produk->save();
         }
 
