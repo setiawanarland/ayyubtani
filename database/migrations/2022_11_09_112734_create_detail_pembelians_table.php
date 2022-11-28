@@ -17,7 +17,7 @@ class CreateDetailPembeliansTable extends Migration
             $table->id();
             $table->foreignId('pembelian_id')->constrained('pembelians');
             $table->foreignId('produk_id')->constrained('produks');
-            $table->integer('qty');
+            $table->float('qty');
             $table->string('ket', 50);
             $table->integer('disc');
             $table->bigInteger('jumlah');

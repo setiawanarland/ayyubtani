@@ -17,7 +17,7 @@ class CreateDetailPembeliansTempTable extends Migration
             $table->id();
             // $table->foreignId('pembelian_temp_id')->default(1)->constrained('pembelian_temps');
             $table->foreignId('produk_id')->constrained('produks');
-            $table->integer('qty');
+            $table->float('qty');
             $table->string('ket', 50);
             $table->integer('disc');
             $table->bigInteger('jumlah');

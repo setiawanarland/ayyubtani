@@ -165,4 +165,31 @@ class ProdukController extends Controller
             return (new GeneralResponse)->default_json(false, "Error", $data, 404);
         }
     }
+
+    public function test()
+    {
+        $hasil = [];
+        $data = [];
+        $produk = Produk::where('satuan', 'bks')->get();
+        foreach ($produk as $key => $value) {
+            $data[] = explode(' ', $value->kemasan);
+        }
+
+        foreach ($data as $key => $value) {
+            // return $value[0];
+            $hasil[] = ($value[0] * $value[3]) / 1000;
+        }
+
+        foreach ($produk as $key => $value) {
+            // return "ok";
+            $baru = $hasil[$key];
+            $dataProduk = Produk::where('id', $value->id)->first();
+            $dataProduk->satuan = "kg";
+            $dataProduk->jumlah_perdos = $baru;
+            $dataProduk->save();
+        }
+
+
+        return $produk;
+    }
 }

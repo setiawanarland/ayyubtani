@@ -29,6 +29,8 @@ Route::post('/login', [AuthController::class, 'login'])->name('set-login');
 Route::get('/logout', [AuthController::class, 'logout'])->name('set-logout');
 Route::get('set-tahun', [Controller::class, 'setTahun'])->name('set-tahun');
 
+Route::get('/produk/test', [ProdukController::class, 'test'])->name('test');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

@@ -16,7 +16,7 @@ class CreateDetailPenjualanTempsTable extends Migration
         Schema::create('detail_penjualan_temps', function (Blueprint $table) {
             $table->id();
             $table->foreignId('produk_id')->constrained('produks');
-            $table->integer('qty');
+            $table->float('qty');
             $table->string('ket', 50);
             $table->integer('disc');
             $table->decimal('jumlah', 15, 1);
