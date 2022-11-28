@@ -149,6 +149,9 @@ class PenjualanController extends Controller
             ->first();
         $data['kios'] = $kios;
 
+        // get status pembayaran
+        $pembayaran = DB::table('pembayarans')->where('id', $request->pembayaran)->first();
+
         // get produks information
         $produks = [];
         foreach ($request->produk_id as $key => $value) {
@@ -172,7 +175,7 @@ class PenjualanController extends Controller
         // set data
         $data['invoice'] = $request->invoice;
         $data['tanggal_jual'] = $request->tanggal_jual;
-        $data['pembayaran'] = $request->pembayaran;
+        $data['pembayaran'] = $pembayaran->nama_pembayaran;
         $data['jatuh_tempo'] = $jatuhTempo;
         $data['dpp'] = $request->dpp;
         $data['ppn'] = $request->ppn;
