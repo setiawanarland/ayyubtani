@@ -83,10 +83,10 @@ class PembelianController extends Controller
         $jumlahDisc = $jumlah * $request->disc / 100;
         $jumlahAfterDisc = $jumlah - $jumlahDisc;
 
-        $dataDetail = DetailPembelianTemp::where('produk_id', $request->produk_id)->first();
-        if ($dataDetail != null) {
-            return (new GeneralResponse)->default_json(false, "Barang sudah ada!", null, 422);
-        }
+        // $dataDetail = DetailPembelianTemp::where('produk_id', $request->produk_id)->first();
+        // if ($dataDetail != null) {
+        //     return (new GeneralResponse)->default_json(false, "Barang sudah ada!", null, 422);
+        // }
 
         $data = new DetailPembelianTemp();
         $data->produk_id = $request->produk_id;
