@@ -1,5 +1,8 @@
 @extends('layout.template')
-
+@php
+    setlocale(LC_ALL, 'IND');
+    setlocale(LC_TIME, 'id_ID');
+@endphp
 @section('content')
     <div class="main-content-inner">
         <div class="row">
@@ -24,6 +27,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {{-- @dd($data['data']) --}}
                                     @if (isset($data['data']))
                                         @foreach ($data['data'] as $key => $value)
                                             @foreach ($value['detail'] as $index => $val)
@@ -51,9 +55,11 @@
                                             @endforeach
                                             <tr class="text-uppercase"
                                                 style="background-color: {{ $value['sisa'] != 0 ? 'lightsalmon' : 'green' }} ">
-                                                <th colspan="2">total hutang bulan {{ $key }}</th>
+                                                <th colspan="2">total hutang bulan
+                                                    {{ strftime('%B', mktime(0, 0, 0, $key, 10)) }}</th>
                                                 <th class="text-right">{{ number_format($value['debet']) }}</th>
-                                                <th colspan="3">total sisa bulan {{ $key }}</th>
+                                                <th colspan="3">total sisa bulan
+                                                    {{ strftime('%B', mktime(0, 0, 0, $key, 10)) }}</th>
                                                 <th class="text-right">{{ number_format($value['sisa']) }}</th>
                                                 @if ($value['sisa'] != 0)
                                                     <th>belum lunas</th>

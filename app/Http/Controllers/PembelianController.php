@@ -197,6 +197,7 @@ class PembelianController extends Controller
         $produk->kemasan = $request->kemasan;
         $produk->satuan = $request->satuan;
         $produk->jumlah_perdos = floatval(preg_replace('/[^\d\.]+/', '', $request->jumlah_perdos));
+        $produk->qty_perdos = floatval(preg_replace('/[^\d\.]+/', '', $request->qty_perdos));
         $produk->harga_beli = intval(preg_replace("/\D/", "", $request->harga_beli));
         $produk->harga_jual = intval(preg_replace("/\D/", "", $request->harga_jual));
         $produk->harga_perdos = intval(preg_replace("/\D/", "", $request->harga_perdos));

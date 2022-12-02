@@ -67,7 +67,7 @@
                                 <div class="col-sm-3 col-md-3 my-3">
                                     <label class="" for="supplier">Supplier</label>
                                     <select class="form-control" id="supplier" name="supplier">
-                                        <option value="null">Pilih Supplier</option>
+                                        {{-- <option value="null">Pilih Supplier</option> --}}
                                         @foreach ($supplier as $index => $value)
                                             <option value="{{ $value->id }}">{{ Str::upper($value->nama_supplier) }}
                                             </option>
@@ -191,6 +191,12 @@
                         <div class="form-group" style="margin-bottom: 0px;">
                             <label for="jumlah_perdos" class="col-form-label">Jumlah Perdos</label>
                             <input class="form-control" type="text" name="jumlah_perdos" id="jumlah_perdos"
+                                value="0">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0px;">
+                            <label for="qty_perdos" class="col-form-label">Qty Perdos</label>
+                            <input class="form-control" type="text" name="qty_perdos" id="qty_perdos"
                                 value="0">
                             <div class="invalid-feedback"></div>
                         </div>
@@ -730,7 +736,7 @@
                             dataRow.destroy();
                             dataRow.init();
 
-                            $('#supplier').val('null').trigger('change');
+                            // $('#supplier').val('null').trigger('change');
                             $('#produk').val('null').trigger('change');
                             $('#ket').val(0);
                         } else {
@@ -792,7 +798,7 @@
                                         dataRow.destroy();
                                         dataRow.init();
 
-                                        $('#supplier').val('null').trigger('change');
+                                        // $('#supplier').val('null').trigger('change');
                                         $('#produk').val('null').trigger('change');
                                         $('#ket').val(0);
                                     });
@@ -838,7 +844,7 @@
                                         dataRow.destroy();
                                         dataRow.init();
 
-                                        $('#supplier').val('null').trigger('change');
+                                        // $('#supplier').val('null').trigger('change');
                                         $('#produk').val('null').trigger('change');
                                         $('#ket').val(0);
                                     });
