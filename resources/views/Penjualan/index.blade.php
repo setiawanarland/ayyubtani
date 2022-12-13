@@ -639,7 +639,7 @@
                                     <div class="flex-item-left">
                                         <h4>transfer ke rekening:</h4>
                                         <p>CV. AYYUB TANI</p>
-                                        <p>BANK BRI : 025201001055504</p>
+                                        <p>BANK BRI : 025201001055304</p>
                                         <p style="margin-top: 20px; text-align:center;">Tanda terima</p>
                                         <p style="margin-top: 50px; text-align:center;">_____________</p>
                                         </div>
