@@ -564,7 +564,7 @@
                                                 <th colspan="2" style="width: 50%; !important">Nama Produk</th>
                                                 <th style="width: 5%;">Qty</th>
                                                 <th style="width: 1%; !important">Stn.</th>
-                                                <th style="width: 10%;">Harga Stn. (PPN 11%)</th>
+                                                <th style="width: 10%;">Harga Stn.</th>
                                                 <th style="width: 5%;">Ket.</th>
                                                 <th style="width: 5%;">Disc.</th>
                                                 <th style="width: 10%;">Jumlah</th>
