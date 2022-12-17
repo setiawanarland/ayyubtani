@@ -262,7 +262,7 @@ class PenjualanController extends Controller
             $detailPenjualan->produk_id = $value;
             $detailPenjualan->qty = floatval(preg_replace('/[^\d\.]+/', '', $request->qty[$key]));
             $detailPenjualan->ket = $request->ket[$key];
-            $detailPenjualan->disc = $request->disc[$key];
+            $detailPenjualan->disc = floatval(preg_replace('/[^\d\.]+/', '', $request->disc[$key]));
             $detailPenjualan->jumlah = floatval(preg_replace('/[^\d\.]+/', '', $request->jumlah[$key]));
             $detailPenjualan->save();
 
@@ -402,7 +402,7 @@ class PenjualanController extends Controller
 
     public function getListEditPenjualan($id)
     {
-        $data = DetailPenjualan::select('detail_penjualans.*', 'produks.nama_produk', 'produks.kemasan', 'produks.satuan', 'produks.harga_jual', 'produks.jumlah_perdos')
+        $data = DetailPenjualan::select('detail_penjualans.*', 'produks.nama_produk', 'produks.kemasan', 'produks.satuan', 'produks.harga_jual', 'harga_perdos', 'produks.jumlah_perdos')
             ->join('produks', 'detail_penjualans.produk_id', 'produks.id')
             ->where('detail_penjualans.penjualan_id', $id)
             ->get();
@@ -461,6 +461,7 @@ class PenjualanController extends Controller
     public function update(Request $request, Penjualan $penjualan)
     {
         $penjualan = Penjualan::where('id', $request->id)->first();
+        $penjualan->tanggal_jual = date('Y-m-d', strtotime($request->tanggal_jual));
         $penjualan->grand_total = intval(preg_replace("/\D/", "", $request->grand_total));
         $penjualan->save();
 
@@ -471,7 +472,7 @@ class PenjualanController extends Controller
 
             $detailPenjualan->qty = $request->qty[$key];
             $detailPenjualan->ket = $request->ket[$key];
-            $detailPenjualan->disc = $request->disc[$key];
+            $detailPenjualan->disc = floatval(preg_replace('/[^\d\.]+/', '', $request->disc[$key]));
             $detailPenjualan->jumlah = intval(preg_replace("/\D/", "", $request->jumlah[$key]));
             $detailPenjualan->save();
 

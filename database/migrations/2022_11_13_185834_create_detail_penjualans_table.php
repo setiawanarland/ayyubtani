@@ -19,7 +19,8 @@ class CreateDetailPenjualansTable extends Migration
             $table->foreignId('produk_id')->constrained('produks');
             $table->float('qty');
             $table->string('ket', 50);
-            $table->integer('disc');
+            // $table->integer('disc');
+            $table->decimal('disc', 15, 1);
             $table->decimal('jumlah', 15, 1);
             $table->timestamps();
         });

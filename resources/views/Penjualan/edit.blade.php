@@ -108,9 +108,10 @@
                                             <th width="25%">Nama Produk</th>
                                             <th width="10%">Qty</th>
                                             <th width="10%">Satuan</th>
-                                            <th width="15%">Harga Stn. <br> ({{ $pajak->nama_pajak }})</th>
+                                            {{-- <th width="15%">Harga Stn. <br> ({{ $pajak->nama_pajak }})</th> --}}
+                                            <th width="15%">Harga</th>
                                             <th width="10%">Ket.</th>
-                                            <th width="8%">Disc.</th>
+                                            <th width="15%">Disc.</th>
                                             <th width="15%">Jumlah</th>
                                             <th>#</th>
                                         </tr>
@@ -150,8 +151,8 @@
                                             <th>GRAND TOTAL</th>
                                             <th style="padding-left:130px; padding-right:3px;">:</th>
                                             <th class="grand_total">
-                                                <input type="text" class="form-control" id="grand_total"
-                                                    name="grand_total" value="">
+                                                <input type="text" class="form-control text-right text-bold"
+                                                    id="grand_total" name="grand_total" value="">
                                                 <input type="hidden" class="form-control old_grandtotal"
                                                     id="old_grandtotal" name="old_grandtotal" value="0">
                                                 <input type="hidden" class="form-control margin_grandtotal"
@@ -208,17 +209,21 @@
                             ppn = 0;
                             grand_total = 0;
                             data.data.map(function(data) {
-                                grand_total += data.jumlah;
+                                console.log(parseFloat(data.jumlah));
+                                grand_total += parseFloat(data.jumlah);
                                 satuan_pajak = data.satuan_pajak;
                             });
-                            ppn = grand_total * satuan_pajak / 100;
-                            dpp = grand_total - ppn;
+
+                            dpp = grand_total / 1.1;
+                            ppn = grand_total - dpp;
                             total_disc = 0;
-                            $('#dpp').val(formatRupiah(dpp.toString(), ''));
-                            $('#ppn').val(formatRupiah(ppn.toString(), ''));
+                            $('#dpp').val(number_format(dpp, 1));
+                            $('#ppn').val(number_format(ppn, 1));
+                            $('#grand_total').val(number_format(grand_total, 1));
+                            // $('#dpp').val(formatRupiah(dpp.toString(), ''));
+                            // $('#ppn').val(formatRupiah(ppn.toString(), ''));
                             $('#total_disc').val(formatRupiah(total_disc.toString(), ''));
-                            $('#grand_total').val(formatRupiah(grand_total.toString(), ''));
-                            $('#old_grandtotal').val(grand_total);
+                            // $('#grand_total').val(formatRupiah(grand_total.toString(), ''));
                             return data.data;
                         },
                     },
@@ -246,8 +251,7 @@
                             data: 'qty',
                             render: function(data, type, row) {
                                 return `
-                                    <input type="text" class="form-control qty" id="qty" name="qty[]" value="` +
-                                    formatRupiah(data.toString(), '') + `">
+                                    <input type="text" class="form-control qty" id="qty" name="qty[]" value="` + data + `">
                                 `;
                             }
                         },
@@ -261,11 +265,11 @@
                             }
                         },
                         {
-                            data: 'harga_jual',
+                            data: 'harga_perdos',
                             render: function(data, type, row) {
                                 return `
                                     <input type="text" class="form-control harga_jual" id="harga_jual" name="harga_jual[]" value="` +
-                                    formatRupiah(data.toString(), '') + `">
+                                    number_format(data, 1) + `">
                                 `;
                             }
                         },
@@ -287,7 +291,7 @@
                             render: function(data, type, row) {
                                 return `
                                 <input type="text" class="form-control disc" id="disc" name="disc[]" value="` +
-                                    data + `">
+                                    number_format(data, 1) + `">
                                 `;
                             }
                         },
@@ -297,7 +301,7 @@
 
                                 return `
                                     <input type="text" class="form-control jumlah" id="jumlah" name="jumlah[]" value="` +
-                                    formatRupiah(data.toString(), '') + `">
+                                    number_format(data, 1) + `">
                                 `;
                             }
                         },
@@ -971,6 +975,34 @@
             let marginGrandtotal = newGrandtotal - oldGrandtotal;
             $('#margin_grandtotal').val(marginGrandtotal);
         });
+
+
+        function number_format(number, decimals, decPoint, thousandsSep) {
+            number = (number + '').replace(/[^0-9+\-Ee.]/g, '')
+            var n = !isFinite(+number) ? 0 : +number
+            var prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
+            var sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep
+            var dec = (typeof decPoint === 'undefined') ? '.' : decPoint
+            var s = ''
+
+            var toFixedFix = function(n, prec) {
+                var k = Math.pow(10, prec)
+                return '' + (Math.round(n * k) / k)
+                    .toFixed(prec)
+            }
+
+            // @todo: for IE parseFloat(0.55).toFixed(0) = 0;
+            s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.')
+            if (s[0].length > 3) {
+                s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep)
+            }
+            if ((s[1] || '').length < prec) {
+                s[1] = s[1] || ''
+                s[1] += new Array(prec - s[1].length + 1).join('0')
+            }
+
+            return s.join(dec)
+        }
 
 
         $(document).ready(function() {
