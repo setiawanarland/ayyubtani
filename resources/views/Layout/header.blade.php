@@ -29,7 +29,8 @@
                                      $tahun = session()->has('tahun') ? (int) session('tahun') : (int) date('Y');
                                      //  return $tahun;
                                  @endphp
-                                 @for ($i = $tahun - 3; $i <= $tahun + 3; $i++)
+                                 {{-- @for ($i = $tahun - 6; $i <= $tahun + 6; $i++) --}}
+                                 @for ($i = $tahun - 6; $i <= $tahun; $i++)
                                      <a class="dropdown-item"
                                          href="{{ route('set-tahun', ['tahun' => $i]) }}">{{ $i }}</a>
                                  @endfor

@@ -59,7 +59,7 @@ class PenjualanController extends Controller
 
     public function getList()
     {
-        $temp = DetailPenjualanTemp::select('detail_penjualan_temps.*', 'produks.nama_produk', 'produks.kemasan', 'produks.satuan', 'produks.harga_jual')
+        $temp = DetailPenjualanTemp::select('detail_penjualan_temps.*', 'produks.nama_produk', 'produks.kemasan', 'produks.satuan', 'produks.harga_jual', 'harga_perdos')
             ->join('produks', 'detail_penjualan_temps.produk_id', 'produks.id')
             ->get();
 
@@ -90,14 +90,16 @@ class PenjualanController extends Controller
         $produk = Produk::where('id', $request->produk_id)->first();
         $qty = $produk->qty_perdos * $request->ket;
         // $hargaSatuan = $produk->harga_jual;
-        $jumlah = $produk->harga_perdos * $request->ket;
-        $jumlahDisc = $jumlah * $request->disc / 100;
-        $jumlahAfterDisc = $jumlah - $jumlahDisc;
+        // $jumlah = $produk->harga_perdos * $request->ket;
+        $jumlah = $produk->harga_perdos;
+        $jumlahDisc = $request->disc;
+        $jumlahAfterDisc = ($jumlah - $jumlahDisc) * $request->ket;
+        // return "$jumlah, $jumlahDisc, $jumlahAfterDisc";
 
         $dataDetail = DetailPenjualanTemp::where('produk_id', $request->produk_id)->first();
-        if ($dataDetail != null) {
-            return (new GeneralResponse)->default_json(false, "Barang sudah ada!", null, 422);
-        }
+        // if ($dataDetail != null) {
+        //     return (new GeneralResponse)->default_json(false, "Barang sudah ada!", null, 422);
+        // }
 
         $data = new DetailPenjualanTemp();
         $data->produk_id = $request->produk_id;
@@ -432,7 +434,7 @@ class PenjualanController extends Controller
         $dataDetail = DetailPenjualan::where('produk_id', $request->produk_id)
             ->where('penjualan_id', $request->penjualan_id)->first();
         if ($dataDetail != null) {
-            return (new GeneralResponse)->default_json(false, "Barang sudah ada!", null, 422);
+            return (new GeneralResponse)->default_json(false, "Produk sudah ada!", null, 422);
         }
 
         $data = new DetailPenjualan();

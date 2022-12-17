@@ -29,7 +29,7 @@
                             @csrf
                             <div class="form-row align-items-center">
 
-                                <div class="col-sm-5 my-1">
+                                <div class="col-sm-4 my-1">
                                     <label class="" for="produk">Produk</label>
                                     <select class="form-control" id="produk" name="produk">
                                         <option value="null">Pilih Produk</option>
@@ -42,13 +42,13 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-3 col-md-1 my-1">
-                                    <label class="" for="qty">Qty</label>
+                                    <label class="" for="qty">Qty (Dos)</label>
                                     <input type="number" class="form-control qty-jual" id="ket" name="ket"
                                         value="0" min="0">
                                 </div>
-                                <div class="col-sm-3 col-md-1 my-1">
-                                    <label class="" for="disc">Disc</label>
-                                    <input type="number" class="form-control" id="disc" name="disc" value="0"
+                                <div class="col-sm-3 col-md-2 my-1">
+                                    <label class="" for="disc">Disc.</label>
+                                    <input type="text" class="form-control" id="disc" name="disc" value="0"
                                         min="0">
                                 </div>
                                 <div class="col-sm-3 col-md-2 my-1">
@@ -124,9 +124,10 @@
                                             <th width="25%">Nama Produk</th>
                                             <th width="10%">Qty</th>
                                             <th width="10%">Satuan</th>
-                                            <th width="15%">Harga Stn. <br> ({{ $pajak->nama_pajak }})</th>
+                                            {{-- <th width="15%">Harga Stn. <br> ({{ $pajak->nama_pajak }})</th> --}}
+                                            <th width="15%">Harga</th>
                                             <th width="10%">Ket.</th>
-                                            <th width="8%">Disc.</th>
+                                            <th width="15%">Disc.</th>
                                             <th width="15%">Jumlah</th>
                                             <th>#</th>
                                         </tr>
@@ -267,11 +268,11 @@
                             }
                         },
                         {
-                            data: 'harga_jual',
+                            data: 'harga_perdos',
                             render: function(data, type, row) {
                                 return `
                                     <input type="text" class="form-control harga_beli" id="harga_beli" name="harga_beli[]" value="` +
-                                    formatRupiah(data.toString(), '') + `">
+                                    number_format(data, 1) + `">
                                 `;
                             }
                         },
@@ -290,7 +291,7 @@
                             render: function(data, type, row) {
                                 return `
                                 <input type="text" class="form-control disc" id="disc" name="disc[]" value="` +
-                                    data + `">
+                                    number_format(data, 1) + `">
                                 `;
                             }
                         },
@@ -564,7 +565,7 @@
                                                 <th colspan="2" style="width: 50%; !important">Nama Produk</th>
                                                 <th style="width: 5%;">Qty</th>
                                                 <th style="width: 1%; !important">Stn.</th>
-                                                <th style="width: 10%;">Harga Stn.</th>
+                                                <th style="width: 10%;">Harga</th>
                                                 <th style="width: 5%;">Ket.</th>
                                                 <th style="width: 5%;">Disc.</th>
                                                 <th style="width: 10%;">Jumlah</th>
@@ -583,9 +584,8 @@
                                                 <td style="width: 5%;text-align:center">` + value.qty + `</td>
                                                 <td style="width: 5%;text-align:center">` + value.satuan
                                     .toUpperCase() + `</td>
-                                                <td style="width: 10%;text-align:right">` + formatRupiah(value
-                                        .harga_jual.toString(),
-                                        '') + `</td>
+                                                <td style="width: 10%;text-align:right">` + number_format(value
+                                        .harga_perdos, 1) + `</td>
                                                 <td style="width: 5%;text-align:center">` + value.ket.toUpperCase() + `</td>
                                                 <td style="width: 5%;text-align:center">` + value.disc + `</td>
                                                 <td style="width: 10%;text-align:right">` + value.jumlah + `</td>
@@ -693,7 +693,7 @@
             let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
             let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
             let ket = $('#ket').val();
-            let disc = $('#disc').val();
+            let disc = parseInt($('#disc').val().replace(/[^0-9]/g, ''));
 
             if (produk_id == 'null') {
                 swal.fire({
@@ -738,6 +738,7 @@
                             $('#kios').val('null').trigger('change');
                             $('#produk').val('null').trigger('change');
                             $('#ket').val(0);
+                            $('#disc').val(0);
                             $('#harga_satuan').val(0);
                             $('#harga_perdos').val(0);
                         } else {
@@ -943,11 +944,26 @@
             })
         });
 
-        $(document).on('keyup', '#harga_satuan', function(e) {
+        $(document).on('keyup', '#disc', function(e) {
+            $(this).val(formatRupiah($(this).val(), ''));
+
             let jumlahPerdos = $('#jumlah_perdos').val();
+            let disc = parseInt($('#disc').val().replace(/[^0-9]/g, ''));
             let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
             let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
-            hargaPerdos = hargaSatuan * jumlahPerdos;
+
+            hargaPerdos = (hargaSatuan * jumlahPerdos) - disc;
+
+            $('#harga_perdos').val(formatRupiah(hargaPerdos.toString(), ''));
+
+        });
+
+        $(document).on('keyup', '#harga_satuan', function(e) {
+            let jumlahPerdos = $('#jumlah_perdos').val();
+            let disc = parseInt($('#disc').val().replace(/[^0-9]/g, ''));
+            let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
+            let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
+            hargaPerdos = (hargaSatuan * jumlahPerdos) - disc;
 
             $('#harga_perdos').val(formatRupiah(hargaPerdos.toString(), ''));
             console.log('harga satuan');
