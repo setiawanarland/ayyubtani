@@ -204,7 +204,7 @@ class PembelianController extends Controller
         $produk->save();
         // return $produk;
 
-        $qty = $request->jumlah_perdos * $request->stok_masuk;
+        $qty = $request->qty_perdos * $request->stok_masuk;
         $hargaSatuan = intval(preg_replace("/\D/", "", $request->harga_beli));
         $jumlah = $hargaSatuan * $qty;
         $jumlahDisc = $jumlah * intval(preg_replace("/\D/", "", $request->disc_harga)) / 100;
