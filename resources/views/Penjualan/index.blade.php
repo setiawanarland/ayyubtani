@@ -448,32 +448,34 @@
                             console.log(data.produks.length);
 
                             var html =
-                                `
-                                                                                                                                                                                    <style>
-                                                                                                                                                                                        @print {
-                                                                                                                                                                                            @page :footer {
-                                                                                                                                                                                                display: none
-                                                                                                                                                                                            }
-                                                                                                                                                                                        
-                                                                                                                                                                                            @page :header {
-                                                                                                                                                                                                display: none
-                                                                                                                                                                                            }
-                                                                                                                                                                                        }
-
-                                                                                                                                                                                        
-                                                                                                                                                                                        #item {
-                                                                                                                                                                                            border-collapse: collapse;
-                                                                                                                                                                                        }
-                                                                                                                                                                                        .empty-list td{
-                                                                                                                                                                                           height: 20px !important;
-                                                                                                                                                                                        }
-
-                                                                                                                                                                                        .flex-container {
-                                                                                                                                                                                        display: flex;
-                                                                                                                                                                                        height: 200px;
-                                                                                                                                                                                        flex-direction: row;
-                                                                                                                                                                                        text-align: left;
-                                                                                                                                                                                        }
+                                `<style>
+                                    @print {
+                                        @page :footer {
+                                            display: none
+                                        }
+                                        @page :header {
+                                            display: none
+                                        }
+                                    }
+                                    
+                                    body {
+                                        font-family: Verdana, sans-serif;
+                                    }
+                                    
+                                    #item {
+                                        border-collapse: collapse;
+                                    }
+                                    
+                                    .empty-list td{
+                                        height: 20px !important;
+                                    }
+                                    
+                                    .flex-container {
+                                        display: flex;
+                                        height: 200px;
+                                        flex-direction: row;
+                                        text-align: left;
+                                    }
 
                                                                                                                                                                                         .flex-container h4 {
                                                                                                                                                                                             font-size: 20px;
@@ -533,8 +535,8 @@
                                                                                                                                                                                         
 
                                                                                                                                                                                         <tr>
-                                                                                                                                                                                            <td colspan="2">NO. INVOICE </td>
-                                                                                                                                                                                            <td colspan="4">: ` +
+                                                                                                                                                                                            <td colspan="3">NO. INVOICE </td>
+                                                                                                                                                                                            <td colspan="3">: ` +
                                 data
                                 .invoice
                                 .toUpperCase() +
@@ -547,8 +549,8 @@
                                 `</td>
                                                                                                                                                                                         </tr>
                                                                                                                                                                                         <tr>
-                                                                                                                                                                                            <td colspan="2">PEMBAYARAN </td>
-                                                                                                                                                                                            <td colspan="4">: ` +
+                                                                                                                                                                                            <td colspan="3">PEMBAYARAN </td>
+                                                                                                                                                                                            <td colspan="3">: ` +
                                 data
                                 .pembayaran
                                 .toUpperCase() +
@@ -566,26 +568,21 @@
                                 `</td>
                                                                                                                                                                                         </tr>
                                                                                                                                                                                         <tr>
-                                                                                                                                                                                            <td colspan="2">JATUH TEMPO</td>
-                                                                                                                                                                                            <td colspan="4">: ` +
+                                                                                                                                                                                            <td colspan="3">JATUH TEMPO</td>
+                                                                                                                                                                                            <td colspan="3">: ` +
                                 data
                                 .jatuh_tempo +
                                 `</td>
-                                                                                                                                                                                            <td colspan="3">SULAWESI SELATAN</td>
-                                                                                                                                                                                        </tr>
-                                                                                                                                                                                        <tr>
-                                                                                                                                                                                            <td colspan="2" style="width: 2%;"></td>
-                                                                                                                                                                                            <td colspan="4"></td>
-                                                                                                                                                                                            <td>NPWP</td>
-                                                                                                                                                                                            <td colspan="2">: ` +
+                                <td>NPWP : ` +
                                 data
                                 .kios
                                 .npwp +
                                 `</td>
                                                                                                                                                                                         </tr>
+                      
                                                                                                                                                                                         <tr>
-                                                                                                                                                                                            <td colspan="2" style="padding-top:-20px;padding-bottom: 5px;width: 2%;"></td>
-                                                                                                                                                                                            <td colspan="4" style="width: 55%;padding-top:-20px;padding-bottom: 5px;"></td>
+                                                                                                                                                                                            <td colspan="3" style="padding-top:-20px;padding-bottom: 5px;width: 2%;"></td>
+                                                                                                                                                                                            <td colspan="3" style="width: 55%;padding-top:-20px;padding-bottom: 5px;"></td>
                                                                                                                                                                                         </tr>
                                                                                                                                                                                     </table>
 
