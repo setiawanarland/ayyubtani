@@ -268,7 +268,7 @@
                             }
                         },
                         {
-                            data: 'harga_perdos',
+                            data: 'harga_jual',
                             render: function(data, type, row) {
                                 return `
                                     <input type="text" class="form-control harga_beli" id="harga_beli" name="harga_beli[]" value="` +
