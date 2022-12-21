@@ -398,6 +398,7 @@ class PenjualanController extends Controller
                 $produk = Produk::where('id', $val->produk_id)->first();
                 $val->nama_produk = $produk->nama_produk;
                 $val->kemasan = $produk->kemasan;
+                $val->harga_jual = $produk->harga_jual;
                 $val->harga_perdos = $produk->harga_perdos;
                 $val->satuan = $produk->satuan;
             }
