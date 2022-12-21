@@ -88,6 +88,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/tempdelete/{id}', [PenjualanController::class, 'tempDelete'])->name('temp-delete');
         Route::delete('/tempreset', [PenjualanController::class, 'tempReset'])->name('temp-reset');
         Route::post('/preview', [PenjualanController::class, 'preview'])->name('penjualan-preview');
+        Route::get('/print', [PenjualanController::class, 'print'])->name('penjualan-print');
         Route::get('/get-produk/{produkId}', [PenjualanController::class, 'getProduk'])->name('get-produk');
         Route::get('/get-stok/{produkId}', [PenjualanController::class, 'getStok'])->name('get-stok');
         Route::get('/get-limit-piutang/{kiosId}', [PenjualanController::class, 'getLimitPiutang'])->name('get-limit-piutang');

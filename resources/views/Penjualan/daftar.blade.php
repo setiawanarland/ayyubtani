@@ -101,6 +101,7 @@
                             return `
                         <button type="button" class="btn btn-primary btn-sm penjualanShow" data-toggle="modal" data-target="#penjualanModal" data-id="${row.id}"><i class="fa fa-eye"></i></button>
                         <button type="button" class="btn btn-warning btn-sm btn-edit penjualanEdit" data-id="${row.id}"><i class="fa fa-edit"></i></button>
+                        <button type="button" class="btn btn-danger btn-sm btn-print penjualanPrint" data-id="${row.id}"><i class="fa fa-print"></i></button>
                         `;
                             //         <a role="button" href="javascript:;" type="button" data-id="${row.id}" class="btn btn-warning btn-sm pembelianUpdate"><i class="fa fa-edit"></i></a>
                             //         <button type="button" class="btn btn-danger btn-sm btn-delete pembelianDelete" data-id="${row.id}"><i class="fa fa-trash"></i></button>
@@ -128,6 +129,316 @@
     }();
 
 
+    // axiocall
+    var AxiosCall = function() {
+        return {
+            print: function(_url, _data, _element) {
+                axios.post(_url, _data)
+                    .then(function(res) {
+                        var data = res.data;
+                        console.log(data);
+                        console.log(data.produks.length);
+
+                        var html =
+                            `
+                                                                                                        <style>
+                                                                                                            @print {
+                                                                                                                @page :footer {
+                                                                                                                    display: none
+                                                                                                                }
+                                                                                                            
+                                                                                                                @page :header {
+                                                                                                                    display: none
+                                                                                                                }
+                                                                                                            }
+
+                                                                                                            #item tr th,
+                                                                                                            #item tr td{
+                                                                                                                border-top: 1px solid black;
+                                                                                                                border-right: 1px solid black;
+                                                                                                                border-bottom: 1px solid black;
+                                                                                                                border-left: 1px solid black;
+                                                                                                            }
+                                                                                                            #item {
+                                                                                                                border-collapse: collapse;
+                                                                                                            }
+                                                                                                            .empty-list td{
+                                                                                                               height: 20px !important;
+                                                                                                            }
+
+                                                                                                            .flex-container {
+                                                                                                            display: flex;
+                                                                                                            height: 200px;
+                                                                                                            flex-direction: row;
+                                                                                                            text-align: left;
+                                                                                                            }
+
+                                                                                                            .flex-container h4 {
+                                                                                                                font-size: 20px;
+                                                                                                                margin-top:15px;
+                                                                                                                margin-bootom:0;
+                                                                                                                text-transform: uppercase;
+                                                                                                            }
+
+                                                                                                            .flex-container p {
+                                                                                                                margin: 0;
+                                                                                                            }
+
+                                                                                                            .flex-container span {
+                                                                                                                margin-top: 100px;
+                                                                                                            }
+
+                                                                                                            .flex-item-left {
+                                                                                                            /* background-color: #f1f1f1; */
+                                                                                                            padding: 10px;
+                                                                                                            flex: 50%;
+                                                                                                            }
+
+                                                                                                            .flex-item-right {
+                                                                                                            /* background-color: dodgerblue; */
+                                                                                                            padding: 12px;
+                                                                                                            flex: 50%;
+                                                                                                            }
+
+                                                                                                            /* Responsive layout - makes a one column-layout instead of two-column layout */
+                                                                                                            // @media (max-width: 800px) {
+                                                                                                            // .flex-container {
+                                                                                                            //     flex-direction: column;
+                                                                                                            // }
+                                                                                                            }
+                                                                                                        </style>
+
+                                                                                                        <table id="" class="text-cente" style="width: 100%;">
+                                                                                                            <tr>
+                                                                                                                <td colspan="6" style="font-size: 30px;">
+                                                                                                                    CV. AYYUB TANI
+                                                                                                                </td>
+                                                                                                                <td colspan="3">
+                                                                                                                    Jeneponto, ` +
+                            data
+                            .tanggal_jual +
+                            `
+                                                                                                                </td>
+                                                                                                            </tr>
+                                                                                                            <tr>
+                                                                                                                <td colspan="6" style="padding-bottom: 5px;">SALAMATARA, KARELOE BONTORAMBA JENEPONTO</td>
+                                                                                                                <td colspan="3" style="padding-bottom:5px">Kepada Yth,</td>
+                                                                                                            </tr>
+                                                                                                            
+
+                                                                                                            <tr>
+                                                                                                                <td colspan="2">NO. INVOICE </td>
+                                                                                                                <td colspan="4">: ` +
+                            data
+                            .invoice
+                            .toUpperCase() +
+                            `</td>
+                                                                                                                <td colspan="3">` +
+                            data
+                            .kios
+                            .nama_kios
+                            .toUpperCase() +
+                            `</td>
+                                                                                                            </tr>
+                                                                                                            <tr>
+                                                                                                                <td colspan="2">PEMBAYARAN </td>
+                                                                                                                <td colspan="4">: ` +
+                            data
+                            .pembayaran
+                            .toUpperCase() +
+                            `</td>
+                                                                                                                <td colspan="3">` +
+                            data
+                            .kios
+                            .alamat
+                            .toUpperCase() +
+                            `, ` +
+                            data
+                            .kios
+                            .kabupaten
+                            .toUpperCase() +
+                            `</td>
+                                                                                                            </tr>
+                                                                                                            <tr>
+                                                                                                                <td colspan="2">JATUH TEMPO</td>
+                                                                                                                <td colspan="4">: ` +
+                            data
+                            .jatuh_tempo +
+                            `</td>
+                                                                                                                <td colspan="3">SULAWESI SELATAN</td>
+                                                                                                            </tr>
+                                                                                                            <tr>
+                                                                                                                <td colspan="2" style="width: 2%;"></td>
+                                                                                                                <td colspan="4"></td>
+                                                                                                                <td>NPWP</td>
+                                                                                                                <td colspan="2">: ` +
+                            data
+                            .kios
+                            .npwp + `</td>
+                                                                                                            </tr>
+                                                                                                            <tr>
+                                                                                                                <td colspan="2" style="padding-top:-20px;padding-bottom: 5px;width: 2%;"></td>
+                                                                                                                <td colspan="4" style="width: 55%;padding-top:-20px;padding-bottom: 5px;"></td>
+                                                                                                            </tr>
+                                                                                                        </table>
+                                                                                                        
+                                                                                                        <table id="item" width="100%">
+                                                                                                            <tr class="">
+                                                                                                                <th style="width: 1%;">No.</th>
+                                                                                                                <th colspan="2" style="width: 50%; !important">Nama Produk</th>
+                                                                                                                <th style="width: 5%;">Qty</th>
+                                                                                                                <th style="width: 1%; !important">Stn.</th>
+                                                                                                                <th style="width: 10%;">Harga</th>
+                                                                                                                <th style="width: 5%;">Ket.</th>
+                                                                                                                <th style="width: 5%;">Disc.</th>
+                                                                                                                <th style="width: 10%;">Jumlah</th>
+                                                                                                                </tr>
+                                                                                                                `;
+                        data.produks.map(function(value, index) {
+
+                            no = index + 1;
+                            html +=
+                                `
+                                                                                                <tr class="">
+                                                                                                                <td style="width: 1%;text-align:center">` +
+                                no +
+                                `</td>
+                                                                                                                <td colspan="2" style="width: 43%;">` +
+                                value.nama_produk.toUpperCase() + " " + value.kemasan
+                                .toUpperCase() +
+                                `</td>
+                                                                                                                <td style="width: 5%;text-align:center">` +
+                                value
+                                .qty +
+                                `</td>
+                                                                                                                <td style="width: 5%;text-align:center">` +
+                                value
+                                .satuan
+                                .toUpperCase() +
+                                `</td>
+                                                                                                                <td style="width: 10%;text-align:right">` +
+                                number_format(
+                                    value
+                                    .harga_perdos, 1) +
+                                `</td>
+                                                                                                                <td style="width: 5%;text-align:center">` +
+                                value
+                                .ket
+                                .toUpperCase() +
+                                `</td>
+                                                                                                                <td style="width: 5%;text-align:center">` +
+                                value
+                                .disc +
+                                `</td>
+                                                                                                                <td style="width: 10%;text-align:right">` +
+                                value
+                                .jumlah + `</td>
+                                                                                                            </tr>
+                                                                                                `;
+                        });
+
+                        for (let index = 0; index < (16 - data.produks.length); index++) {
+                            html += `<tr class="empty-list" style="line-height:15px;">
+                                                                                                                <td style="width: 1%;text-align:center;"></td>
+                                                                                                                <td colspan="2" style="width: 43%;"></td>
+                                                                                                                <td style="width: 8%;text-align:center"></td>
+                                                                                                                <td style="width: 5%;text-align:center"></td>
+                                                                                                                <td style="width: 10%;text-align:right"></td>
+                                                                                                                <td style="width: 10%;text-align:center"></td>
+                                                                                                                <td style="width: 5%;text-align:center"></td>
+                                                                                                                <td style="width: 12%;text-align:right"></td>
+                                                                                                            </tr>`;
+
+                        }
+                        html +=
+                            `
+                                                                                                        </table>
+                                                                                                        <table width="30%" style="float:right;margin-top: -1px;">
+                                                                                                        <tr style="outline: thin solid black;">
+                                                                                                            <td style="width:30%;">DPP </td>
+                                                                                                            <td style="width:1%;">:</td>
+                                                                                                            <td class="dpp" style="width:10%;text-align: right;">` +
+                            data
+                            .dpp +
+                            `</td>
+                                                                                                        </tr>
+                                                                                                        <tr style="outline: thin solid black;">
+                                                                                                            <td style="width: 30%;">PPN</td>
+                                                                                                            <td style="width:1%;">:</td>
+                                                                                                            <td class="ppn" style="width:10%;text-align: right;">` +
+                            data
+                            .ppn +
+                            `</td>
+                                                                                                        </tr>
+                                                                                                        <tr style="outline: thin solid black;">
+                                                                                                            <td style="width: 30%;">Discount</td>
+                                                                                                            <td style="width:1%;">:</td>
+                                                                                                            <td class="disc" style="width:10%;text-align: right;">` +
+                            data
+                            .total_disc +
+                            `</td>
+                                                                                                        </tr>
+                                                                                            <tr style="outline: thin solid black;">
+                                                                                                                <th style="width: 30%;text-align:left;">GRAND TOTAL</th>
+                                                                                                                <th style="width:1%;">:</th>
+                                                                                                                <th class="grand_total" style="width:10%;text-align: right;">` +
+                            data
+                            .grand_total + `</th>
+                                                                                                            </tr>
+                                                                                                        </table>
+                                                                                                `;
+
+                        html += `
+                                                                                                <div class="flex-container">
+                                                                                                    <div class="flex-item-left">
+                                                                                                        <h4>transfer ke rekening:</h4>
+                                                                                                        <p>CV. AYYUB TANI</p>
+                                                                                                        <p>BANK BRI : 025201001055304</p>
+                                                                                                        <p style="margin-top: 20px; text-align:center;">Tanda terima</p>
+                                                                                                        <p style="margin-top: 50px; text-align:center;">_____________</p>
+                                                                                                        </div>
+                                                                                                        <div class="flex-item-right">
+                                                                                                            <p style="margin-top: 120px; text-align:center;">Hormat Kami</p>
+                                                                                                            <p style="margin-top: 50px; text-align:center;">_____________</p>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                `;
+
+                        var document_focus = false;
+                        var popupWin = window.open('', '_blank', 'width=500,height=500');
+                        popupWin.document.open();
+                        popupWin.document.write(
+                            '<html><body onload="document.title=`Ayyub Tani`;">' +
+                            html + '</html>');
+
+                        var document_focus = false; // var we use to monitor document focused status.
+                        // Now our event handlers.
+                        $(document).ready(function() {
+                            popupWin.window.print();
+                            document_focus = true;
+                        });
+                        setInterval(function() {
+                            if (document_focus === true) {
+                                popupWin.window.close();
+                            }
+                        }, 250);
+
+
+                    }).catch(function(error) {
+                        console.log(error);
+                        swal.fire({
+                            text: "Pilih kios, masukkan invoice dan pilih pembayaran terlebih dahulu",
+                            title: "Error",
+                            icon: "error",
+                            showConfirmButton: true,
+                            confirmButtonText: "OK",
+                        })
+                    });
+            }
+        };
+    }();
+
+
 
 
     // show penjualan
@@ -145,18 +456,22 @@
 
                 let element =
                     `<table id="" class="text-cente" style="width: 100%;">
-                            <tr>
-                                <td colspan="6" style="font-size: 30px;">` + data.kios.nama_kios.toUpperCase() +
+                                                                                                        <tr>
+                                                                                                            <td colspan="6" style="font-size: 30px;">` +
+                    data
+                    .kios
+                    .nama_kios
+                    .toUpperCase() +
                     `</td>
-                                                                                                                                                                <td colspan="3">
-                                                                                                                                                                    Jeneponto, ` +
+                                                                                                                                                                                                                                            <td colspan="3">
+                                                                                                                                                                                                                                                Jeneponto, ` +
                     tanggal_jual +
                     `
-                                                                                                                                                                </td>
-                                                                                                                                                            </tr>
-                                                                                                                                                            <tr>
-                                                                                                                                                                <td colspan="6" style="padding-bottom: 20px;">
-                                                                                                                                                                    ` +
+                                                                                                                                                                                                                                            </td>
+                                                                                                                                                                                                                                        </tr>
+                                                                                                                                                                                                                                        <tr>
+                                                                                                                                                                                                                                            <td colspan="6" style="padding-bottom: 20px;">
+                                                                                                                                                                                                                                                ` +
                     data
                     .kios
                     .alamat
@@ -167,29 +482,29 @@
                     .kabupaten
                     .toUpperCase() +
                     `
-                                                                                                                                                                </td>
-                                                                                                                                                            </tr>
-                                                                                                                                                            <tr>
-                                                                                                                                                                <td colspan="2" style="padding-top:-20px;padding-bottom: 20px;">NO. INVOICE </td>
-                                                                                                                                                                <td colspan="4" style="padding-top:-20px;padding-bottom: 20px;">
-                                                                                                                                                                    : ` +
+                                                                                                                                                                                                                                            </td>
+                                                                                                                                                                                                                                        </tr>
+                                                                                                                                                                                                                                        <tr>
+                                                                                                                                                                                                                                            <td colspan="2" style="padding-top:-20px;padding-bottom: 20px;">NO. INVOICE </td>
+                                                                                                                                                                                                                                            <td colspan="4" style="padding-top:-20px;padding-bottom: 20px;">
+                                                                                                                                                                                                                                                : ` +
                     data
                     .penjualan
                     .invoice
                     .toUpperCase() +
                     `
-                                                                                                                                                                </td>
-                                                                                                                                                            </tr>
-                                                                                                                                                        </table>
-                                                                                                                                                        
-                                                                                                                                                        <table id="item">
-                                                                                                                                                            <tr class="">
-                                                                                                                                                                <th style="width: 1%;">No.</th>
-                                                                                                                                                                <th colspan="2" style="width: 25%;">Nama Produk</th>
-                                                                                                                                                                <th style="width: 5%;">Ket.</th>
-                                                                                                                                                                <th style="width: 8%;">Disc.</th>
-                                                                                                                                                                <th style="width: 15%;">Jumlah</th>
-                                                                                                                                                            </tr>`;
+                                                                                                                                                                                                                                            </td>
+                                                                                                                                                                                                                                        </tr>
+                                                                                                                                                                                                                                    </table>
+                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                    <table id="item">
+                                                                                                                                                                                                                                        <tr class="">
+                                                                                                                                                                                                                                            <th style="width: 1%;">No.</th>
+                                                                                                                                                                                                                                            <th colspan="2" style="width: 25%;">Nama Produk</th>
+                                                                                                                                                                                                                                            <th style="width: 5%;">Ket.</th>
+                                                                                                                                                                                                                                            <th style="width: 8%;">Disc.</th>
+                                                                                                                                                                                                                                            <th style="width: 15%;">Jumlah</th>
+                                                                                                                                                                                                                                        </tr>`;
 
                 data.detailPenjualan.map(function(value, index) {
                     console.log(value);
@@ -197,12 +512,12 @@
 
                     element +=
                         `
-                                                                                                                                                            <tr class="">
-                                                                                                                                                                <td style="width: 1%;">` +
+                                                                                                                                                                                                                                        <tr class="">
+                                                                                                                                                                                                                                            <td style="width: 1%;">` +
                         no +
                         `</td>
-                                                                                                                                                                <td colspan="2" style="width: 25%;">
-                                                                                                                                                                    ` +
+                                                                                                                                                                                                                                            <td colspan="2" style="width: 25%;">
+                                                                                                                                                                                                                                                ` +
                         value
                         .nama_produk
                         .toUpperCase() +
@@ -211,59 +526,361 @@
                         .kemasan_produk
                         .toUpperCase() +
                         `
-                                                                                                                                                                </td>
-                                                                                                                                                                <td style="width: 10%;">` +
+                                                                                                                                                                                                                                            </td>
+                                                                                                                                                                                                                                            <td style="width: 10%;">` +
                         value
                         .ket
                         .toUpperCase() +
                         `</td>
-                                                                                                                                                                <td style="width: 8%;">` +
+                                                                                                                                                                                                                                            <td style="width: 8%;">` +
                         number_format(value.disc, 1) +
                         `</td>
-                                                                                                                                                                <td style="width: 15%;text-align: right;">` +
+                                                                                                                                                                                                                                            <td style="width: 15%;text-align: right;">` +
                         number_format(value.jumlah, 1) +
                         `</td>
-                                                                                                                                                            </tr>`;
+                                                                                                                                                                                                                                        </tr>`;
                 });
 
                 element +=
                     `
-                                                                                                                                                        </table>
-                                                                                                                                                        
-                                                                                                                                                        <table width="50%" style="float:right;margin-top: 10px;">
-                                                                                                            <tr>
-                                                                                                                <td style="width:20%;">DPP </td>
-                                                                                                                <td style="width:1%;">:</td>
-                                                                                                                <td class="dpp" style="width:20%;text-align: right;">` +
+                                                                                                                                                                                                                                    </table>
+                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                    <table width="50%" style="float:right;margin-top: 10px;">
+                                                                                                                                                                                        <tr>
+                                                                                                                                                                                            <td style="width:20%;">DPP </td>
+                                                                                                                                                                                            <td style="width:1%;">:</td>
+                                                                                                                                                                                            <td class="dpp" style="width:20%;text-align: right;">` +
                     number_format(data.penjualan.dpp, 1) +
                     `</td>
-                                                                                                            </tr>
-                                                                                                            <tr>
-                                                                                                                <td style="width: 20%;">PPN</td>
-                                                                                                                <td style="width:1%;">:</td>
-                                                                                                                <td class="ppn" style="width:20%;text-align: right;">` +
+                                                                                                                                                                                        </tr>
+                                                                                                                                                                                        <tr>
+                                                                                                                                                                                            <td style="width: 20%;">PPN</td>
+                                                                                                                                                                                            <td style="width:1%;">:</td>
+                                                                                                                                                                                            <td class="ppn" style="width:20%;text-align: right;">` +
                     number_format(data.penjualan.ppn, 1) +
                     `</td>
-                                                                                                            </tr>
-                                                                                                            <tr>
-                                                                                                                <td style="width: 20%;">Discount</td>
-                                                                                                                <td style="width:1%;">:</td>
-                                                                                                                <td class="disc" style="width:20%;text-align: right;">` +
+                                                                                                                                                                                        </tr>
+                                                                                                                                                                                        <tr>
+                                                                                                                                                                                            <td style="width: 20%;">Discount</td>
+                                                                                                                                                                                            <td style="width:1%;">:</td>
+                                                                                                                                                                                            <td class="disc" style="width:20%;text-align: right;">` +
                     number_format(data.penjualan.total_disc, 1) +
                     `</td>
-                                                                                                            </tr>
-                                                                                <tr>
-                                                                                                                                                        <th style="width: 20%;">GRAND TOTAL</th>
-                                                                                                                                                        <th style="width:1%;">:</th>
-                                                                                                                                                        <th class="grand_total" style="width:20%;text-align: right;font-weight:bold">` +
+                                                                                                                                                                                        </tr>
+                                                                                                                                                            <tr>
+                                                                                                                                                                                                                                    <th style="width: 20%;">GRAND TOTAL</th>
+                                                                                                                                                                                                                                    <th style="width:1%;">:</th>
+                                                                                                                                                                                                                                    <th class="grand_total" style="width:20%;text-align: right;font-weight:bold">` +
                     number_format(data.penjualan.grand_total, 1) +
                     `</th>
-                                                                                                                                                    </tr>
-                                                                                                                                                </table>
-                                                                                                                                                `;
+                                                                                                                                                                                                                                </tr>
+                                                                                                                                                                                                                            </table>
+                                                                                                                                                                                                                            `;
 
                 $('.modalDetail').children().remove();
                 $('.modalDetail').append(element);
+
+            })
+            .catch(function(err) {
+
+            });
+    });
+
+    $(document).on('click', '.penjualanPrint', function(e) {
+        var key = $(this).data('id');
+        console.log(key);
+        axios.get('/penjualan/print?id=' + key)
+            .then(function(res) {
+                let data = res.data[0];
+                let date = new Date(data.tanggal_jual);
+                let tanggal_jual = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date
+                    .getFullYear();
+                console.log(data);
+                console.log(data.kios.nama_kios);
+
+                var html =
+                    `
+                                                                                                        <style>
+                                                                                                            @print {
+                                                                                                                @page :footer {
+                                                                                                                    display: none
+                                                                                                                }
+                                                                                                            
+                                                                                                                @page :header {
+                                                                                                                    display: none
+                                                                                                                }
+                                                                                                            }
+
+                                                                                                            #item tr th,
+                                                                                                            #item tr td{
+                                                                                                                border-top: 1px solid black;
+                                                                                                                border-right: 1px solid black;
+                                                                                                                border-bottom: 1px solid black;
+                                                                                                                border-left: 1px solid black;
+                                                                                                            }
+                                                                                                            #item {
+                                                                                                                border-collapse: collapse;
+                                                                                                            }
+                                                                                                            .empty-list td{
+                                                                                                               height: 20px !important;
+                                                                                                            }
+
+                                                                                                            .flex-container {
+                                                                                                            display: flex;
+                                                                                                            height: 200px;
+                                                                                                            flex-direction: row;
+                                                                                                            text-align: left;
+                                                                                                            }
+
+                                                                                                            .flex-container h4 {
+                                                                                                                font-size: 20px;
+                                                                                                                margin-top:15px;
+                                                                                                                margin-bootom:0;
+                                                                                                                text-transform: uppercase;
+                                                                                                            }
+
+                                                                                                            .flex-container p {
+                                                                                                                margin: 0;
+                                                                                                            }
+
+                                                                                                            .flex-container span {
+                                                                                                                margin-top: 100px;
+                                                                                                            }
+
+                                                                                                            .flex-item-left {
+                                                                                                            /* background-color: #f1f1f1; */
+                                                                                                            padding: 10px;
+                                                                                                            flex: 50%;
+                                                                                                            }
+
+                                                                                                            .flex-item-right {
+                                                                                                            /* background-color: dodgerblue; */
+                                                                                                            padding: 12px;
+                                                                                                            flex: 50%;
+                                                                                                            }
+
+                                                                                                            /* Responsive layout - makes a one column-layout instead of two-column layout */
+                                                                                                            // @media (max-width: 800px) {
+                                                                                                            // .flex-container {
+                                                                                                            //     flex-direction: column;
+                                                                                                            // }
+                                                                                                            }
+                                                                                                        </style>
+
+                                                                                                        <table id="" class="text-cente" style="width: 100%;">
+                                                                                                            <tr>
+                                                                                                                <td colspan="6" style="font-size: 30px;">
+                                                                                                                    CV. AYYUB TANI
+                                                                                                                </td>
+                                                                                                                <td colspan="3">
+                                                                                                                    Jeneponto, ` +
+                    tanggal_jual +
+                    `
+                                                                                                                </td>
+                                                                                                            </tr>
+                                                                                                            <tr>
+                                                                                                                <td colspan="6" style="padding-bottom: 5px;">SALAMATARA, KARELOE BONTORAMBA JENEPONTO</td>
+                                                                                                                <td colspan="3" style="padding-bottom:5px">Kepada Yth,</td>
+                                                                                                            </tr>
+                                                                                                            
+
+                                                                                                            <tr>
+                                                                                                                <td colspan="2">NO. INVOICE </td>
+                                                                                                                <td colspan="4">: ` +
+                    data
+                    .invoice
+                    .toUpperCase() +
+                    `</td>
+                                                                                                                <td colspan="3">` +
+                    data
+                    .kios
+                    .nama_kios
+                    .toUpperCase() +
+                    `</td>
+                                                                                                            </tr>
+                                                                                                            <tr>
+                                                                                                                <td colspan="2">PEMBAYARAN </td>
+                                                                                                                <td colspan="4">: ` +
+                    data
+                    .pembayaran
+                    .toUpperCase() +
+                    `</td>
+                                                                                                                <td colspan="3">` +
+                    data
+                    .kios
+                    .alamat
+                    .toUpperCase() +
+                    `, ` +
+                    data
+                    .kios
+                    .kabupaten
+                    .toUpperCase() +
+                    `</td>
+                                                                                                            </tr>
+                                                                                                            <tr>
+                                                                                                                <td colspan="2">JATUH TEMPO</td>
+                                                                                                                <td colspan="4">: ` +
+                    data
+                    .jatuh_tempo +
+                    `</td>
+                                                                                                                <td colspan="3">SULAWESI SELATAN</td>
+                                                                                                            </tr>
+                                                                                                            <tr>
+                                                                                                                <td colspan="2" style="width: 2%;"></td>
+                                                                                                                <td colspan="4"></td>
+                                                                                                                <td>NPWP</td>
+                                                                                                                <td colspan="2">: ` +
+                    data
+                    .kios
+                    .npwp + `</td>
+                                                                                                            </tr>
+                                                                                                            <tr>
+                                                                                                                <td colspan="2" style="padding-top:-20px;padding-bottom: 5px;width: 2%;"></td>
+                                                                                                                <td colspan="4" style="width: 55%;padding-top:-20px;padding-bottom: 5px;"></td>
+                                                                                                            </tr>
+                                                                                                        </table>
+                                                                                                        
+                                                                                                        <table id="item" width="100%">
+                                                                                                            <tr class="">
+                                                                                                                <th style="width: 1%;">No.</th>
+                                                                                                                <th colspan="2" style="width: 50%; !important">Nama Produk</th>
+                                                                                                                <th style="width: 5%;">Qty</th>
+                                                                                                                <th style="width: 1%; !important">Stn.</th>
+                                                                                                                <th style="width: 10%;">Harga</th>
+                                                                                                                <th style="width: 5%;">Ket.</th>
+                                                                                                                <th style="width: 5%;">Disc.</th>
+                                                                                                                <th style="width: 10%;">Jumlah</th>
+                                                                                                                </tr>
+                                                                                                                `;
+                data.detail_penjualan.map(function(value, index) {
+                    console.log(value);;
+                    no = index + 1;
+                    html +=
+                        `
+                                                                                                <tr class="">
+                                                                                                                <td style="width: 1%;text-align:center">` +
+                        no +
+                        `</td>
+                                                                                                                <td colspan="2" style="width: 43%;">` +
+                        value.nama_produk.toUpperCase() + " " + value.kemasan
+                        .toUpperCase() +
+                        `</td>
+                                                                                                                <td style="width: 5%;text-align:center">` +
+                        value
+                        .qty +
+                        `</td>
+                                                                                                                <td style="width: 5%;text-align:center">` +
+                        value
+                        .satuan
+                        .toUpperCase() +
+                        `</td>
+                                                                                                                <td style="width: 10%;text-align:right">` +
+                        number_format(
+                            value
+                            .harga_perdos, 1) +
+                        `</td>
+                                                                                                                <td style="width: 5%;text-align:center">` +
+                        value
+                        .ket
+                        .toUpperCase() +
+                        `</td>
+                                                                                                                <td style="width: 5%;text-align:center">` +
+                        value
+                        .disc +
+                        `</td>
+                                                                                                                <td style="width: 10%;text-align:right">` +
+                        value
+                        .jumlah + `</td>
+                                                                                                            </tr>
+                                                                                                `;
+                });
+
+                for (let index = 0; index < (16 - data.detail_penjualan.length); index++) {
+                    html += `<tr class="empty-list" style="line-height:15px;">
+                                                                                                                <td style="width: 1%;text-align:center;"></td>
+                                                                                                                <td colspan="2" style="width: 43%;"></td>
+                                                                                                                <td style="width: 8%;text-align:center"></td>
+                                                                                                                <td style="width: 5%;text-align:center"></td>
+                                                                                                                <td style="width: 10%;text-align:right"></td>
+                                                                                                                <td style="width: 10%;text-align:center"></td>
+                                                                                                                <td style="width: 5%;text-align:center"></td>
+                                                                                                                <td style="width: 12%;text-align:right"></td>
+                                                                                                            </tr>`;
+
+                }
+                html +=
+                    `
+                                                                                                        </table>
+                                                                                                        <table width="30%" style="float:right;margin-top: -1px;">
+                                                                                                        <tr style="outline: thin solid black;">
+                                                                                                            <td style="width:30%;">DPP </td>
+                                                                                                            <td style="width:1%;">:</td>
+                                                                                                            <td class="dpp" style="width:10%;text-align: right;">` +
+                    data
+                    .dpp +
+                    `</td>
+                                                                                                        </tr>
+                                                                                                        <tr style="outline: thin solid black;">
+                                                                                                            <td style="width: 30%;">PPN</td>
+                                                                                                            <td style="width:1%;">:</td>
+                                                                                                            <td class="ppn" style="width:10%;text-align: right;">` +
+                    data
+                    .ppn +
+                    `</td>
+                                                                                                        </tr>
+                                                                                                        <tr style="outline: thin solid black;">
+                                                                                                            <td style="width: 30%;">Discount</td>
+                                                                                                            <td style="width:1%;">:</td>
+                                                                                                            <td class="disc" style="width:10%;text-align: right;">` +
+                    data
+                    .total_disc +
+                    `</td>
+                                                                                                        </tr>
+                                                                                            <tr style="outline: thin solid black;">
+                                                                                                                <th style="width: 30%;text-align:left;">GRAND TOTAL</th>
+                                                                                                                <th style="width:1%;">:</th>
+                                                                                                                <th class="grand_total" style="width:10%;text-align: right;">` +
+                    data
+                    .grand_total + `</th>
+                                                                                                            </tr>
+                                                                                                        </table>
+                                                                                                `;
+
+                html += `
+                                                                                                <div class="flex-container">
+                                                                                                    <div class="flex-item-left">
+                                                                                                        <h4>transfer ke rekening:</h4>
+                                                                                                        <p>CV. AYYUB TANI</p>
+                                                                                                        <p>BANK BRI : 025201001055304</p>
+                                                                                                        <p style="margin-top: 20px; text-align:center;">Tanda terima</p>
+                                                                                                        <p style="margin-top: 50px; text-align:center;">_____________</p>
+                                                                                                        </div>
+                                                                                                        <div class="flex-item-right">
+                                                                                                            <p style="margin-top: 120px; text-align:center;">Hormat Kami</p>
+                                                                                                            <p style="margin-top: 50px; text-align:center;">_____________</p>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                `;
+
+                var document_focus = false;
+                var popupWin = window.open('', '_blank', 'width=500,height=500');
+                popupWin.document.open();
+                popupWin.document.write(
+                    '<html><body onload="document.title=`Ayyub Tani`;">' +
+                    html + '</html>');
+
+                var document_focus = false; // var we use to monitor document focused status.
+                // Now our event handlers.
+                $(document).ready(function() {
+                    popupWin.window.print();
+                    document_focus = true;
+                });
+                setInterval(function() {
+                    if (document_focus === true) {
+                        popupWin.window.close();
+                    }
+                }, 250);
+
 
             })
             .catch(function(err) {

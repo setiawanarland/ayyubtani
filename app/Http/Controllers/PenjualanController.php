@@ -11,6 +11,7 @@ use App\Models\DetailPenjualanTemp;
 use App\Models\Kios;
 use App\Models\LimitPutang;
 use App\Models\pajak;
+use App\Models\Pembayaran;
 use App\Models\Piutang;
 use App\Models\Produk;
 use DB;
@@ -334,12 +335,6 @@ class PenjualanController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\pembelian  $penjualan
-     * @return \Illuminate\Http\Response
-     */
     public function show(Request $request, $id)
     {
         $data = [];
@@ -361,12 +356,6 @@ class PenjualanController extends Controller
         return $data;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Penjualan  $penjualan
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Request $request, $id)
     {
         $page_title = 'Ayyub Tani';
@@ -392,6 +381,33 @@ class PenjualanController extends Controller
 
         // return $penjualan;
         return view('penjualan.edit', compact('page_title', 'page_description', 'breadcrumbs', 'kios', 'produk', 'pajak', 'penjualan'));
+    }
+
+    public function print(Request $request)
+    {
+        $penjualan = Penjualan::where('id', $request->id)
+            ->get();
+
+        foreach ($penjualan as $key => $value) {
+            $jatuhTempo = date('d/m/Y', strtotime('+1 months', strtotime($value->tanggal_jual)));
+            $statusPembayaran = Pembayaran::where('id', $value->status)->first();
+            $kios = Kios::where('id', $value->kios_id)->first();
+            $detailPenjualan = DetailPenjualan::where('penjualan_id', $value->id)->get();
+
+            foreach ($detailPenjualan as $index => $val) {
+                $produk = Produk::where('id', $val->produk_id)->first();
+                $val->nama_produk = $produk->nama_produk;
+                $val->kemasan = $produk->kemasan;
+                $val->harga_perdos = $produk->harga_perdos;
+                $val->satuan = $produk->satuan;
+            }
+            $value->jatuh_tempo = $jatuhTempo;
+            $value->pembayaran = $statusPembayaran->nama_pembayaran;
+            $value->kios = $kios;
+            $value->detail_penjualan = $detailPenjualan;
+        }
+
+        return $penjualan;
     }
 
     public function listEditPenjualan(Request $request)
@@ -494,12 +510,6 @@ class PenjualanController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Penjualan  $penjualan
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Penjualan $penjualan)
     {
         //
