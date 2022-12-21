@@ -40,6 +40,16 @@
                     </li> --}}
 
                     <li>
+                        <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-file"></i><span>laporan
+                            </span></a>
+                        <ul class="collapse">
+                            <li class="{{ Request::path() == 'laporan/stok' ? 'active' : '' }}"><a
+                                    href="{{ url('/laporan/stok') }}"><i
+                                        class="fa fa-file-text"></i><span>stok</span></a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
                         <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-cog"></i><span>Settings
                             </span></a>
                         <ul class="collapse">

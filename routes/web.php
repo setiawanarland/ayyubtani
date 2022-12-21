@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HutangController;
 use App\Http\Controllers\KiosController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PajakController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PenjualanController;
@@ -105,6 +106,11 @@ Route::middleware('auth')->group(function () {
     Route::prefix('piutang')->group(function () {
         Route::get('/', [PiutangController::class, 'index'])->name('piutang');
         Route::get('/list', [PiutangController::class, 'list'])->name('piutang-list');
+    });
+
+    Route::prefix('laporan')->group(function () {
+        Route::get('/stok', [LaporanController::class, 'stok'])->name('laporan-stok');
+        Route::get('/stok-list', [LaporanController::class, 'list'])->name('stok-list');
     });
 
     Route::prefix('pajak')->group(function () {

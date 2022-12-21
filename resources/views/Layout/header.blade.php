@@ -30,7 +30,7 @@
                                      //  return $tahun;
                                  @endphp
                                  {{-- @for ($i = $tahun - 6; $i <= $tahun + 6; $i++) --}}
-                                 @for ($i = $tahun - 6; $i <= $tahun; $i++)
+                                 @for ($i = $tahun - 6; $i <= $tahun + 6; $i++)
                                      <a class="dropdown-item"
                                          href="{{ route('set-tahun', ['tahun' => $i]) }}">{{ $i }}</a>
                                  @endfor
