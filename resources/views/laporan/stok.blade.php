@@ -117,7 +117,7 @@
                             }
                         },
                         {
-                            data: 'stok',
+                            data: 'stok_bulanan',
                             render: function(data, type, row) {
                                 return `${data} Dos`;
                             }

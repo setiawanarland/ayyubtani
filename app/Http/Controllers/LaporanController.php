@@ -23,21 +23,12 @@ class LaporanController extends Controller
 
     public function list(Request $request)
     {
+        $data = [];
         $bulan = request('bulan');
         $stokBeli = 0;
         $stokJual = 0;
 
-        $produks = DB::table('produks')
-            ->where('stok', '!=', 0)
-            ->get();
-
-        $pembelian = DB::table("pembelians")
-            ->join('detail_pembelians', 'pembelians.id', 'detail_pembelians.pembelian_id')
-            ->join('produks', 'detail_pembelians.produk_id', 'produks.id')
-            ->where('tahun', session('tahun'))
-            ->whereMonth('tanggal_beli', "$bulan")
-            ->orderBy('nama_produk', 'ASC')
-            ->get();
+        $produks = DB::table('produks')->get();
 
         foreach ($produks as $key => $value) {
             $stokBeli = 0;
@@ -45,52 +36,49 @@ class LaporanController extends Controller
 
             $pembelian = DB::table('detail_pembelians')
                 ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
-                ->where('tahun', session('tahun'))
-                ->whereMonth('tanggal_beli', "$bulan")
                 ->where('produk_id', $value->id)
-                // ->where('produk_id', 168)
+                ->where('tahun', session('tahun'))
+                // ->whereRaw("$whereBeli")
+                ->when($bulan, function ($query, $bulan) {
+                    if ($bulan !== 'all') {
+                        return $query->whereMonth('tanggal_beli', "$bulan");
+                    }
+                })
                 ->get();
+
+            if (count($pembelian) > 0) {
+                foreach ($pembelian as $index => $val) {
+                    $stokBeli += intval(preg_replace("/\D/", "", $val->ket));
+                }
+            }
 
             $penjualan = DB::table('detail_penjualans')
                 ->join('penjualans', 'detail_penjualans.penjualan_id', 'penjualans.id')
-                ->where('tahun', session('tahun'))
-                ->whereMonth('tanggal_jual', "$bulan")
                 ->where('produk_id', $value->id)
-                // ->where('produk_id', 168)
+                ->where('tahun', session('tahun'))
+                ->when($bulan, function ($query, $bulan) {
+                    if ($bulan !== 'all') {
+                        return $query->whereMonth('tanggal_jual', "$bulan");
+                    }
+                })
                 ->get();
-            // return $pembelian;
 
-            foreach ($pembelian as $index => $val) {
-                $stokBeli += intval(preg_replace("/\D/", "", $val->ket));
-            }
-
-            foreach ($penjualan as $index => $val) {
-                $stokJual += intval(preg_replace("/\D/", "", $val->ket));
+            if (count($penjualan) > 0) {
+                foreach ($penjualan as $index => $val) {
+                    $stokJual += intval(preg_replace("/\D/", "", $val->ket));
+                }
             }
 
             $value->pembelian = $stokBeli;
             $value->penjualan = $stokJual;
+            $value->stok_bulanan = $stokBeli - $stokJual;
+
+            if ($stokBeli !== 0 || $stokJual !== 0) {
+                $data[] = $value;
+            }
         }
 
-        // $data = DB::table("pembelians")
-        //     ->join('detail_pembelians', 'pembelians.id', 'detail_pembelians.pembelian_id')
-        //     ->join('produks', 'detail_pembelians.produk_id', 'produks.id')
-        //     ->where('tahun', session('tahun'))
-        //     ->whereMonth('tanggal_beli', "$bulan")
-        //     ->orderBy('nama_produk', 'ASC')
-        //     ->get();
-
-        // $produk = DB::table("pembelians")
-        //     ->join('detail_pembelians', 'pembelians.id', 'detail_pembelians.pembelian_id')
-        //     ->join('produks', 'detail_pembelians.produk_id', 'produks.id')
-        //     ->orderBy('nama_produk', 'ASC')
-        //     ->get();
-
-        if ($produks) {
-            return (new GeneralResponse)->default_json(true, 'success', $produks, 200);
-        } else {
-            return (new GeneralResponse)->default_json(false, 'error', null, 401);
-        }
+        return (new GeneralResponse)->default_json(true, 'success', $data, 200);
     }
 
     public function rekap(Request $request)
@@ -98,98 +86,62 @@ class LaporanController extends Controller
         $bulan = request('bulan');
         $jenis = request('jenis');
         $data = [];
+        $temp = [];
         $stokBeli = 0;
         $stokJual = 0;
 
-        $produks = DB::table('produks')
-            ->where('stok', '!=', 0)
-            ->get();
-        if ($bulan !== 'all') {
-            $pembelian = DB::table("pembelians")
-                ->join('detail_pembelians', 'pembelians.id', 'detail_pembelians.pembelian_id')
-                ->join('produks', 'detail_pembelians.produk_id', 'produks.id')
+        $produks = DB::table('produks')->get();
+
+        foreach ($produks as $key => $value) {
+            $stokBeli = 0;
+            $stokJual = 0;
+
+            $pembelian = DB::table('detail_pembelians')
+                ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
+                ->where('produk_id', $value->id)
                 ->where('tahun', session('tahun'))
-                ->whereMonth('tanggal_beli', "$bulan")
-                ->orderBy('nama_produk', 'ASC')
+                // ->whereRaw("$whereBeli")
+                ->when($bulan, function ($query, $bulan) {
+                    if ($bulan !== 'all') {
+                        return $query->whereMonth('tanggal_beli', "$bulan");
+                    }
+                })
                 ->get();
 
-            foreach ($produks as $key => $value) {
-                $stokBeli = 0;
-                $stokJual = 0;
-
-                $pembelian = DB::table('detail_pembelians')
-                    ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
-                    ->where('tahun', session('tahun'))
-                    ->whereMonth('tanggal_beli', "$bulan")
-                    ->where('produk_id', $value->id)
-                    // ->where('produk_id', 168)
-                    ->get();
-
-                $penjualan = DB::table('detail_penjualans')
-                    ->join('penjualans', 'detail_penjualans.penjualan_id', 'penjualans.id')
-                    ->where('tahun', session('tahun'))
-                    ->whereMonth('tanggal_jual', "$bulan")
-                    ->where('produk_id', $value->id)
-                    // ->where('produk_id', 168)
-                    ->get();
-                // return $pembelian;
-
+            if (count($pembelian) > 0) {
                 foreach ($pembelian as $index => $val) {
                     $stokBeli += intval(preg_replace("/\D/", "", $val->ket));
                 }
-
-                foreach ($penjualan as $index => $val) {
-                    $stokJual += intval(preg_replace("/\D/", "", $val->ket));
-                }
-
-                $value->pembelian = $stokBeli;
-                $value->penjualan = $stokJual;
             }
-        } else {
-            $pembelian = DB::table("pembelians")
-                ->join('detail_pembelians', 'pembelians.id', 'detail_pembelians.pembelian_id')
-                ->join('produks', 'detail_pembelians.produk_id', 'produks.id')
+
+            $penjualan = DB::table('detail_penjualans')
+                ->join('penjualans', 'detail_penjualans.penjualan_id', 'penjualans.id')
+                ->where('produk_id', $value->id)
                 ->where('tahun', session('tahun'))
-                ->whereMonth('tanggal_beli', "$bulan")
-                ->orderBy('nama_produk', 'ASC')
+                ->when($bulan, function ($query, $bulan) {
+                    if ($bulan !== 'all') {
+                        return $query->whereMonth('tanggal_jual', "$bulan");
+                    }
+                })
                 ->get();
 
-            foreach ($produks as $key => $value) {
-                $stokBeli = 0;
-                $stokJual = 0;
-
-                $pembelian = DB::table('detail_pembelians')
-                    ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
-                    ->where('tahun', session('tahun'))
-                    ->whereMonth('tanggal_beli', "$bulan")
-                    ->where('produk_id', $value->id)
-                    // ->where('produk_id', 168)
-                    ->get();
-
-                $penjualan = DB::table('detail_penjualans')
-                    ->join('penjualans', 'detail_penjualans.penjualan_id', 'penjualans.id')
-                    ->where('tahun', session('tahun'))
-                    ->whereMonth('tanggal_jual', "$bulan")
-                    ->where('produk_id', $value->id)
-                    // ->where('produk_id', 168)
-                    ->get();
-                // return $pembelian;
-
-                foreach ($pembelian as $index => $val) {
-                    $stokBeli += intval(preg_replace("/\D/", "", $val->ket));
-                }
-
+            if (count($penjualan) > 0) {
                 foreach ($penjualan as $index => $val) {
                     $stokJual += intval(preg_replace("/\D/", "", $val->ket));
                 }
+            }
 
-                $value->pembelian = $stokBeli;
-                $value->penjualan = $stokJual;
+            $value->pembelian = $stokBeli;
+            $value->penjualan = $stokJual;
+            $value->stok_bulanan = $stokBeli - $stokJual;
+
+            if ($stokBeli !== 0 || $stokJual !== 0) {
+                $temp[] = $value;
             }
         }
 
         $data['bulan'] = $bulan;
-        $data['produks'] = $produks;
+        $data['produks'] = $temp;
         // return $data;
 
         return $this->laporanRekapStok($data, $bulan, $jenis);
