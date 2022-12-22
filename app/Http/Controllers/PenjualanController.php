@@ -511,8 +511,42 @@ class PenjualanController extends Controller
         }
     }
 
-    public function destroy(Penjualan $penjualan)
+    public function destroy(Penjualan $penjualan, $id)
     {
-        //
+        $penjualan = Penjualan::where('id', $id)->first();
+        $detailPenjualan = DetailPenjualan::where('penjualan_id', $penjualan->id)->get();
+        $piutang = Piutang::where('penjualan_id', $penjualan->id)->first();
+
+        foreach ($detailPenjualan as $key => $value) {
+            $produk = Produk::where('id', $value->produk_id)->first();
+
+            $stokJual = intval(preg_replace("/\D/", "", $value->ket));
+            $stok = $produk->stok;
+            $qtyJual = floatval(preg_replace('/[^\d\.]+/', '', $value->qty));
+            $qty = $produk->qty;
+            $stokBaru = $stokJual + $stok;
+            $qtyBaru = $qtyJual + $qty;
+
+            $produk->stok = $stokBaru;
+            $produk->qty = $qtyBaru;
+
+            $produk->save();
+
+            if ($produk) {
+                $detail = DetailPenjualan::where('id', $value->id)->first();
+                $detail->delete();
+            } else {
+                return (new GeneralResponse)->default_json(false, "Error", $produk, 401);
+            }
+        }
+
+        $piutang->delete();
+        $data = $penjualan->delete();
+
+        if ($data) {
+            return (new GeneralResponse)->default_json(true, "Success", $data, 201);
+        } else {
+            return (new GeneralResponse)->default_json(false, "Error", $data, 401);
+        }
     }
 }

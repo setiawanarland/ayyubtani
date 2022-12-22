@@ -101,6 +101,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/list-penjualan-edit', [PenjualanController::class, 'listEditPenjualan'])->name('penjualan-edit-list');
         Route::post('/add-edit', [PenjualanController::class, 'addEdit'])->name('add-edit');
         Route::post('/update', [PenjualanController::class, 'update'])->name('penjualan-update');
+        Route::delete('/delete/{id}', [PenjualanController::class, 'destroy'])->name('penjualan-delete');
     });
 
     Route::prefix('piutang')->group(function () {
