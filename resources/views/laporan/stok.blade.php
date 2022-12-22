@@ -278,35 +278,27 @@
             let bulan = $('#bulan').val();
             console.log(bulan);
 
-            if (bulan !== 'all') {
-                url = `/laporan/stok-rekap/?bulan=${bulan}&jenis=pdf`;
-                window.open(url);
-            } else {
-                Swal.fire(
-                    "Perhatian",
-                    "Pilih bulan terlebih dahulu",
-                    "warning"
-                );
-            }
+            url = `/laporan/stok-rekap/?bulan=${bulan}&jenis=pdf`;
+            window.open(url);
+            // if (bulan !== 'all') {
+            // } else {
+            //     Swal.fire(
+            //         "Perhatian",
+            //         "Pilih bulan terlebih dahulu",
+            //         "warning"
+            //     );
+            // }
 
-        })
+        });
 
         $('.cetak').on('click', function() {
             let bulan = $('#bulan').val();
             console.log(bulan);
 
-            if (bulan !== 'all') {
-                url = `/laporan/stok-rekap/?bulan=${bulan}&jenis=excel`;
-                window.open(url);
-            } else {
-                Swal.fire(
-                    "Perhatian",
-                    "Pilih bulan terlebih dahulu",
-                    "warning"
-                );
-            }
+            url = `/laporan/stok-rekap/?bulan=${bulan}&jenis=excel`;
+            window.open(url);
 
-        })
+        });
 
 
 
