@@ -224,7 +224,7 @@ class LaporanController extends Controller
             $sheet->setCellValue('C' . $cell, strtoupper($value->kemasan));
             $sheet->setCellValue('D' . $cell, $value->pembelian);
             $sheet->setCellValue('E' . $cell, $value->penjualan);
-            $sheet->setCellValue('F' . $cell, $value->stok);
+            $sheet->setCellValue('F' . $cell, $value->stok_bulanan);
 
             // level if kepala 
 
