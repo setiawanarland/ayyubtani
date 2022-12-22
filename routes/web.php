@@ -111,6 +111,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('laporan')->group(function () {
         Route::get('/stok', [LaporanController::class, 'stok'])->name('laporan-stok');
         Route::get('/stok-list', [LaporanController::class, 'list'])->name('stok-list');
+        Route::get('/stok-rekap', [LaporanController::class, 'rekap'])->name('stok-rekap');
     });
 
     Route::prefix('pajak')->group(function () {

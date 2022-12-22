@@ -8,22 +8,25 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="header-title">Laporan Stok</h4>
-                        <div class="col-sm-4">
-                            <select class="form-control" id="bulan" name="bulan">
-                                <option value="all">SEMUA BULAN</option>
-                                @php
-                                    $bulan = [1 => 'Januari', 'Febuari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-                                @endphp
-                                @foreach ($bulan as $index => $value)
-                                    <option value="{{ $index }}">
-                                        {{ Str::upper($value) }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+                        <div class="form-row align-items-center">
+                            <div class="col-sm-4">
+                                <select class="form-control" id="bulan" name="bulan">
+                                    <option value="all">SEMUA BULAN</option>
+                                    @php
+                                        $bulan = [1 => 'Januari', 'Febuari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                                    @endphp
+                                    @foreach ($bulan as $index => $value)
+                                        <option value="{{ $index }}">
+                                            {{ Str::upper($value) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
 
-                        <div class="col-sm-2 mt-2">
-                            <button type="button" class="btn btn-primary mb-3">Cetak Data</button>
+                            <div class="col-sm-2 mt-2">
+                                <button type="button" class="btn btn-primary mb-3 cetak">Cetak</button>
+                                <button type="button" class="btn btn-danger mb-3 lihat">Lihat</button>
+                            </div>
                         </div>
                         <div class="data-tables">
                             <table id="produkTable" class="text-cente">
@@ -267,6 +270,43 @@
             dataRow.destroy();
             dataRow.init();
         });
+
+
+
+        $('.lihat').on('click', function() {
+
+            let bulan = $('#bulan').val();
+            console.log(bulan);
+
+            if (bulan !== 'all') {
+                url = `/laporan/stok-rekap/?bulan=${bulan}&jenis=pdf`;
+                window.open(url);
+            } else {
+                Swal.fire(
+                    "Perhatian",
+                    "Pilih bulan terlebih dahulu",
+                    "warning"
+                );
+            }
+
+        })
+
+        $('.cetak').on('click', function() {
+            let bulan = $('#bulan').val();
+            console.log(bulan);
+
+            if (bulan !== 'all') {
+                url = `/laporan/stok-rekap/?bulan=${bulan}&jenis=excel`;
+                window.open(url);
+            } else {
+                Swal.fire(
+                    "Perhatian",
+                    "Pilih bulan terlebih dahulu",
+                    "warning"
+                );
+            }
+
+        })
 
 
 
