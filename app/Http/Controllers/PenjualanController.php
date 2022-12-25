@@ -31,7 +31,7 @@ class PenjualanController extends Controller
         $breadcrumbs = ['Penjualan'];
 
         $kios = DB::table('kios')
-            ->select('id', 'nama_kios',)
+            ->select('id', 'nama_kios', 'pemilik')
             ->get();
 
         $produk = DB::table('produks')
