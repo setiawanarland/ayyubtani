@@ -90,7 +90,7 @@
                                     <select class="form-control" id="kios" name="kios">
                                         <option value="null">Pilih Kios</option>
                                         @foreach ($kios as $index => $value)
-                                            <option value="{{ $value->id }}">{{ Str::upper($value->nama_kios) }}
+                                            <option value="{{ $value->id }}">{{ Str::upper($value->pemilik) }}
                                             </option>
                                         @endforeach
                                     </select>
