@@ -47,7 +47,7 @@ class PenjualanController extends Controller
 
         $lastPenjualan = Penjualan::max('id');
 
-        $invoice = "AT-" . substr(date('Y'), -2) . "/" . sprintf("%05s", abs($lastPenjualan + 1));
+        $invoice = "AT-" . substr(session('tahun'), -2) . "/" . sprintf("%05s", abs($lastPenjualan + 1));
 
         return view('penjualan.index', compact('page_title', 'page_description', 'breadcrumbs', 'kios', 'produk', 'pajak', 'pembayaran', 'invoice'));
     }
