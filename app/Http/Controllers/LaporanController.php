@@ -231,7 +231,7 @@ class LaporanController extends Controller
             $sheet->setCellValue('D' . $cell, $value->pembelian);
             $sheet->setCellValue('E' . $cell, $value->penjualan);
             $sheet->setCellValue('F' . $cell, $value->stok_bulanan);
-            $sheet->setCellValue('G' . $cell, number_format($value->harga, 1));
+            $sheet->setCellValue('G' . $cell, number_format($value->harga));
         }
 
         $border = [
