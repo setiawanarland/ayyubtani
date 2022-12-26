@@ -216,7 +216,7 @@ class LaporanController extends Controller
         $sheet->getStyle('E5:E' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('F5:F' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('G5:G5')->getAlignment()->setVertical('center')->setHorizontal('center');
-        $sheet->getStyle('G' . (count($data['produks']) + $cell) . ':G' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
+        $sheet->getStyle('G6:G' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
         $sheet->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center');
 
 
