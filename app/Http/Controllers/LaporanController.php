@@ -72,7 +72,7 @@ class LaporanController extends Controller
             $value->pembelian = $stokBeli;
             $value->penjualan = $stokJual;
             // $value->stok_bulanan = $stokBeli - $stokJual;
-            $value->stok_bulanan = $stokBeli - $value->stok;
+            $value->stok_bulanan = $value->stok - $stokBeli;
             $value->harga = $value->stok_bulanan * $value->harga_perdos;
             $value->dpp = $value->harga / 1.1;
             $value->ppn = $value->harga - $value->dpp;
@@ -138,7 +138,7 @@ class LaporanController extends Controller
             $value->pembelian = $stokBeli;
             $value->penjualan = $stokJual;
             // $value->stok_bulanan = $stokBeli - $stokJual;
-            $value->stok_bulanan = $stokBeli - $value->stok;
+            $value->stok_bulanan = $value->stok - $stokBeli;
             $value->harga = $value->stok_bulanan * $value->harga_perdos;
             $value->dpp = $value->harga / 1.1;
             $value->ppn = $value->harga - $value->dpp;
