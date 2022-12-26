@@ -187,9 +187,9 @@ class LaporanController extends Controller
         $tahun = ""  . session('tahun') . "-" . $bulan . "";
         $periode = ($bulan != 'all') ? strtoupper(strftime('%B %Y', mktime(0, 0, 0, $bulan + 1, 0, (int)session('tahun')))) : (int)session('tahun');
 
-        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI STOK BARANG')->mergeCells('A1:F1');
-        $sheet->setCellValue('A2', 'CV. AYYUB TANI')->mergeCells('A2:F2');
-        $sheet->setCellValue('A3', "PERIODE $periode")->mergeCells('A3:F3');
+        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI STOK BARANG')->mergeCells('A1:I1');
+        $sheet->setCellValue('A2', 'CV. AYYUB TANI')->mergeCells('A2:I2');
+        $sheet->setCellValue('A3', "PERIODE $periode")->mergeCells('A3:I3');
 
         $sheet->setCellValue('A5', 'No')->mergeCells('A5:A5');
         $sheet->getColumnDimension('A')->setWidth(6);
@@ -231,7 +231,7 @@ class LaporanController extends Controller
         $sheet->getStyle('H6:H' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0.0');
         $sheet->getStyle('I5:I5')->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
-        $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0.0');
+        $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
         $sheet->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center');
 
 
