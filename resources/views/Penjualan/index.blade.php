@@ -515,7 +515,9 @@
                                                                                                                                                                                     <table id="" class="text-cente" style="width: 100%;">
                                                                                                                                                                                         <tr>
                                                                                                                                                                                             <td colspan="6" style="font-size: 30px;">
+                                                                                                                                                                                                <img src="{{ asset('images/author/at.png') }}" width="10%">
                                                                                                                                                                                                 CV. AYYUB TANI
+                                                                                                                                                                                                <img src="{{ asset('images/author/dgw.png') }}" width="10%">
                                                                                                                                                                             
                                                                                                                                                                                             </td>
                                                                                                                                                                                             <td colspan="3">
