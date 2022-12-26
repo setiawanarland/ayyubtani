@@ -204,11 +204,11 @@ class LaporanController extends Controller
         $sheet->setCellValue('F5', 'Stok');
         $sheet->getColumnDimension('F')->setWidth(8);
         $sheet->setCellValue('G5', 'Harga');
-        $sheet->getColumnDimension('G')->setWidth(20);
+        $sheet->getColumnDimension('G')->setWidth(18);
         $sheet->setCellValue('H5', 'DPP');
-        $sheet->getColumnDimension('H')->setWidth(20);
+        $sheet->getColumnDimension('H')->setWidth(18);
         $sheet->setCellValue('I5', 'PPN');
-        $sheet->getColumnDimension('I')->setWidth(20);
+        $sheet->getColumnDimension('I')->setWidth(18);
 
         $cell = 5;
 
