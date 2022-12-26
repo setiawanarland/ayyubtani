@@ -181,7 +181,7 @@ class LaporanController extends Controller
         // //Margin PDF
         $spreadsheet->getActiveSheet()->getPageMargins()->setTop(0.3);
         $spreadsheet->getActiveSheet()->getPageMargins()->setRight(0.3);
-        $spreadsheet->getActiveSheet()->getPageMargins()->setLeft(0.5);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setLeft(0.3);
         $spreadsheet->getActiveSheet()->getPageMargins()->setBottom(0.3);
 
         $tahun = ""  . session('tahun') . "-" . $bulan . "";
@@ -204,11 +204,11 @@ class LaporanController extends Controller
         $sheet->setCellValue('F5', 'Stok');
         $sheet->getColumnDimension('F')->setWidth(8);
         $sheet->setCellValue('G5', 'Harga');
-        $sheet->getColumnDimension('G')->setWidth(18);
+        $sheet->getColumnDimension('G')->setWidth(16);
         $sheet->setCellValue('H5', 'DPP');
-        $sheet->getColumnDimension('H')->setWidth(18);
+        $sheet->getColumnDimension('H')->setWidth(16);
         $sheet->setCellValue('I5', 'PPN');
-        $sheet->getColumnDimension('I')->setWidth(18);
+        $sheet->getColumnDimension('I')->setWidth(16);
 
         $cell = 5;
 
