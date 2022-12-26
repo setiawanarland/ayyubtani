@@ -544,7 +544,7 @@ class PenjualanController extends Controller
         $data = $penjualan->delete();
 
         if ($data) {
-            return (new GeneralResponse)->default_json(true, "Success", $data, 201);
+            return (new GeneralResponse)->default_json(true, "Success", $data, 200);
         } else {
             return (new GeneralResponse)->default_json(false, "Error", $data, 401);
         }
