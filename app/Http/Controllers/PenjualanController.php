@@ -540,7 +540,9 @@ class PenjualanController extends Controller
             }
         }
 
-        $piutang->delete();
+        if ($piutang) {
+            $piutang->delete();
+        }
         $data = $penjualan->delete();
 
         if ($data) {
