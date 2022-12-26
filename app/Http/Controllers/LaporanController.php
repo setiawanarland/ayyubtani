@@ -225,10 +225,10 @@ class LaporanController extends Controller
         $sheet->getStyle('F5:F' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('G5:G5')->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('G6:G' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
-        $sheet->getStyle('G6:G' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0.0');
+        $sheet->getStyle('G6:G' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
         $sheet->getStyle('H5:H5')->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('H6:H' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
-        $sheet->getStyle('H6:H' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0.0');
+        $sheet->getStyle('H6:H' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
         $sheet->getStyle('I5:I5')->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
         $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
