@@ -24,7 +24,7 @@
                             </div>
 
                             <div class="col-sm-2 mt-2">
-                                <button type="button" class="btn btn-primary mb-3 cetak">Cetak</button>
+                                <button type="button" class="btn btn-primary mb-3 cetak">Excel</button>
                                 <button type="button" class="btn btn-danger mb-3 lihat">Lihat</button>
                             </div>
                         </div>
@@ -40,6 +40,7 @@
                                         <th>Pembelian</th>
                                         <th>Penjualan</th>
                                         <th>Stok</th>
+                                        <th>Harga</th>
                                         {{-- <th>Action</th> --}}
                                     </tr>
                                 </thead>
@@ -120,6 +121,12 @@
                             data: 'stok_bulanan',
                             render: function(data, type, row) {
                                 return `${data} Dos`;
+                            }
+                        },
+                        {
+                            data: 'harga',
+                            render: function(data, type, row) {
+                                return number_format(data, 1);
                             }
                         },
                         // {
@@ -321,6 +328,35 @@
 
             $('#harga_perdos').val(formatRupiah(harga_perdos.toString(), 'Rp. '));
         });
+
+
+
+        function number_format(number, decimals, decPoint, thousandsSep) {
+            number = (number + '').replace(/[^0-9+\-Ee.]/g, '')
+            var n = !isFinite(+number) ? 0 : +number
+            var prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
+            var sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep
+            var dec = (typeof decPoint === 'undefined') ? '.' : decPoint
+            var s = ''
+
+            var toFixedFix = function(n, prec) {
+                var k = Math.pow(10, prec)
+                return '' + (Math.round(n * k) / k)
+                    .toFixed(prec)
+            }
+
+            // @todo: for IE parseFloat(0.55).toFixed(0) = 0;
+            s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.')
+            if (s[0].length > 3) {
+                s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep)
+            }
+            if ((s[1] || '').length < prec) {
+                s[1] = s[1] || ''
+                s[1] += new Array(prec - s[1].length + 1).join('0')
+            }
+
+            return s.join(dec)
+        }
 
 
 

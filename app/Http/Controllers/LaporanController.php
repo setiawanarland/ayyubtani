@@ -72,6 +72,7 @@ class LaporanController extends Controller
             $value->pembelian = $stokBeli;
             $value->penjualan = $stokJual;
             $value->stok_bulanan = $stokBeli - $stokJual;
+            $value->harga = $value->stok_bulanan * $value->harga_perdos;
 
             if ($stokBeli !== 0 || $stokJual !== 0) {
                 $data[] = $value;
@@ -134,6 +135,7 @@ class LaporanController extends Controller
             $value->pembelian = $stokBeli;
             $value->penjualan = $stokJual;
             $value->stok_bulanan = $stokBeli - $stokJual;
+            $value->harga = $value->stok_bulanan * $value->harga_perdos;
 
             if ($stokBeli !== 0 || $stokJual !== 0) {
                 $temp[] = $value;
@@ -197,13 +199,15 @@ class LaporanController extends Controller
         $sheet->getColumnDimension('E')->setWidth(13);
         $sheet->setCellValue('F5', 'Stok');
         $sheet->getColumnDimension('F')->setWidth(8);
+        $sheet->setCellValue('G5', 'Harga');
+        $sheet->getColumnDimension('G')->setWidth(20);
 
         $cell = 5;
 
         $sheet->getStyle('A1:A3')->getFont()->setSize(12);
-        $sheet->getStyle('A:F')->getAlignment()->setWrapText(true);
-        $sheet->getStyle('A5:F5')->getFont()->setBold(true);
-        $sheet->getStyle('A5:F5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('A:G')->getAlignment()->setWrapText(true);
+        $sheet->getStyle('A5:G5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:G5')->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('A5:A' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
         $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
@@ -211,6 +215,7 @@ class LaporanController extends Controller
         $sheet->getStyle('D5:D' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('E5:E' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('F5:F' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('G5:G' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
         $sheet->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center');
 
 
@@ -225,113 +230,7 @@ class LaporanController extends Controller
             $sheet->setCellValue('D' . $cell, $value->pembelian);
             $sheet->setCellValue('E' . $cell, $value->penjualan);
             $sheet->setCellValue('F' . $cell, $value->stok_bulanan);
-
-            // level if kepala 
-
-
-            // $total_tambahan = 0;
-
-            // // cek if isset skp_utama
-            // if (isset($value['skp_utama'])) {
-
-            //     $jumlah_data = 0;
-            //     $sum_nilai_iki = 0;
-            //     foreach ($value['skp_utama'] as $key => $val) {
-
-            //         foreach ($val['aspek_skp'] as $k => $v) {
-
-            //             foreach ($v['target_skp'] as $mk => $rr) {
-            //                 $kategori_ = '';
-            //                 if ($rr['bulan'] ==  $bulan) {
-
-            //                     $single_rate = ($v['realisasi_skp'][$mk]['realisasi_bulanan'] / $rr['target']) * 100;
-
-            //                     if ($single_rate > 110) {
-            //                         $nilai_iki = 110 + ((120 - 110) / (110 - 101)) * (110 - 101);
-            //                     } elseif ($single_rate >= 101 && $single_rate <= 110) {
-            //                         $nilai_iki = 110 + ((120 - 110) / (110 - 101)) * ($single_rate - 101);
-            //                     } elseif ($single_rate == 100) {
-            //                         $nilai_iki = 109;
-            //                     } elseif ($single_rate >= 80 && $single_rate <= 99) {
-            //                         $nilai_iki = 70 + ((89 - 70) / (99 - 80)) * ($single_rate - 80);
-            //                     } elseif ($single_rate >= 60 && $single_rate <= 79) {
-            //                         $nilai_iki = 50 + ((69 - 50) / (79 - 60)) * ($single_rate - 60);
-            //                     } elseif ($single_rate >= 0 && $single_rate <= 79) {
-            //                         $nilai_iki = (49 / 59) * $single_rate;
-            //                     }
-            //                     //$sheet->setCellValue('J13', round($nilai_iki,1).' %' )->mergeCells('J13:J13');
-            //                     $sum_nilai_iki += $nilai_iki;
-            //                     $jumlah_data++;
-            //                 }
-            //             }
-            //         }
-            //     }
-
-            //     if ($sum_nilai_iki != 0 && $jumlah_data != 0) {
-            //         $nilai_utama = round($sum_nilai_iki / $jumlah_data, 1);
-            //     } else {
-            //         $nilai_utama = 0;
-            //     }
-            // } else {
-            //     $nilai_utama = 0;
-            // }
-
-            // // cek if isset skp_tambahan
-            // if (isset($value['skp_tambahan'])) {
-
-            //     $total_tambahan = 0;
-
-            //     foreach ($value['skp_tambahan'] as $key => $val) {
-
-            //         foreach ($val['aspek_skp'] as $k => $v) {
-
-            //             foreach ($v['target_skp'] as $mk => $rr) {
-            //                 $kategori_ = '';
-            //                 if ($rr['bulan'] ==  $bulan) {
-
-            //                     $single_rate = ($v['realisasi_skp'][$mk]['realisasi_bulanan'] / $rr['target']) * 100;
-
-            //                     if ($single_rate > 110) {
-            //                         $nilai_iki = 110 + ((120 - 110) / (110 - 101)) * (110 - 101);
-            //                     } elseif ($single_rate >= 101 && $single_rate <= 110) {
-            //                         $nilai_iki = 110 + ((120 - 110) / (110 - 101)) * ($single_rate - 101);
-            //                     } elseif ($single_rate == 100) {
-            //                         $nilai_iki = 109;
-            //                     } elseif ($single_rate >= 80 && $single_rate <= 99) {
-            //                         $nilai_iki = 70 + ((89 - 70) / (99 - 80)) * ($single_rate - 80);
-            //                     } elseif ($single_rate >= 60 && $single_rate <= 79) {
-            //                         $nilai_iki = 50 + ((69 - 50) / (79 - 60)) * ($single_rate - 60);
-            //                     } elseif ($single_rate >= 0 && $single_rate <= 79) {
-            //                         $nilai_iki = (49 / 59) * $single_rate;
-            //                     }
-
-            //                     if ($nilai_iki > 110) {
-            //                         $total_tambahan += 2.4;
-            //                     } elseif ($nilai_iki >= 101 && $nilai_iki <= 110) {
-            //                         $total_tambahan += 1.6;
-            //                     } elseif ($nilai_iki == 100) {
-            //                         $total_tambahan += 1.0;
-            //                     } elseif ($nilai_iki >= 80 && $nilai_iki <= 99) {
-            //                         $total_tambahan += 0.5;
-            //                     } elseif ($nilai_iki >= 60 && $nilai_iki <= 79) {
-            //                         $total_tambahan += 0.3;
-            //                     } elseif ($nilai_iki >= 0 && $nilai_iki <= 79) {
-            //                         $total_tambahan += 0.1;
-            //                     }
-            //                 }
-            //             }
-            //         }
-            //     }
-
-            //     $nilai_tambahan = $total_tambahan;
-            // } else {
-            //     $nilai_tambahan = 0;
-            // }
-
-
-            // $total_nilai = round($nilai_utama + $nilai_tambahan, 1);
-            // // $sheet->setCellValue('J' . $cell, $total_nilai);
-            // $sheet->setCellValue('E' . $cell, $total_nilai);
+            $sheet->setCellValue('G' . $cell, number_format($value->harga, 1));
         }
 
         $border = [
@@ -343,8 +242,7 @@ class LaporanController extends Controller
             ],
         ];
 
-        // $sheet->getStyle('A4:F' . $cell)->applyFromArray($border);
-        $sheet->getStyle('A5:F' . $cell)->applyFromArray($border);
+        $sheet->getStyle('A5:G' . $cell)->applyFromArray($border);
 
         if ($jenis == 'excel') {
             // Untuk download 
