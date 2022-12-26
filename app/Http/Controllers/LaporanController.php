@@ -73,6 +73,8 @@ class LaporanController extends Controller
             $value->penjualan = $stokJual;
             $value->stok_bulanan = $stokBeli - $stokJual;
             $value->harga = $value->stok_bulanan * $value->harga_perdos;
+            $value->dpp = $value->harga / 1.1;
+            $value->ppn = $value->harga - $value->dpp;
 
             if ($stokBeli !== 0 || $stokJual !== 0) {
                 $data[] = $value;
@@ -136,6 +138,8 @@ class LaporanController extends Controller
             $value->penjualan = $stokJual;
             $value->stok_bulanan = $stokBeli - $stokJual;
             $value->harga = $value->stok_bulanan * $value->harga_perdos;
+            $value->dpp = $value->harga / 1.1;
+            $value->ppn = $value->harga - $value->dpp;
 
             if ($stokBeli !== 0 || $stokJual !== 0) {
                 $temp[] = $value;
@@ -201,13 +205,17 @@ class LaporanController extends Controller
         $sheet->getColumnDimension('F')->setWidth(8);
         $sheet->setCellValue('G5', 'Harga');
         $sheet->getColumnDimension('G')->setWidth(20);
+        $sheet->setCellValue('H5', 'DPP');
+        $sheet->getColumnDimension('H')->setWidth(20);
+        $sheet->setCellValue('I5', 'PPN');
+        $sheet->getColumnDimension('I')->setWidth(20);
 
         $cell = 5;
 
         $sheet->getStyle('A1:A3')->getFont()->setSize(12);
-        $sheet->getStyle('A:G')->getAlignment()->setWrapText(true);
-        $sheet->getStyle('A5:G5')->getFont()->setBold(true);
-        $sheet->getStyle('A5:G5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('A:I')->getAlignment()->setWrapText(true);
+        $sheet->getStyle('A5:I5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:I5')->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('A5:A' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
         $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
@@ -218,6 +226,12 @@ class LaporanController extends Controller
         $sheet->getStyle('G5:G5')->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('G6:G' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
         $sheet->getStyle('G6:G' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0.0');
+        $sheet->getStyle('H5:H5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('H6:H' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
+        $sheet->getStyle('H6:H' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0.0');
+        $sheet->getStyle('I5:I5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
+        $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0.0');
         $sheet->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center');
 
 
@@ -234,6 +248,8 @@ class LaporanController extends Controller
             $sheet->setCellValue('F' . $cell, $value->stok_bulanan);
             // $sheet->setCellValue('G' . $cell, number_format($value->harga));
             $sheet->setCellValue('G' . $cell, $value->harga);
+            $sheet->setCellValue('H' . $cell, $value->dpp);
+            $sheet->setCellValue('I' . $cell, $value->ppn);
         }
 
         $border = [
@@ -245,7 +261,7 @@ class LaporanController extends Controller
             ],
         ];
 
-        $sheet->getStyle('A5:G' . $cell)->applyFromArray($border);
+        $sheet->getStyle('A5:I' . $cell)->applyFromArray($border);
 
         if ($jenis == 'excel') {
             // Untuk download 

@@ -41,6 +41,8 @@
                                         <th>Penjualan</th>
                                         <th>Stok</th>
                                         <th>Harga</th>
+                                        <th>DPP</th>
+                                        <th>PPN</th>
                                         {{-- <th>Action</th> --}}
                                     </tr>
                                 </thead>
@@ -125,6 +127,18 @@
                         },
                         {
                             data: 'harga',
+                            render: function(data, type, row) {
+                                return number_format(data, 1);
+                            }
+                        },
+                        {
+                            data: 'dpp',
+                            render: function(data, type, row) {
+                                return number_format(data, 1);
+                            }
+                        },
+                        {
+                            data: 'ppn',
                             render: function(data, type, row) {
                                 return number_format(data, 1);
                             }
