@@ -194,7 +194,7 @@ class LaporanController extends Controller
         $sheet->setCellValue('A5', 'No')->mergeCells('A5:A5');
         $sheet->getColumnDimension('A')->setWidth(8);
         $sheet->setCellValue('B5', 'Nama Produk');
-        $sheet->getColumnDimension('B')->setWidth(60);
+        $sheet->getColumnDimension('B')->setWidth(30);
         $sheet->setCellValue('C5', 'Kemasan');
         $sheet->getColumnDimension('C')->setWidth(25);
         $sheet->setCellValue('D5', 'Pembelian');
