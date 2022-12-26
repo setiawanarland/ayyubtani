@@ -28,7 +28,7 @@ class LaporanController extends Controller
         $stokBeli = 0;
         $stokJual = 0;
 
-        $produks = DB::table('produks')->get();
+        $produks = DB::table('produks')->orderBy('nama_produk')->get();
 
         foreach ($produks as $key => $value) {
             $stokBeli = 0;
@@ -93,7 +93,7 @@ class LaporanController extends Controller
         $stokBeli = 0;
         $stokJual = 0;
 
-        $produks = DB::table('produks')->get();
+        $produks = DB::table('produks')->orderBy('nama_produk')->get();
 
         foreach ($produks as $key => $value) {
             $stokBeli = 0;
