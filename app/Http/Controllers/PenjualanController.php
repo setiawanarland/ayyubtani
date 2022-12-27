@@ -45,7 +45,7 @@ class PenjualanController extends Controller
 
         $pembayaran = DB::table('pembayarans')->get();
 
-        $lastPenjualan = Penjualan::get();
+        $lastPenjualan = Penjualan::where('tahun', session('tahun'))->get();
 
         $invoice = "AT-" . substr(session('tahun'), -2) . "-" . sprintf("%05s", count($lastPenjualan) + 1);
 
