@@ -47,6 +47,10 @@
                                     href="{{ url('/laporan/stok') }}"><i
                                         class="fa fa-file-text"></i><span>stok</span></a>
                             </li>
+                            <li class="{{ Request::path() == 'laporan/produk' ? 'active' : '' }}"><a
+                                    href="{{ url('/laporan/produk') }}"><i
+                                        class="fa fa-database"></i><span>produk</span></a>
+                            </li>
                         </ul>
                     </li>
                     <li>

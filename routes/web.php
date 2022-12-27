@@ -113,6 +113,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/stok', [LaporanController::class, 'stok'])->name('laporan-stok');
         Route::get('/stok-list', [LaporanController::class, 'list'])->name('stok-list');
         Route::get('/stok-rekap', [LaporanController::class, 'rekap'])->name('stok-rekap');
+        Route::get('/produk', [LaporanController::class, 'produk'])->name('laporan-produk');
+        Route::get('/produk-list', [LaporanController::class, 'listProduk'])->name('produk-list');
+        Route::get('/produk-rekap', [LaporanController::class, 'rekapProduk'])->name('produk-rekap');
     });
 
     Route::prefix('pajak')->group(function () {
