@@ -71,7 +71,7 @@
                     ordering: false,
                     paging: false,
                     ajax: {
-                        url: "/laporan/produk-list",
+                        url: "/laporan/produk-laporan",
                         type: "GET",
                         data: {
                             "bulan": bulan
