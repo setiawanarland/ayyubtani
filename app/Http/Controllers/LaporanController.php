@@ -395,9 +395,9 @@ class LaporanController extends Controller
 
         $spreadsheet->getProperties()->setCreator('CV AYYUB TANI')
             ->setLastModifiedBy('CV AYYUB TANI')
-            ->setTitle('Laporan Rekap Stok Bulanan')
-            ->setSubject('Laporan Rekap Stok Bulanan')
-            ->setDescription('Laporan Rekap Stok Bulanan')
+            ->setTitle('Laporan Rekap Produk Bulanan')
+            ->setSubject('Laporan Rekap Produk Bulanan')
+            ->setDescription('Laporan Rekap Produk Bulanan')
             ->setKeywords('pdf php')
             ->setCategory('Laporan Rekap Stok Bulanan');
 
