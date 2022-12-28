@@ -379,7 +379,7 @@
                                 }).then(function() {
                                     dataRow.destroy();
                                     dataRow.init();
-                                    window.location = "{{ route('daftar-penjualan') }}";
+                                    // window.location = "{{ route('daftar-penjualan') }}";
                                 });
                             }
                         }).catch(function(error) {
