@@ -122,11 +122,11 @@
                                         <tr>
                                             <th>No.</th>
                                             <th width="25%">Nama Produk</th>
-                                            <th width="10%">Qty</th>
-                                            <th width="10%">Satuan</th>
-                                            {{-- <th width="15%">Harga Stn. <br> ({{ $pajak->nama_pajak }})</th> --}}
-                                            <th width="15%">Harga</th>
                                             <th width="10%">Ket.</th>
+                                            <th width="10%">Qty</th>
+                                            {{-- <th width="15%">Harga Stn. <br> ({{ $pajak->nama_pajak }})</th> --}}
+                                            <th width="10%">Satuan</th>
+                                            <th width="15%">Harga</th>
                                             <th width="15%">Disc.</th>
                                             <th width="15%">Jumlah</th>
                                             <th>#</th>
@@ -251,12 +251,24 @@
                             }
                         },
                         {
+                            data: 'ket',
+                            render: function(data, type, row) {
+                                return `
+                                <input type="text" class="form-control ket" id="ket" name="ket[]" value="` +
+                                    data.toUpperCase() + " Dos" +
+                                    `">
+                                `;
+                            }
+
+                        },
+                        {
                             data: 'qty',
                             render: function(data, type, row) {
                                 return `
                                     <input type="text" class="form-control qty" id="qty" name="qty[]" value="` + data + `">
                                 `;
                             }
+
                         },
                         {
                             data: 'satuan',
@@ -266,6 +278,7 @@
                                     data.toUpperCase() + `">
                                 `;
                             }
+
                         },
                         {
                             data: 'harga_jual',
@@ -273,16 +286,6 @@
                                 return `
                                     <input type="text" class="form-control harga_beli" id="harga_beli" name="harga_beli[]" value="` +
                                     number_format(data, 1) + `">
-                                `;
-                            }
-                        },
-                        {
-                            data: 'ket',
-                            render: function(data, type, row) {
-                                return `
-                                <input type="text" class="form-control ket" id="ket" name="ket[]" value="` +
-                                    data.toUpperCase() + " Dos" +
-                                    `">
                                 `;
                             }
                         },
@@ -515,7 +518,7 @@
                                                                                                                                                                                     <table id="" class="text-cente" style="width: 100%;">
                                                                                                                                                                                         <tr>
                                                                                                                                                                                             <td colspan="6" style="font-size: 30px;">
-                                                                                                                                                                                                <img src="{{ asset('images/author/at.png') }}" width="10%">
+                                                                                                                                                                                                <img src="{{ asset('images/author/at.png') }}" width="10%" height="25px">
                                                                                                                                                                                                 CV. AYYUB TANI
                                                                                                                                                                                                 <img src="{{ asset('images/author/dgw.png') }}" width="10%">
                                                                                                                                                                             
@@ -545,6 +548,9 @@
                                 `</td>
                                                                                                                                                                                             <td colspan="3">` +
                                 data
+                                .kios
+                                .pemilik
+                                .toUpperCase() + `, ` + data
                                 .kios
                                 .nama_kios
                                 .toUpperCase() +
@@ -594,10 +600,10 @@
                                                                                                                                                                                         border-bottom: 1px solid black;">
                                                                                                                                                                                             <th style="width: 1%;">No.</th>
                                                                                                                                                                                             <th colspan="2" style="width: 50%; !important">Nama Produk</th>
+                                                                                                                                                                                            <th style="width: 5%;">Ket.</th>
                                                                                                                                                                                             <th style="width: 5%;">Qty</th>
                                                                                                                                                                                             <th style="width: 1%; !important">Stn.</th>
                                                                                                                                                                                             <th style="width: 10%;">Harga</th>
-                                                                                                                                                                                            <th style="width: 5%;">Ket.</th>
                                                                                                                                                                                             <th style="width: 5%;">Disc.</th>
                                                                                                                                                                                             <th style="width: 10%;">Jumlah</th>
                                                                                                                                                                                             </tr>
@@ -617,22 +623,21 @@
                                     `</td>
                                                                                                                                                                                             <td style="width: 5%;text-align:center">` +
                                     value
+                                    .ket
+                                    .toUpperCase() +
+                                    `</td>
+                                                                                                                                                                                            <td style="width: 5%;text-align:center">` +
+                                    value
                                     .qty +
                                     `</td>
                                                                                                                                                                                             <td style="width: 5%;text-align:center">` +
                                     value
-                                    .satuan
-                                    .toUpperCase() +
+                                    .satuan.toUpperCase() +
                                     `</td>
                                                                                                                                                                                             <td style="width: 10%;text-align:right">` +
                                     number_format(
                                         value
                                         .harga_jual, 1) +
-                                    `</td>
-                                                                                                                                                                                            <td style="width: 5%;text-align:center">` +
-                                    value
-                                    .ket
-                                    .toUpperCase() +
                                     `</td>
                                                                                                                                                                                             <td style="width: 5%;text-align:center">` +
                                     number_format(
@@ -727,7 +732,7 @@
                                                                                                                                                                                     <p style="margin-top: 50px; text-align:center;">_____________</p>
                                                                                                                                                                                     </div>
                                                                                                                                                                                     <div class="flex-item-right">
-                                                                                                                                                                                        <p style="margin-top: 143px; text-align:center;">Hormat Kami</p>
+                                                                                                                                                                                        <p style="margin-top: 113px; text-align:center;">Hormat Kami</p>
                                                                                                                                                                                         <p style="margin-top: 50px; text-align:center;">_____________</p>
                                                                                                                                                                                 </div>
                                                                                                                                                                             </div>
@@ -1041,28 +1046,28 @@
 
         });
 
-        $(document).on('keyup', '#harga_satuan', function(e) {
-            let jumlahPerdos = $('#jumlah_perdos').val();
-            let disc = parseInt($('#disc').val().replace(/[^0-9]/g, ''));
-            let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
-            let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
-            hargaPerdos = (hargaSatuan * jumlahPerdos) - disc;
+        // $(document).on('keyup', '#harga_satuan', function(e) {
+        //     let jumlahPerdos = $('#jumlah_perdos').val();
+        //     let disc = parseInt($('#disc').val().replace(/[^0-9]/g, ''));
+        //     let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
+        //     let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
+        //     hargaPerdos = (hargaSatuan * jumlahPerdos) - disc;
 
-            $('#harga_perdos').val(formatRupiah(hargaPerdos.toString(), ''));
-            console.log('harga satuan');
-            console.log(jumlahPerdos);
-        });
+        //     $('#harga_perdos').val(formatRupiah(hargaPerdos.toString(), ''));
+        //     console.log('harga satuan');
+        //     console.log(jumlahPerdos);
+        // });
 
-        $(document).on('keyup', '#harga_perdos', function(e) {
-            let jumlahPerdos = $('#jumlah_perdos').val();
-            let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
-            let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
-            hargaSatuan = hargaPerdos / jumlahPerdos;
+        // $(document).on('keyup', '#harga_perdos', function(e) {
+        //     let jumlahPerdos = $('#jumlah_perdos').val();
+        //     let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
+        //     let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
+        //     hargaSatuan = hargaPerdos / jumlahPerdos;
 
-            $('#harga_satuan').val(formatRupiah(hargaSatuan.toString(), ''));
-            console.log('harga perdos');
-            console.log(jumlahPerdos);
-        });
+        //     $('#harga_satuan').val(formatRupiah(hargaSatuan.toString(), ''));
+        //     console.log('harga perdos');
+        //     console.log(jumlahPerdos);
+        // });
 
         // format rupiah
         $('#harga_satuan, #harga_perdos').on('keyup', function() {
