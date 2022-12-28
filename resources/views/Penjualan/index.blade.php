@@ -1046,17 +1046,17 @@
 
         });
 
-        // $(document).on('keyup', '#harga_satuan', function(e) {
-        //     let jumlahPerdos = $('#jumlah_perdos').val();
-        //     let disc = parseInt($('#disc').val().replace(/[^0-9]/g, ''));
-        //     let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
-        //     let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
-        //     hargaPerdos = (hargaSatuan * jumlahPerdos) - disc;
+        $(document).on('keyup', '#harga_satuan', function(e) {
+            let jumlahPerdos = $('#jumlah_perdos').val();
+            let disc = parseInt($('#disc').val().replace(/[^0-9]/g, ''));
+            let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
+            let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
+            hargaPerdos = (hargaSatuan * jumlahPerdos) - disc;
 
-        //     $('#harga_perdos').val(formatRupiah(hargaPerdos.toString(), ''));
-        //     console.log('harga satuan');
-        //     console.log(jumlahPerdos);
-        // });
+            $('#harga_perdos').val(formatRupiah(hargaPerdos.toString(), ''));
+            console.log('harga satuan');
+            console.log(jumlahPerdos);
+        });
 
         // $(document).on('keyup', '#harga_perdos', function(e) {
         //     let jumlahPerdos = $('#jumlah_perdos').val();
