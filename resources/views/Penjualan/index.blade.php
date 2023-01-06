@@ -90,7 +90,8 @@
                                     <select class="form-control" id="kios" name="kios">
                                         <option value="null">Pilih Kios</option>
                                         @foreach ($kios as $index => $value)
-                                            <option value="{{ $value->id }}">{{ Str::upper($value->pemilik) }}
+                                            <option value="{{ $value->id }}">
+                                                {{ Str::upper($value->pemilik) }}, {{ Str::upper($value->nama_kios) }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -739,7 +740,7 @@
                                                                                                                                                                             `;
 
                             var document_focus = false;
-                            var popupWin = window.open('', '_blank', 'width=500,height=500');
+                            var popupWin = window.open('', '_blank', 'width=1000%,height=500');
                             popupWin.document.open();
                             popupWin.document.write(
                                 '<html><body onload="document.title=`Ayyub Tani`;">' +

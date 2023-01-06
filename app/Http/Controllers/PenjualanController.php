@@ -45,9 +45,11 @@ class PenjualanController extends Controller
 
         $pembayaran = DB::table('pembayarans')->get();
 
-        $lastPenjualan = Penjualan::where('tahun', session('tahun'))->get();
+        // $lastPenjualan = Penjualan::where('tahun', session('tahun'))->get();
+        $lastPenjualan = Penjualan::max('invoice');
 
-        $invoice = "AT-" . substr(session('tahun'), -2) . "-" . sprintf("%05s", count($lastPenjualan) + 1);
+        // $invoice = "AT-" . substr(session('tahun'), -2) . "-" . sprintf("%05s", count($lastPenjualan) + 1);
+        $invoice = $lastPenjualan + 1;
 
         return view('penjualan.index', compact('page_title', 'page_description', 'breadcrumbs', 'kios', 'produk', 'pajak', 'pembayaran', 'invoice'));
     }
