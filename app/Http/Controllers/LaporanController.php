@@ -766,7 +766,7 @@ class LaporanController extends Controller
                     return $query->whereMonth('tanggal_jual', "$bulan");
                 }
             })
-            ->orderBy('invoice')
+            ->orderBy('tanggal_beli')
             ->get();
 
         foreach ($pembelian as $key => $value) {
@@ -821,7 +821,7 @@ class LaporanController extends Controller
                     return $query->whereMonth('tanggal_beli', "$bulan");
                 }
             })
-            ->orderBy('invoice')
+            ->orderBy('tanggal_beli')
             ->get();
 
         foreach ($penjualan as $key => $value) {
