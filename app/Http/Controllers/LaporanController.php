@@ -508,9 +508,9 @@ class LaporanController extends Controller
     {
         $page_title = 'Ayyub Tani';
         $page_description = 'Dashboard Admin Ayyub Tani';
-        $breadcrumbs = ['Laporan Invoice'];
+        $breadcrumbs = ['Laporan Penjualan'];
 
-        return view('laporan.invoice', compact('page_title', 'page_description', 'breadcrumbs'));
+        return view('laporan.penjualan', compact('page_title', 'page_description', 'breadcrumbs'));
     }
 
     public function listPenjualan(Request $request)
