@@ -744,4 +744,245 @@ class LaporanController extends Controller
 
         $writer->save('php://output');
     }
+
+    public function pembelian()
+    {
+        $page_title = 'Ayyub Tani';
+        $page_description = 'Dashboard Admin Ayyub Tani';
+        $breadcrumbs = ['Laporan Pembelian'];
+
+        return view('laporan.pembelian', compact('page_title', 'page_description', 'breadcrumbs'));
+    }
+
+    public function listPembelian(Request $request)
+    {
+        $data = [];
+        $bulan = request('bulan');
+
+        $pembelian = DB::table('pembelians')
+            ->where('tahun', session('tahun'))
+            ->when($bulan, function ($query, $bulan) {
+                if ($bulan !== 'all') {
+                    return $query->whereMonth('tanggal_jual', "$bulan");
+                }
+            })
+            ->orderBy('invoice')
+            ->get();
+
+        foreach ($pembelian as $key => $value) {
+
+            $detailPembelian = DB::table('detail_pembelians')
+                ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
+                ->where('pembelian_id', $value->id)
+                ->where('tahun', session('tahun'))
+                ->when($bulan, function ($query, $bulan) {
+                    if ($bulan !== 'all') {
+                        return $query->whereMonth('tanggal_beli', "$bulan");
+                    }
+                })
+                ->get();
+
+
+            if (count($detailPembelian) > 0) {
+                foreach ($detailPembelian as $index => $val) {
+
+                    $produk = DB::table('produks')->select('nama_produk', 'kemasan')->where('id', $val->produk_id)->first();
+
+                    if ($produk) {
+                        $val->produk = $produk->nama_produk;
+                        $val->kemasan = $produk->kemasan;
+                    }
+                }
+            }
+
+            $supplier = DB::table('suppliers')->select('nama_supplier')->where('id', $value->supplier_id)->first();
+
+            $value->detailPembelian = $detailPembelian;
+            $value->supplier = $supplier;
+
+            if (count($detailPembelian) > 0) {
+                $data[] = $value;
+            }
+        }
+
+        return (new GeneralResponse)->default_json(true, 'success', $data, 200);
+    }
+
+    public function rekapPembelian(Request $request)
+    {
+        $bulan = request('bulan');
+        $jenis = request('jenis');
+        $data = [];
+        $temp = [];
+        $penjualan = DB::table('pembelians')
+            ->where('tahun', session('tahun'))
+            ->when($bulan, function ($query, $bulan) {
+                if ($bulan !== 'all') {
+                    return $query->whereMonth('tanggal_beli', "$bulan");
+                }
+            })
+            ->orderBy('invoice')
+            ->get();
+
+        foreach ($penjualan as $key => $value) {
+
+            $detailPembelian = DB::table('detail_pembelians')
+                ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
+                ->where('pembelian_id', $value->id)
+                ->where('tahun', session('tahun'))
+                ->when($bulan, function ($query, $bulan) {
+                    if ($bulan !== 'all') {
+                        return $query->whereMonth('tanggal_beli', "$bulan");
+                    }
+                })
+                ->get();
+
+
+            if (count($detailPembelian) > 0) {
+                foreach ($detailPembelian as $index => $val) {
+
+                    $produk = DB::table('produks')->select('nama_produk', 'kemasan')->where('id', $val->produk_id)->first();
+
+                    if ($produk) {
+                        $val->produk = $produk->nama_produk;
+                        $val->kemasan = $produk->kemasan;
+                    }
+                }
+            }
+
+            $supplier = DB::table('suppliers')->select('nama_supplier')->where('id', $value->supplier_id)->first();
+
+            $value->detail_pembelian = $detailPembelian;
+            $value->supplier = $supplier;
+
+            if (count($detailPembelian) > 0) {
+                $temp[] = $value;
+            }
+        }
+
+        $data['bulan'] = $bulan;
+        $data['pembelian'] = $temp;
+        // return $data;
+
+        return $this->laporanRekapPembelian($data, $bulan, $jenis);
+    }
+
+    public function laporanRekapPembelian($data, $bulan, $jenis)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $spreadsheet->getProperties()->setCreator('CV AYYUB TANI')
+            ->setLastModifiedBy('CV AYYUB TANI')
+            ->setTitle('Laporan Rekap Pembelian Bulanan')
+            ->setSubject('Laporan Rekap Pembelian Bulanan')
+            ->setDescription('Laporan Rekap Pembelian Bulanan')
+            ->setKeywords('pdf php')
+            ->setCategory('Laporan Rekap Pembelian Bulanan');
+
+        $sheet = $spreadsheet->getActiveSheet();
+        // $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+        $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+        $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_FOLIO);
+
+        $sheet->getRowDimension(1)->setRowHeight(17);
+        $sheet->getRowDimension(2)->setRowHeight(17);
+        $sheet->getRowDimension(3)->setRowHeight(7);
+        $spreadsheet->getDefaultStyle()->getFont()->setName('Times New Roman');
+        $spreadsheet->getDefaultStyle()->getFont()->setSize(10);
+        $spreadsheet->getActiveSheet()->getPageSetup()->setHorizontalCentered(true);
+        $spreadsheet->getActiveSheet()->getPageSetup()->setVerticalCentered(false);
+
+        // //Margin PDF
+        $spreadsheet->getActiveSheet()->getPageMargins()->setTop(0.3);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setRight(0.3);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setLeft(0.3);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setBottom(0.3);
+
+        $tahun = ""  . session('tahun') . "-" . $bulan . "";
+        $periode = ($bulan != 'all') ? strtoupper(strftime('%B %Y', mktime(0, 0, 0, $bulan + 1, 0, (int)session('tahun')))) : (int)session('tahun');
+
+        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI PENJUALAN')->mergeCells('A1:F1');
+        $sheet->setCellValue('A2', 'CV. AYYUB TANI')->mergeCells('A2:F2');
+        $sheet->setCellValue('A3', "PERIODE $periode")->mergeCells('A3:F3');
+
+        $sheet->setCellValue('A5', 'No')->mergeCells('A5:A5');
+        $sheet->getColumnDimension('A')->setWidth(6);
+        $sheet->setCellValue('B5', 'Invoice');
+        $sheet->getColumnDimension('B')->setWidth(10);
+        $sheet->setCellValue('C5', 'Tanggal');
+        $sheet->getColumnDimension('C')->setWidth(15);
+        $sheet->setCellValue('D5', 'Supplier');
+        $sheet->getColumnDimension('D')->setWidth(35);
+        $sheet->setCellValue('E5', 'Pembelian');
+        $sheet->getColumnDimension('E')->setWidth(40);
+        $sheet->setCellValue('F5', 'Ket');
+        $sheet->getColumnDimension('F')->setWidth(10);
+
+        $cell = 5;
+        $merge = 0;
+
+        // return $data;
+        foreach ($data['pembelian'] as $index => $value) {
+            // return $value;
+            $cell++;
+            $merge = $cell + (count($value->detail_pembelian) - 1);
+
+            $sheet->setCellValue('A' . $cell, $index + 1)->mergeCells('A' . $cell . ':A' . $merge);
+            $sheet->setCellValue('B' . $cell, strtoupper($value->invoice))->mergeCells('B' . $cell . ':B' . $merge);
+            $sheet->setCellValue('C' . $cell, date("d/m/Y", strtotime($value->tanggal_beli)))->mergeCells('C' . $cell . ':C' . $merge);
+            $sheet->setCellValue('D' . $cell, strtoupper($value->supplier->nama_supplier))->mergeCells('D' . $cell . ':D' . $merge);
+
+            $index = $cell;
+            foreach ($value->detail_pembelian as $k => $v) {
+                $sheet->setCellValue('E' . $index, "" . strtoupper($v->produk) . ", " . strtoupper($v->kemasan));
+                $sheet->setCellValue('F' . $index, $v->ket);
+                $index++;
+            }
+
+            $cell = $merge;
+        }
+
+        $sheet->getStyle('A1:A3')->getFont()->setSize(12);
+        $sheet->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('A:F')->getAlignment()->setWrapText(true);
+        $sheet->getStyle('A5:F5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:F5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('A5:A' . $cell)->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('B5:B' . (count($data['pembelian']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('B5:B' . (count($data['pembelian']) + $cell))->getAlignment()->setVertical('center');
+        $sheet->getStyle('C5:C' . (count($data['pembelian']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('D5:D' . (count($data['pembelian']) + $cell))->getAlignment()->setVertical('center');
+        $sheet->getStyle('E5:E' . (count($data['pembelian']) + $cell))->getAlignment()->setVertical('center');
+        $sheet->getStyle('F5:F' . (count($data['pembelian']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+
+        $border = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['argb' => '0000000'],
+                ],
+            ],
+        ];
+
+        $sheet->getStyle('A5:F' . $cell)->applyFromArray($border);
+
+        if ($jenis == 'excel') {
+            // Untuk download 
+            $writer = new Xlsx($spreadsheet);
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="Rekapitulasi Laporan Pembelian CV. AYYUB TANI ' . $periode . '.xlsx"');
+        } else {
+            $spreadsheet->getActiveSheet()->getHeaderFooter()
+                ->setOddHeader('&C&H' . url()->current());
+            $spreadsheet->getActiveSheet()->getHeaderFooter()
+                ->setOddFooter('&L&B &RPage &P of &N');
+            $class = \PhpOffice\PhpSpreadsheet\Writer\Pdf\Mpdf::class;
+            \PhpOffice\PhpSpreadsheet\IOFactory::registerWriter('Pdf', $class);
+            header('Content-Type: application/pdf');
+            header('Cache-Control: max-age=0');
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Pdf');
+        }
+
+        $writer->save('php://output');
+    }
 }
