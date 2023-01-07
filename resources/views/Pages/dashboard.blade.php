@@ -21,7 +21,7 @@
                         <div class="card">
                             <div class="seo-fact sbg2">
                                 <div class="p-4 d-flex justify-content-between align-items-center">
-                                    <div class="seofct-icon"><i class="ti-user"></i> Daftar Kios</div>
+                                    <div class="seofct-icon"><i class="ti-user"></i> Kios</div>
                                     <h2>{{ $dataKios }}</h2>
                                 </div>
                                 <canvas id="seolinechart" height="50"></canvas>
@@ -33,7 +33,7 @@
                             <div class="seo-fact sbg3">
                                 <div class="p-4 d-flex justify-content-between align-items-center">
                                     <div class="seofct-icon"><i class="ti-shopping-cart-full"></i> Pembelian</div>
-                                    <h2>1000</h2>
+                                    <h2>{{ $dataPembelian }}</h2>
                                 </div>
                                 <canvas id="seolinechart" height="50"></canvas>
                             </div>
@@ -44,7 +44,7 @@
                             <div class="seo-fact sbg4">
                                 <div class="p-4 d-flex justify-content-between align-items-center">
                                     <div class="seofct-icon"><i class="ti-shopping-cart"></i> Penjualan</div>
-                                    <h2>0</h2>
+                                    <h2>{{ $dataPenjualan }}</h2>
                                 </div>
                                 <canvas id="seolinechart" height="50"></canvas>
                             </div>

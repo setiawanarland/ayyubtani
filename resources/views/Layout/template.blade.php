@@ -155,6 +155,8 @@
     <script src="{{ asset('js/bar-chart.js') }}"></script>
     <!-- all map chart -->
     <script src="{{ asset('js/maps.js') }}"></script>
+    <!-- moment -->
+    <script src="{{ asset('js/moment.js') }}"></script>
     <!-- others plugins -->
     <script src="{{ asset('js/plugins.js') }}"></script>
     <script src="{{ asset('js/scripts.js') }}"></script>

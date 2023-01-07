@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Request as RequestFacades;
 use App\Http\Controllers\KiosController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SupplierController;
+use App\Models\Kios;
+use App\Models\Pembelian;
+use App\Models\Penjualan;
+use App\Models\Produk;
 
 class DashboardController extends Controller
 {
@@ -17,22 +21,11 @@ class DashboardController extends Controller
         $page_description = 'Dashboard Admin Ayyub Tani';
         $breadcrumbs = ['Dashboard'];
 
-        $data = [];
-        $produk = (new ProdukController)->getList();
-        foreach ($produk as $key => $value) {
-            $data[] = $value;
-        }
+        $dataProduk = count(Produk::get());
+        $dataKios = count(Kios::get());
+        $dataPembelian = count(Pembelian::where('tahun', session('tahun'))->get());
+        $dataPenjualan = count(Penjualan::where('tahun', session('tahun'))->get());
 
-        $dataProduk = count($data[1]['data']);
-
-        $data = [];
-        $kios = (new KiosController)->getList();
-        foreach ($kios as $key => $value) {
-            $data[] = $value;
-        }
-
-        $dataKios = count($data[1]['data']);
-
-        return view('Pages.dashboard', compact('page_title', 'page_description', 'breadcrumbs', 'dataProduk', 'dataKios'));
+        return view('Pages.dashboard', compact('page_title', 'page_description', 'breadcrumbs', 'dataProduk', 'dataKios', 'dataPembelian', 'dataPenjualan'));
     }
 }
