@@ -39,6 +39,7 @@
                                         {{-- <th>Harga Beli</th> --}}
                                         <th>Invoice</th>
                                         <th>Penjualan</th>
+                                        <th>Kios</th>
                                         {{-- <th>Stok</th>
                                         <th>Harga</th>
                                         <th>DPP</th>
@@ -139,12 +140,19 @@
                                 return html;
                             }
                         },
-                        // {
-                        //     data: 'harga',
-                        //     render: function(data, type, row) {
-                        //         return number_format(data, 1);
-                        //     }
-                        // },
+                        {
+                            data: 'detail_penjualan',
+                            render: function(data, type, row) {
+                                let html = '';
+                                html += '<ul>';
+                                $.each(data, function(x, y) {
+                                    html +=
+                                        `<li>${y.kios.toUpperCase()}<li>`;
+                                })
+                                html += '</ul>';
+                                return html;
+                            }
+                        },
                         // {
                         //     data: 'dpp',
                         //     render: function(data, type, row) {
