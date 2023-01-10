@@ -175,7 +175,7 @@ class PenjualanController extends Controller
         $data['produks'] = $produks;
 
         // set jatuhTempo 
-        $jatuhTempo = date('d/m/Y', strtotime('+1 months', strtotime($request->tanggal_jual)));
+        $jatuhTempo = ($request->pembayaran == 1) ? date('d/m/Y', strtotime('+1 months', strtotime($request->tanggal_jual))) : date('d/m/Y', strtotime($request->tanggal_jual));
 
         // set data
         $data['invoice'] = $request->invoice;
@@ -322,7 +322,7 @@ class PenjualanController extends Controller
 
     public function getListPenjualan()
     {
-        $data = Penjualan::select('penjualans.*', 'kios.nama_kios',)
+        $data = Penjualan::select('penjualans.*', 'kios.nama_kios', 'kios.pemilik')
             ->join('kios', 'penjualans.kios_id', 'kios.id')
             ->where('penjualans.tahun', session('tahun'))
             // ->orderBy('penjualans.tahun', 'ASC')
@@ -391,7 +391,7 @@ class PenjualanController extends Controller
             ->get();
 
         foreach ($penjualan as $key => $value) {
-            $jatuhTempo = date('d/m/Y', strtotime('+1 months', strtotime($value->tanggal_jual)));
+            $jatuhTempo = ($value->status == 1) ? date('d/m/Y', strtotime('+1 months', strtotime($value->tanggal_jual))) : date('d/m/Y', strtotime($value->tanggal_jual));
             $statusPembayaran = Pembayaran::where('id', $value->status)->first();
             $kios = Kios::where('id', $value->kios_id)->first();
             $detailPenjualan = DetailPenjualan::where('penjualan_id', $value->id)->get();
