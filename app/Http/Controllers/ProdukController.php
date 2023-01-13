@@ -168,28 +168,120 @@ class ProdukController extends Controller
 
     public function test()
     {
-        $hasil = [];
-        $data = [];
-        $produk = Produk::where('satuan', 'btl')->get();
-        foreach ($produk as $key => $value) {
-            $data[] = explode(' ', $value->kemasan);
-        }
+        // $hasil = [];
+        // $data = [];
+        // $produk = Produk::where('satuan', 'btl')->get();
+        // foreach ($produk as $key => $value) {
+        //     $data[] = explode(' ', $value->kemasan);
+        // }
+
+        // foreach ($data as $key => $value) {
+        //     // return $value[0];
+        //     $hasil[] = ($value[0] * $value[3]) / 1000;
+        // }
+
+        // foreach ($produk as $key => $value) {
+        //     // return "ok";
+        //     $baru = $hasil[$key];
+        //     $dataProduk = Produk::where('id', $value->id)->first();
+        //     $dataProduk->satuan = "ltr";
+        //     $dataProduk->qty_perdos = $baru;
+        //     $dataProduk->save();
+        // }
+
+
+        // return $produk;
+
+        $data = [
+            49066200.0,
+            54661200.0,
+            41023350.0,
+            88377600.0,
+            54988850.0,
+            84531800.0,
+            67209400.0,
+            35685600.0,
+            36611600.0,
+            103831000.0,
+            48191000.0,
+            14448850.0,
+            20428850.0,
+            24191850.0,
+            21628200.0,
+            83323600.0,
+            39352500.0,
+            83323600.0,
+            38282500.0,
+            86715600.0,
+            83323600.0,
+            46762500.0,
+            34890500.0,
+            250352000.0,
+            197453200.0,
+            201460000.0,
+            131640000.0,
+            5350000.0,
+            19705400.0,
+            38558500.0,
+            3630000.0,
+            2000000.0,
+            1015200.0,
+            5740000.0,
+            6520000.0,
+            27595200.0,
+            9549200.0,
+            11889200.0,
+            18913200.0,
+            3209200.0,
+            3048000.0,
+            1460000.0,
+            19605000.0,
+            1180000.0,
+            3148000.0,
+            3260000.0,
+            2870000.0,
+            32600000.0,
+            6937200.0,
+            4940000.0,
+            14640000.0,
+            10498000.0,
+            5814000.0,
+            3494000.0,
+            3260000.0,
+            1148000.0,
+            1944000.0,
+            1944000.0,
+            15700000.0,
+            1435000.0,
+            3260000.0,
+            13040000.0,
+            1303800.0,
+            5900000.0,
+            12690600.0,
+            11043200.0,
+            4305000.0,
+            7300400.0,
+            3780000.0,
+            17160000.0,
+            7668000.0,
+            16518000.0,
+            9914600.0,
+            17657000.0,
+            6328800.0,
+            9934400.0,
+            59952200.0,
+            10280000.0,
+        ];
+
+        $result = [];
+        $dpp = 0;
 
         foreach ($data as $key => $value) {
-            // return $value[0];
-            $hasil[] = ($value[0] * $value[3]) / 1000;
+            $dpp = round($value / 1.11, 1);
+            $result['dpp'][] = $dpp;
+            $result['ppn'][] = round($value - $dpp, 1);
         }
 
-        foreach ($produk as $key => $value) {
-            // return "ok";
-            $baru = $hasil[$key];
-            $dataProduk = Produk::where('id', $value->id)->first();
-            $dataProduk->satuan = "ltr";
-            $dataProduk->qty_perdos = $baru;
-            $dataProduk->save();
-        }
-
-
-        return $produk;
+        return $result;
     }
 }
