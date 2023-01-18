@@ -11,6 +11,7 @@ use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\PiutangController;
 use App\Http\Controllers\ProdukController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
@@ -132,5 +133,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/pajak-update', [PajakController::class, 'update'])->name('pajak-update');
         Route::delete('/delete/{id}', [PajakController::class, 'delete'])->name('pajak-delete');
         Route::post('/active/{id}', [PajakController::class, 'active'])->name('pajak-active');
+    });
+
+    Route::prefix('setting')->group(function () {
+        Route::get('/tambah-stok', [SettingController::class, 'tambahStok'])->name('tambah-stok');
+        Route::get('/list-tambah-stok', [SettingController::class, 'listTambahStok'])->name('list-tambah-stok');
+        Route::post('/process-tambah', [SettingController::class, 'processTambah'])->name('process-tambah');
+        Route::get('/kurang-stok', [SettingController::class, 'kurangStok'])->name('kurang-stok');
+        Route::get('/list-kurang-stok', [SettingController::class, 'listKurangStok'])->name('list-kurang-stok');
+        Route::post('/process-kurang', [SettingController::class, 'processKurang'])->name('process-kurang');
+        Route::get('/produk/{id}', [SettingController::class, 'getProduk'])->name('get-produk');
     });
 });
