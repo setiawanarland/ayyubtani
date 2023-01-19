@@ -74,9 +74,6 @@
                         <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-cog"></i><span>Settings
                             </span></a>
                         <ul class="collapse">
-                            <li class="{{ Request::path() == 'pajak' ? 'active' : '' }}"><a
-                                    href="{{ url('/pajak') }}"><i class="fa fa-credit-card"></i><span>pajak</span></a>
-                            </li>
                             <li class="{{ Request::path() == 'tambah-stok' ? 'active' : '' }}"><a
                                     href="{{ url('/setting/tambah-stok') }}"><i
                                         class="fa fa-plus-square"></i><span>tambah stok</span></a>
@@ -84,6 +81,9 @@
                             <li class="{{ Request::path() == 'kurang-stok' ? 'active' : '' }}"><a
                                     href="{{ url('/setting/kurang-stok') }}"><i
                                         class="fa fa-minus-square"></i><span>kurang stok</span></a>
+                            </li>
+                            <li class="{{ Request::path() == 'pajak' ? 'active' : '' }}"><a
+                                    href="{{ url('/pajak') }}"><i class="fa fa-credit-card"></i><span>pajak</span></a>
                             </li>
                         </ul>
                     </li>
