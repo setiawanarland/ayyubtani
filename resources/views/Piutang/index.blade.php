@@ -23,7 +23,8 @@
                                 <tbody>
                                     @foreach ($data['kios'] as $key => $value)
                                         <tr style="background-color: aquamarine">
-                                            <td class="text-left">{{ Str::upper($value->nama_kios) }}</td>
+                                            <td class="text-left">{{ Str::upper($value->pemilik) }},
+                                                {{ Str::upper($value->nama_kios) }}</td>
                                             <td class="text-right">{{ number_format($value->debet, 1) }}</td>
                                             <td class="text-right">{{ number_format($value->kredit, 1) }}</td>
                                             <td class="text-right">{{ number_format($value->sisa, 1) }}</td>
