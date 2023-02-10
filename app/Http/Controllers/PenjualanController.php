@@ -241,6 +241,14 @@ class PenjualanController extends Controller
         $dataPenjualan['bulan'] = date('m', strtotime($request->tanggal_jual));
         $dataPenjualan['tahun'] = date('Y', strtotime($request->tanggal_jual));
 
+        if ($request->kios == 111) {
+            $listKios = ['sangkala dg. nyonri', 'iwan', 'mansur', 'solle s', 'dg. beta p', 'hafid dg. naba'];
+            $randomKios =  $listKios[array_rand($listKios)];
+
+            $kios = Kios::where('id', $request->kios)->first();
+            $kios->pemilik = $randomKios;
+            $kios->save();
+        }
 
         $penjualan = new Penjualan();
         $penjualan->kios_id = $request->kios;
