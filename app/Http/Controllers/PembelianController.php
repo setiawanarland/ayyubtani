@@ -358,6 +358,136 @@ class PembelianController extends Controller
         return $data;
     }
 
+    public function po()
+    {
+        $data = DB::table('detail_pembelians_temp')
+            ->join('produks', 'detail_pembelians_temp.produk_id', 'produks.id')
+            ->get();
+
+        return $this->printPo($data);
+    }
+
+    public function printPo($data)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $spreadsheet->getProperties()->setCreator('CV AYYUB TANI')
+            ->setLastModifiedBy('CV AYYUB TANI')
+            ->setTitle('PO CV. AYYUB TANI')
+            ->setSubject('PO CV. AYYUB TANI')
+            ->setDescription('PO CV. AYYUB TANI')
+            ->setKeywords('pdf php')
+            ->setCategory('PO CV. AYYUB TANI');
+
+        $sheet = $spreadsheet->getActiveSheet();
+        // $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+        $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+        $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
+
+        $sheet->getRowDimension(1)->setRowHeight(17);
+        $sheet->getRowDimension(2)->setRowHeight(17);
+        $sheet->getRowDimension(3)->setRowHeight(7);
+        $spreadsheet->getDefaultStyle()->getFont()->setName('Times New Roman');
+        $spreadsheet->getDefaultStyle()->getFont()->setSize(10);
+        $spreadsheet->getActiveSheet()->getPageSetup()->setHorizontalCentered(true);
+        $spreadsheet->getActiveSheet()->getPageSetup()->setVerticalCentered(false);
+
+        //Margin PDF
+        $spreadsheet->getActiveSheet()->getPageMargins()->setTop(0.3);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setRight(0.3);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setLeft(0.3);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setBottom(0.3);
+
+        $sheet->setCellValue('A1', 'CV. AYYUB TANI')->mergeCells('A1:C1');
+        $sheet->setCellValue('A2', 'ALAMAT');
+        $sheet->setCellValue('B2', ' : SALAMATARA KARELOE BONTORAMBA JENEPONTO')->mergeCells('B2:C2');
+        $sheet->setCellValue('A3', 'NPWP');
+        $sheet->setCellValue('B3', ' : 80.181.426.0-807.000')->mergeCells('B3:C3');
+        $sheet->setCellValue('A4', 'NIK');
+        $sheet->setCellValue('B4', ' : ')->mergeCells('B4:C4');
+        $sheet->setCellValue('D1', 'JENEPONTO, ' . date('d-m-Y'))->mergeCells('D1:F1');
+        $sheet->setCellValue('D2', 'Kepada Yth,')->mergeCells('D2:F2');
+        $sheet->setCellValue('D3', 'PT. TIGA GENERASI MANDIRI')->mergeCells('D3:F3');
+        $sheet->setCellValue('D4', 'KCP VETERAN MAKASSAR')->mergeCells('D4:F4');
+        $sheet->setCellValue('A5', 'ORDERAN BARANG')->mergeCells('A5:F5');
+
+        $sheet->setCellValue('A6', 'NO')->mergeCells('A6:A6');
+        $sheet->getColumnDimension('A')->setWidth(6);
+        $sheet->setCellValue('B6', 'NAMA PRODUK');
+        $sheet->getColumnDimension('B')->setWidth(40);
+        $sheet->setCellValue('C6', 'KEMASAN');
+        $sheet->getColumnDimension('C')->setWidth(25);
+        $sheet->setCellValue('D6', 'QTY');
+        $sheet->getColumnDimension('D')->setWidth(13);
+        $sheet->setCellValue('E6', 'ITEM');
+        $sheet->getColumnDimension('E')->setWidth(10);
+        $sheet->setCellValue('F6', 'KET');
+        $sheet->getColumnDimension('F')->setWidth(18);
+
+        $cell = 6;
+
+        $sheet->getStyle('A:F')->getAlignment()->setWrapText(true);
+        $sheet->getStyle('A5:F6')->getFont()->setBold(true);
+        $sheet->getStyle('A5:F6')->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('A6:A' . (count($data) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('B6:B' . (count($data) + $cell))->getAlignment()->setVertical('center');
+        $sheet->getStyle('B6:B' . (count($data) + $cell))->getAlignment()->setVertical('center');
+        $sheet->getStyle('C6:C' . (count($data) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('D6:D' . (count($data) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('E6:E' . (count($data) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('F6:F' . (count($data) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('A1:A1')->getFont()->setBold(true);
+        $sheet->getStyle('D3:D3')->getFont()->setBold(true);
+
+        // return $data;
+        foreach ($data as $index => $value) {
+
+            $cell++;
+
+            $sheet->setCellValue('A' . $cell, $index + 1);
+            $sheet->setCellValue('B' . $cell, strtoupper($value->nama_produk));
+            $sheet->setCellValue('C' . $cell, strtoupper($value->kemasan));
+            $sheet->setCellValue('D' . $cell, $value->ket);
+            $sheet->setCellValue('E' . $cell, 'DOS');
+        }
+        $sheet->getStyle('B' . ($cell + 3) . ':D' . ($cell + 11))->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('B' . ($cell + 10))->getFont()->setUnderline(true);
+
+        $sheet->setCellValue('B' . ($cell + 3), 'PENANGGUNG JAWAB');
+        $sheet->setCellValue('B' . ($cell + 10), 'H. ILYAS');
+        $sheet->setCellValue('B' . ($cell + 11), 'DIREKTUR');
+        $sheet->setCellValue('E' . ($cell + 3), 'DIBUAT OLEH,')->mergeCells('E' . ($cell + 3) . ':F' . ($cell + 3));
+        $sheet->setCellValue('E' . ($cell + 10), '');
+        $sheet->setCellValue('E' . ($cell + 11), 'ADMINISTRASI');
+
+        $border = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['argb' => '0000000'],
+                ],
+            ],
+        ];
+
+        $sheet->getStyle('A6:F' . $cell)->applyFromArray($border);
+
+
+        $spreadsheet->getActiveSheet()->getHeaderFooter()
+            ->setOddHeader('&C&H' . url()->current());
+        $spreadsheet->getActiveSheet()->getHeaderFooter()
+            ->setOddFooter('&L&B &RPage &P of &N');
+        $class = \PhpOffice\PhpSpreadsheet\Writer\Pdf\Mpdf::class;
+        \PhpOffice\PhpSpreadsheet\IOFactory::registerWriter('Pdf', $class);
+        $fileName = "PO_" . date('d-m-Y') . ".pdf";
+        header('Content-Type: application/pdf');
+        header("Content-Disposition: attachment; filename=" . urlencode($fileName));
+        header('Cache-Control: max-age=0');
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Pdf');
+
+
+        $writer->save('php://output');
+    }
+
     /**
      * Show the form for editing the specified resource.
      *

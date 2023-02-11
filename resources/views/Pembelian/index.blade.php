@@ -145,6 +145,7 @@
                                 <div class="form-group" style="margin-top: 10px;">
                                     <button class="btn btn-primary" type="submit">Save</button>
                                     {{-- <button class="btn btn-danger btn-cancel printPreview" type="">Print</button> --}}
+                                    <button class="btn btn-success btn-po po" type="button">PO</button>
                                 </div>
                             </div>
 
@@ -939,6 +940,13 @@
             AxiosCall.print("{{ route('pembelian-preview') }}", formData,
                 "#produkForm");
         });
+
+        // PO
+        $(document).on('click', '.po', () => {
+            console.log('ok');
+            const url = `/pembelian/po`;
+            window.open(url);
+        })
 
 
         $('#grand_total').on('keyup', function() {

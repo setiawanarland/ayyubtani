@@ -76,6 +76,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/daftar', [PembelianController::class, 'daftar'])->name('daftar-pembelian');
         Route::get('/list-pembelian', [PembelianController::class, 'listPembelian'])->name('pembelian-list');
         Route::get('/show/{id}', [PembelianController::class, 'show'])->name('pembelian-show');
+        Route::get('/po', [PembelianController::class, 'po'])->name('po');
     });
 
     Route::prefix('hutang')->group(function () {
