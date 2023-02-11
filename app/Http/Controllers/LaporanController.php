@@ -77,9 +77,11 @@ class LaporanController extends Controller
             $value->dpp = $value->harga / 1.1;
             $value->ppn = $value->harga - $value->dpp;
 
-            if ($stokBeli !== 0 || $stokJual !== 0) {
-                $data[] = $value;
-            }
+            $data[] = $value;
+
+            // if ($stokBeli !== 0 || $stokJual !== 0) {
+            //     $data[] = $value;
+            // }
         }
 
         return (new GeneralResponse)->default_json(true, 'success', $data, 200);
@@ -143,9 +145,15 @@ class LaporanController extends Controller
             $value->dpp = $value->harga / 1.1;
             $value->ppn = $value->harga - $value->dpp;
 
-            if ($stokBeli !== 0 || $stokJual !== 0) {
-                $temp[] = $value;
-            }
+            $dataProduk = DB::table('produks')->where('nama_produk', $value->nama_produk)->get();
+
+            $value->merge = count($dataProduk);
+
+            $temp[] = $value;
+
+            // if ($stokBeli !== 0 || $stokJual !== 0) {
+            //     $temp[] = $value;
+            // }
         }
 
         $data['bulan'] = $bulan;
@@ -236,14 +244,19 @@ class LaporanController extends Controller
         $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
         $sheet->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center');
 
-
+        $merge = 0;
+        $prevValue = '';
+        $number = 0;
         foreach ($data['produks'] as $index => $value) {
-            // return $value;
-
+            if (strtolower($prevValue) !== strtolower($value->nama_produk)) {
+                $prevValue = $value->nama_produk;
+                $merge = $cell + $value->merge;
+                $number++;
+            }
             $cell++;
 
-            $sheet->setCellValue('A' . $cell, $index + 1);
-            $sheet->setCellValue('B' . $cell, strtoupper($value->nama_produk));
+            $sheet->setCellValue('A' . $cell, $number)->mergeCells('A' . $cell . ':A' . $merge);
+            $sheet->setCellValue('B' . $cell, strtoupper($value->nama_produk))->mergeCells('B' . $cell . ':B' . $merge);
             $sheet->setCellValue('C' . $cell, strtoupper($value->kemasan));
             $sheet->setCellValue('D' . $cell, $value->pembelian);
             $sheet->setCellValue('E' . $cell, $value->penjualan);
