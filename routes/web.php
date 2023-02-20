@@ -53,6 +53,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/show/{id}', [ProdukController::class, 'show'])->name('get-produk');
         Route::post('/produk-update', [ProdukController::class, 'update'])->name('produk-update');
         Route::delete('/delete/{id}', [ProdukController::class, 'delete'])->name('produk-delete');
+        Route::get('/cetak', [ProdukController::class, 'cetak'])->name('cetak-produk');
     });
 
     Route::prefix('kios')->group(function () {

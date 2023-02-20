@@ -8,6 +8,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="header-title">Data Produk</h4>
+                        <button type="button" class="btn d-flex btn-success mb-3 pull-right cetak">Cetak Data</button>
                         <button type="button" class="btn d-flex btn-primary mb-3 pull-right tambahData">Tambah Data</button>
                         <div class="data-tables">
                             <table id="produkTable" class="text-cente">
@@ -409,6 +410,17 @@
                     })
                 }
             })
+        });
+
+
+        $('.cetak').on('click', function() {
+            const d = new Date();
+            let bulan = d.getMonth() + 1;
+            console.log(bulan);
+
+            url = `/produk/cetak/?bulan=${bulan}&jenis=excel`;
+            window.open(url);
+
         });
 
 
