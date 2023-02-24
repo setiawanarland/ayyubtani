@@ -158,7 +158,19 @@
                         {
                             data: 'stok',
                             render: function(data, type, row) {
-                                return `${data} Dos`;
+                                let satuanKemasan = (row.satuan == "ltr") ? "Btl" : "Bks";
+                                let ketKemasan = row.jumlah_perdos;
+                                let qtyKemasan = row.qty_kemasan;
+                                let qtyTotal = row.qty;
+                                let ketTotal = Math.round(qtyTotal / qtyKemasan);
+                                let ketLeft = ketTotal % ketKemasan;
+                                let stok = (ketLeft > 0) ? "" + (ketTotal - ketLeft) / ketKemasan +
+                                    " Dos " + ketLeft + " " + satuanKemasan + "" : "" + (ketTotal -
+                                        ketLeft) /
+                                    ketKemasan +
+                                    " Dos";
+
+                                return stok;
                             }
                         },
                         {

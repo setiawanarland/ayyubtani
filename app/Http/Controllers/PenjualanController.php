@@ -103,12 +103,12 @@ class PenjualanController extends Controller
         // if ($dataDetail != null) {
         //     return (new GeneralResponse)->default_json(false, "Barang sudah ada!", null, 422);
         // }
-
         $data = new DetailPenjualanTemp();
         $data->produk_id = $request->produk_id;
         $data->qty = $qty;
         // $data->harga_satuan = $hargaSatuan;
         $data->ket = $request->ket;
+        $data->ket_kemasan = $request->ketKemasan;
         $data->disc = $request->disc;
         $data->jumlah = $jumlahAfterDisc;
         $data->save();

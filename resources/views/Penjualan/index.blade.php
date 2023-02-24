@@ -29,7 +29,7 @@
                             @csrf
                             <div class="form-row align-items-center">
 
-                                <div class="col-sm-4 my-1">
+                                <div class="col-sm-6 my-1">
                                     <label class="" for="produk">Produk</label>
                                     <select class="form-control" id="produk" name="produk">
                                         <option value="null">Pilih Produk</option>
@@ -41,23 +41,28 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-sm-3 col-md-1 my-1">
+                                <div class="col-sm-4 col-md-2 my-1">
                                     <label class="" for="qty">Qty (Dos)</label>
                                     <input type="number" class="form-control qty-jual" id="ket" name="ket"
                                         value="0" min="0">
                                 </div>
-                                <div class="col-sm-3 col-md-2 my-1">
+                                <div class="col-sm-4 col-md-2 my-1">
+                                    <label class="" for="qty">Qty (Kemasan)</label>
+                                    <input type="number" class="form-control qty-kemasan" id="ket_kemasan"
+                                        name="ket_kemasan" value="0" min="0">
+                                </div>
+                                <div class="col-sm-3 col-md-3 my-1">
                                     <label class="" for="disc">Disc.</label>
                                     <input type="text" class="form-control" id="disc" name="disc" value="0"
                                         min="0">
                                 </div>
-                                <div class="col-sm-3 col-md-2 my-1">
+                                <div class="col-sm-5 col-md-3 my-1">
                                     <label class="" for="harga_satuan">Harga Stn.</label>
                                     <input type="hidden" class="form-control" id="harga_lama" name="harga_lama">
                                     <input type="hidden" class="form-control" id="jumlah_perdos" name="jumlah_perdos">
                                     <input type="text" class="form-control" id="harga_satuan" name="harga_satuan">
                                 </div>
-                                <div class="col-sm-3 col-md-2 my-1">
+                                <div class="col-sm-5 col-md-3 my-1">
                                     <label class="" for="harga_perdos">Harga Perdos</label>
                                     <input type="text" class="form-control" id="harga_perdos" name="harga_perdos"
                                         readonly>
@@ -254,6 +259,16 @@
                         {
                             data: 'ket',
                             render: function(data, type, row) {
+                                console.log(row.satuan);
+                                if (parseInt(data) < 1) {
+                                    let satuan = (row.satuan == "ltr") ? "Btl" : "Bks";
+
+                                    return `
+                                <input type="text" class="form-control ket" id="ket" name="ket[]" value="` +
+                                        row.ket_kemasan + " " + satuan +
+                                        `">
+                                `;
+                                }
                                 return `
                                 <input type="text" class="form-control ket" id="ket" name="ket[]" value="` +
                                     data.toUpperCase() + " Dos" +
@@ -778,6 +793,7 @@
         $(document).on('click', '.addTemp', function(e) {
             let kios_id = $('#kios').val();
             let produk_id = $('#produk').val();
+            let ketKemasan = parseInt($('#ket_kemasan').val().replace(/[^0-9]/g, ''));
             let hargaLama = parseInt($('#harga_lama').val().replace(/[^0-9]/g, ''));
             let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
             let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
@@ -816,6 +832,7 @@
                         'harga_lama': hargaLama,
                         'harga_satuan': hargaSatuan,
                         'harga_perdos': hargaPerdos,
+                        'ketKemasan': ketKemasan,
                         'ket': ket,
                         'disc': disc,
                     },
@@ -826,6 +843,7 @@
 
                             $('#kios').val('null').trigger('change');
                             $('#produk').val('null').trigger('change');
+                            $('#ket_kemasan').val(0);
                             $('#ket').val(0);
                             $('#disc').val(0);
                             $('#harga_satuan').val(0);
@@ -967,8 +985,11 @@
 
         $(document).on('keyup', '.qty-jual', function(e) {
             let produkId = $('#produk').val();
+            let ketKemasan = parseInt($('#jumlah_perdos').val());
             let qty = $('#ket').val();
-            console.log(qty);
+
+            $('#ket_kemasan').val(qty * ketKemasan);
+            console.log(ketKemasan);
             if (produkId == 'null') {
                 swal.fire({
                     title: "Warning!",
@@ -1016,6 +1037,7 @@
                 },
                 success: function(response) {
                     console.log(response);
+                    $('#ket_kemasan').val(response.data.jumlah_perdos);
                     $('#jumlah_perdos').val(formatRupiah(response.data.jumlah_perdos.toString(), ''));
                     $('#harga_lama').val(formatRupiah(response.data.harga_jual.toString(), ''));
                     $('#harga_satuan').val(formatRupiah(response.data.harga_jual.toString(), ''));
@@ -1057,6 +1079,21 @@
             $('#harga_perdos').val(formatRupiah(hargaPerdos.toString(), ''));
             console.log('harga satuan');
             console.log(jumlahPerdos);
+        });
+
+        $(document).on('keyup', '#ket_kemasan', function(e) {
+            let ketKemasan = parseInt($('#ket_kemasan').val().replace(/[^0-9]/g, ''));
+            let jumlahPerdos = $('#jumlah_perdos').val();
+            let jumlahBaru = ketKemasan / jumlahPerdos;
+
+            $('#ket').val(parseFloat(jumlahBaru));
+
+            let disc = parseInt($('#disc').val().replace(/[^0-9]/g, ''));
+            let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
+            let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
+            hargaPerdos = (hargaSatuan * ketKemasan) - disc;
+
+            $('#harga_perdos').val(formatRupiah(hargaPerdos.toString(), ''));
         });
 
         // $(document).on('keyup', '#harga_perdos', function(e) {

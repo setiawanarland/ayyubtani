@@ -17,6 +17,7 @@ class CreateDetailPenjualanTempsTable extends Migration
             $table->id();
             $table->foreignId('produk_id')->constrained('produks');
             $table->float('qty');
+            $table->integer('ket_kemasan');
             $table->string('ket', 50);
             // $table->integer('disc');
             $table->decimal('disc', 15, 1);

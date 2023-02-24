@@ -53,7 +53,7 @@ class SettingController extends Controller
         $qtyAfter = $stokAfter * $produk->qty_perdos;
 
         $produk->stok = $stokAfter;
-        $produk->qty = round($qtyAfter, 1);
+        $produk->qty = $qtyAfter;
         $produk->save();
 
         if ($produk) {
@@ -113,7 +113,8 @@ class SettingController extends Controller
         $qtyAfter = $stokAfter * $produk->qty_perdos;
 
         $produk->stok = $stokAfter;
-        $produk->qty = round($qtyAfter, 1);
+        $produk->qty = $qtyAfter;
+        // return $produk;
         $produk->save();
 
         if ($produk) {
