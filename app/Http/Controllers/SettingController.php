@@ -35,7 +35,7 @@ class SettingController extends Controller
         $data = DB::table("tambah_stoks")
             ->select('tambah_stoks.*', 'produks.nama_produk', 'produks.kemasan')
             ->join('produks', 'tambah_stoks.produk_id', 'produks.id')
-            ->orderBy('created_at', 'ASC')
+            ->orderBy('created_at', 'DESC')
             ->get();
 
         if ($data) {
@@ -95,7 +95,7 @@ class SettingController extends Controller
         $data = DB::table("kurang_stoks")
             ->select('kurang_stoks.*', 'produks.nama_produk', 'produks.kemasan')
             ->join('produks', 'kurang_stoks.produk_id', 'produks.id')
-            ->orderBy('created_at', 'ASC')
+            ->orderBy('created_at', 'DESC')
             ->get();
 
         if ($data) {

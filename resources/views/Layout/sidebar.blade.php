@@ -12,7 +12,7 @@
                     <li class="{{ Request::path() == 'dashboard' ? 'active' : '' }}"><a
                             href="{{ route('dashboard') }}"><i class="ti-dashboard"></i><span>dashboard</span></a></li>
                     <li>
-                        <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-file"></i><span>data
+                        <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-database"></i><span>data
                             </span></a>
                         <ul class="collapse">
                             <li class="{{ Request::path() == 'supplier' ? 'active' : '' }}"><a
@@ -38,15 +38,25 @@
                     <li class="{{ Request::path() == 'penjualan/daftar' ? 'active' : '' }}"><a
                             href="{{ url('/penjualan/daftar') }}"><i class="ti-shopping-cart"></i><span>daftar
                                 penjualan</span></a></li>
-                    <li class="{{ Request::path() == 'hutang' ? 'active' : '' }}"><a href="{{ url('/hutang') }}"><i
-                                class="ti-upload"></i><span>hutang</span></a>
+
+                    <li>
+                        <a href="javascript:void(0)" aria-expanded="true"><i
+                                class="fa fa-money"></i><span>hutang/piutang
+                            </span></a>
+                        <ul class="collapse">
+
+                            <li class="{{ Request::path() == 'hutang' ? 'active' : '' }}"><a
+                                    href="{{ url('/hutang') }}"><i class="ti-upload"></i><span>hutang</span></a>
+                            </li>
+                            <li class="{{ Request::path() == 'barang-list' ? 'active' : '' }}"><a
+                                    href="{{ url('/piutang') }}"><i class="ti-download"></i><span>piutang</span></a>
+                            </li>
+                            {{-- <li class="{{ Request::path() == 'barang-list' ? 'active' : '' }}"><a
+                                    href="{{ url('/dashboard') }}"><i class="ti-shopping-cart"></i><span>penjualan</span></a>
+                            </li> --}}
+                        </ul>
                     </li>
-                    <li class="{{ Request::path() == 'barang-list' ? 'active' : '' }}"><a
-                            href="{{ url('/piutang') }}"><i class="ti-download"></i><span>piutang</span></a>
-                    </li>
-                    {{-- <li class="{{ Request::path() == 'barang-list' ? 'active' : '' }}"><a
-                            href="{{ url('/dashboard') }}"><i class="ti-shopping-cart"></i><span>penjualan</span></a>
-                    </li> --}}
+
 
                     <li>
                         <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-file"></i><span>laporan
