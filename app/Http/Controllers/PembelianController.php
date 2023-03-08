@@ -472,17 +472,22 @@ class PembelianController extends Controller
         $sheet->getStyle('A6:F' . $cell)->applyFromArray($border);
 
 
-        $spreadsheet->getActiveSheet()->getHeaderFooter()
-            ->setOddHeader('&C&H' . url()->current());
-        $spreadsheet->getActiveSheet()->getHeaderFooter()
-            ->setOddFooter('&L&B &RPage &P of &N');
-        $class = \PhpOffice\PhpSpreadsheet\Writer\Pdf\Mpdf::class;
-        \PhpOffice\PhpSpreadsheet\IOFactory::registerWriter('Pdf', $class);
-        $fileName = "PO_" . date('d-m-Y') . ".pdf";
-        header('Content-Type: application/pdf');
-        header("Content-Disposition: attachment; filename=" . urlencode($fileName));
-        header('Cache-Control: max-age=0');
-        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Pdf');
+        // $spreadsheet->getActiveSheet()->getHeaderFooter()
+        //     ->setOddHeader('&C&H' . url()->current());
+        // $spreadsheet->getActiveSheet()->getHeaderFooter()
+        //     ->setOddFooter('&L&B &RPage &P of &N');
+        // $class = \PhpOffice\PhpSpreadsheet\Writer\Pdf\Mpdf::class;
+        // \PhpOffice\PhpSpreadsheet\IOFactory::registerWriter('Pdf', $class);
+        // $fileName = "PO_" . date('d-m-Y') . ".pdf";
+        // header('Content-Type: application/pdf');
+        // header("Content-Disposition: attachment; filename=" . urlencode($fileName));
+        // header('Cache-Control: max-age=0');
+        // $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Pdf');
+
+        $fileName = "PO_" . date('d-m-Y');
+        $writer = new Xlsx($spreadsheet);
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $fileName . '.xlsx"');
 
 
         $writer->save('php://output');
