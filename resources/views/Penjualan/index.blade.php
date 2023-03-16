@@ -699,40 +699,28 @@
                                                                                                                                                                                     
                                                                                                                                                                                     <table width="30%" style="float:right;margin-top: -1px;">
                                                                                                                                                                                     <tr style="">
-                                                                                                                                                                                        <td style="width:30%;">DPP </td>
+                                                                                                                                                                                        <th style="width: 30%;text-align:left;">GRAND TOTAL</th>
                                                                                                                                                                                         <td style="width:1%;">:</td>
-                                                                                                                                                                                        <td class="dpp" style="width:10%;text-align: right;">` +
-                                number_format(
-                                    data
-                                    .dpp, 1) +
-                                `</td>
-                                                                                                                                                                                    </tr>
-                                                                                                                                                                                    <tr style="">
-                                                                                                                                                                                        <td style="width: 30%;">PPN</td>
-                                                                                                                                                                                        <td style="width:1%;">:</td>
-                                                                                                                                                                                        <td class="ppn" style="width:10%;text-align: right;">` +
-                                number_format(
-                                    data
-                                    .ppn, 1) +
-                                `</td>
-                                                                                                                                                                                    </tr>
-                                                                                                                                                                                    <tr style="">
-                                                                                                                                                                                        <td style="width: 30%;">Discount</td>
-                                                                                                                                                                                        <td style="width:1%;">:</td>
-                                                                                                                                                                                        <td class="disc" style="width:10%;text-align: right;">` +
-                                number_format(
-                                    data
-                                    .total_disc, 1) +
-                                `</td>
-                                                                                                                                                                                    </tr>
-                                                                                                                                                                        <tr style="">
-                                                                                                                                                                                            <th style="width: 30%;text-align:left;">GRAND TOTAL</th>
-                                                                                                                                                                                            <th style="width:1%;">:</th>
-                                                                                                                                                                                            <th class="grand_total" style="width:10%;text-align: right;">` +
+                                                                                                                                                                                        <th class="grand_total" style="width:10%;text-align: right;">` +
                                 number_format(
                                     data
                                     .grand_total, 1) +
                                 `</th>
+                                                                                                                                                                                    </tr>
+                                                                                                                                                                                    <tr style="">
+                                                                                                                                                                                        <td style="width: 30%;"></td>
+                                                                                                                                                                                        <td style="width:1%;"></td>
+                                                                                                                                                                                        <td class="ppn" style="width:10%;text-align: right;"></td>
+                                                                                                                                                                                    </tr>
+                                                                                                                                                                                    <tr style="">
+                                                                                                                                                                                        <td style="width: 30%;"></td>
+                                                                                                                                                                                        <td style="width:1%;"></td>
+                                                                                                                                                                                        <td class="disc" style="width:10%;text-align: right;"></td>
+                                                                                                                                                                                    </tr>
+                                                                                                                                                                        <tr style="">
+                                                                                                                                                                                            <th style="width: 30%;text-align:left;"></th>
+                                                                                                                                                                                            <th style="width:1%;"></th>
+                                                                                                                                                                                            <th class="grand_total" style="width:10%;text-align: right;"></th>
                                                                                                                                                                                         </tr>
                                                                                                                                                                                     </table>
                                                                                                                                                                             `;
