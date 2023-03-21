@@ -36,7 +36,7 @@
                                         @foreach ($produk as $index => $value)
                                             <option value="{{ $value->id }}">
                                                 {{ Str::upper($value->nama_produk) }} {{ Str::upper($value->kemasan) }} |
-                                                Stok {{ $value->stok }} dos
+                                                Stok {{ $value->stok }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -972,47 +972,47 @@
                 "#penjualanForm");
         });
 
-        $(document).on('keyup', '.qty-jual', function(e) {
-            let produkId = $('#produk').val();
-            let ketKemasan = parseInt($('#jumlah_perdos').val());
-            let qty = $('#ket').val();
+        // $(document).on('keyup', '.qty-jual', function(e) {
+        //     let produkId = $('#produk').val();
+        //     let ketKemasan = parseInt($('#jumlah_perdos').val());
+        //     let qty = $('#ket').val();
 
-            $('#ket_kemasan').val(qty * ketKemasan);
-            console.log(ketKemasan);
-            if (produkId == 'null') {
-                swal.fire({
-                    title: "Warning!",
-                    text: "Pilih produk terlebih dahulu",
-                    icon: "warning",
-                });
-            }
+        //     $('#ket_kemasan').val(qty * ketKemasan);
+        //     console.log(ketKemasan);
+        //     if (produkId == 'null') {
+        //         swal.fire({
+        //             title: "Warning!",
+        //             text: "Pilih produk terlebih dahulu",
+        //             icon: "warning",
+        //         });
+        //     }
 
-            if (produkId != 'null') {
-                $.ajax({
-                    url: `/penjualan/get-stok/${produkId}`,
-                    type: 'GET',
-                    data: {
-                        '_method': 'GET',
-                        '_token': $('meta[name="csrf-token"]').attr('content'),
-                        'qty': qty,
-                    },
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.log(error.responseJSON.data);
-                        let data = error.responseJSON.data;
-                        swal.fire({
-                            title: `${data.nama_produk.toUpperCase()} ${data.kemasan.toUpperCase()}`,
-                            text: ` ${error.responseJSON.message}!`,
-                            icon: "warning",
-                        }).then(function() {
-                            $('#ket').val(0);
-                        });
-                    }
-                })
-            }
-        });
+        //     if (produkId != 'null') {
+        //         $.ajax({
+        //             url: `/penjualan/get-stok/${produkId}`,
+        //             type: 'GET',
+        //             data: {
+        //                 '_method': 'GET',
+        //                 '_token': $('meta[name="csrf-token"]').attr('content'),
+        //                 'qty': qty,
+        //             },
+        //             success: function(response) {
+        //                 console.log(response);
+        //             },
+        //             error: function(error) {
+        //                 console.log(error.responseJSON.data);
+        //                 let data = error.responseJSON.data;
+        //                 swal.fire({
+        //                     title: `${data.nama_produk.toUpperCase()} ${data.kemasan.toUpperCase()}`,
+        //                     text: ` ${error.responseJSON.message}!`,
+        //                     icon: "warning",
+        //                 }).then(function() {
+        //                     $('#ket').val(0);
+        //                 });
+        //             }
+        //         })
+        //     }
+        // });
 
         $(document).on('change', '#produk', function(e) {
             let produkId = $('#produk').val();

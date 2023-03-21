@@ -35,8 +35,19 @@ class PenjualanController extends Controller
             ->get();
 
         $produk = DB::table('produks')
-            ->select('id', 'nama_produk', 'kemasan', 'stok', 'harga_jual', 'harga_perdos')
+            ->orderBy('nama_produk', 'ASC')
             ->get();
+
+        foreach ($produk as $key => $value) {
+            $satuanKemasan = ($value->satuan == "ltr") ? "Btl" : "Bks";
+            $ketKemasan = $value->jumlah_perdos;
+            $qtyKemasan = $value->qty_kemasan;
+            $qtyTotal = $value->qty;
+            $ketTotal = round($qtyTotal / $qtyKemasan);
+            $ketLeft = $ketTotal % $ketKemasan;
+            $stok = ($ketLeft > 0) ? "" . ($ketTotal - $ketLeft) / $ketKemasan . " Dos " . $ketLeft . " " . $satuanKemasan . "" : "" . ($ketTotal - $ketLeft) / $ketKemasan . " Dos";
+            $value->stok = $stok;
+        }
 
         $pajak = DB::table('pajaks')
             ->select('nama_pajak')
@@ -199,13 +210,13 @@ class PenjualanController extends Controller
 
     public function getStok(Request $request, $id)
     {
-        $produk = Produk::select('nama_produk', 'kemasan', 'stok')->where('id', $id)->first();
+        $produk = Produk::where('id', $id)->first();
 
-        if ($produk->stok == 0) {
+        if ($produk->qty == 0) {
             return (new GeneralResponse)->default_json(false, "Stok kosong!", $produk, 401);
         }
 
-        if ($produk->stok < $request->qty) {
+        if ($produk->qty < $request->qty) {
             return (new GeneralResponse)->default_json(false, "Stok tersisa {$produk->stok}!", $produk, 401);
         }
     }
