@@ -244,6 +244,16 @@ class PenjualanController extends Controller
         }
     }
 
+    public function randomKios($namaPemilik)
+    {
+        $listKios = ['sangkala dg. nyonri', 'iwan', 'mansur', 'solle s', 'dg. beta p', 'hafid dg. naba'];
+        $newlistKios = $listKios;
+        if (($key = array_search($namaPemilik, $newlistKios)) !== false) {
+            unset($newlistKios[$key]);
+        }
+        return $newlistKios[array_rand($newlistKios)];
+    }
+
 
     public function store(Request $request)
     {
@@ -253,10 +263,11 @@ class PenjualanController extends Controller
         $dataPenjualan['tahun'] = date('Y', strtotime($request->tanggal_jual));
 
         if ($request->kios == 111) {
-            $listKios = ['sangkala dg. nyonri', 'iwan', 'mansur', 'solle s', 'dg. beta p', 'hafid dg. naba'];
-            $randomKios =  $listKios[array_rand($listKios)];
 
             $kios = Kios::where('id', $request->kios)->first();
+
+            $randomKios = $this->randomKios($kios->pemilik);
+
             $kios->pemilik = $randomKios;
             $kios->save();
         }
