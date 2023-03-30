@@ -120,9 +120,9 @@
                             }
                         },
                         {
-                            data: 'stok_bulanan',
+                            data: 'stok',
                             render: function(data, type, row) {
-                                return `${data} Dos`;
+                                return `${data}`;
                             }
                         },
                         {

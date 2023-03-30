@@ -77,6 +77,15 @@ class LaporanController extends Controller
             $value->dpp = $value->harga / 1.1;
             $value->ppn = $value->harga - $value->dpp;
 
+            $satuanKemasan = ($value->satuan == "ltr") ? "Btl" : "Bks";
+            $ketKemasan = $value->jumlah_perdos;
+            $qtyKemasan = $value->qty_kemasan;
+            $qtyTotal = $value->qty;
+            $ketTotal = round($qtyTotal / $qtyKemasan);
+            $ketLeft = $ketTotal % $ketKemasan;
+            $stok = ($ketLeft > 0) ? "" . ($ketTotal - $ketLeft) / $ketKemasan . " Dos " . $ketLeft . " " . $satuanKemasan . "" : "" . ($ketTotal - $ketLeft) / $ketKemasan . " Dos";
+            $value->stok = $stok;
+
             $data[] = $value;
 
             // if ($stokBeli !== 0 || $stokJual !== 0) {
@@ -145,6 +154,15 @@ class LaporanController extends Controller
             $value->dpp = $value->harga / 1.1;
             $value->ppn = $value->harga - $value->dpp;
 
+            $satuanKemasan = ($value->satuan == "ltr") ? "Btl" : "Bks";
+            $ketKemasan = $value->jumlah_perdos;
+            $qtyKemasan = $value->qty_kemasan;
+            $qtyTotal = $value->qty;
+            $ketTotal = round($qtyTotal / $qtyKemasan);
+            $ketLeft = $ketTotal % $ketKemasan;
+            $stok = ($ketLeft > 0) ? "" . ($ketTotal - $ketLeft) / $ketKemasan . " Dos " . $ketLeft . " " . $satuanKemasan . "" : "" . ($ketTotal - $ketLeft) / $ketKemasan . " Dos";
+            $value->stok = $stok;
+
             $dataProduk = DB::table('produks')->where('nama_produk', $value->nama_produk)->get();
 
             $value->merge = count($dataProduk);
@@ -197,56 +215,59 @@ class LaporanController extends Controller
         $tahun = ""  . session('tahun') . "-" . $bulan . "";
         $periode = ($bulan != 'all') ? strtoupper(strftime('%B %Y', mktime(0, 0, 0, $bulan + 1, 0, (int)session('tahun')))) : (int)session('tahun');
 
-        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI STOK BARANG')->mergeCells('A1:I1');
-        $sheet->setCellValue('A2', 'CV. AYYUB TANI')->mergeCells('A2:I2');
-        $sheet->setCellValue('A3', "PERIODE $periode")->mergeCells('A3:I3');
+        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI STOK BARANG')->mergeCells('A1:D1');
+        $sheet->setCellValue('A2', 'CV. AYYUB TANI')->mergeCells('A2:D2');
+        $sheet->setCellValue('A3', "PERIODE $periode")->mergeCells('A3:D3');
 
         $sheet->setCellValue('A5', 'No')->mergeCells('A5:A5');
         $sheet->getColumnDimension('A')->setWidth(6);
         $sheet->setCellValue('B5', 'Nama Produk');
         $sheet->getColumnDimension('B')->setWidth(30);
         $sheet->setCellValue('C5', 'Kemasan');
-        $sheet->getColumnDimension('C')->setWidth(25);
-        $sheet->setCellValue('D5', 'Pembelian');
-        $sheet->getColumnDimension('D')->setWidth(13);
-        $sheet->setCellValue('E5', 'Penjualan');
-        $sheet->getColumnDimension('E')->setWidth(13);
-        $sheet->setCellValue('F5', 'Stok');
-        $sheet->getColumnDimension('F')->setWidth(8);
-        $sheet->setCellValue('G5', 'Harga');
-        $sheet->getColumnDimension('G')->setWidth(16);
-        $sheet->setCellValue('H5', 'DPP');
-        $sheet->getColumnDimension('H')->setWidth(16);
-        $sheet->setCellValue('I5', 'PPN');
-        $sheet->getColumnDimension('I')->setWidth(16);
+        $sheet->getColumnDimension('C')->setWidth(30);
+        $sheet->setCellValue('D5', 'Stok');
+        $sheet->getColumnDimension('D')->setWidth(23);
+        // $sheet->setCellValue('D5', 'Pembelian');
+        // $sheet->getColumnDimension('D')->setWidth(13);
+        // $sheet->setCellValue('E5', 'Penjualan');
+        // $sheet->getColumnDimension('E')->setWidth(13);
+        // $sheet->setCellValue('F5', 'Stok');
+        // $sheet->getColumnDimension('F')->setWidth(8);
+        // $sheet->setCellValue('G5', 'Harga');
+        // $sheet->getColumnDimension('G')->setWidth(16);
+        // $sheet->setCellValue('H5', 'DPP');
+        // $sheet->getColumnDimension('H')->setWidth(16);
+        // $sheet->setCellValue('I5', 'PPN');
+        // $sheet->getColumnDimension('I')->setWidth(16);
 
         $cell = 5;
 
         $sheet->getStyle('A1:A3')->getFont()->setSize(12);
-        $sheet->getStyle('A:I')->getAlignment()->setWrapText(true);
-        $sheet->getStyle('A5:I5')->getFont()->setBold(true);
-        $sheet->getStyle('A5:I5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('A:D')->getAlignment()->setWrapText(true);
+        $sheet->getStyle('A5:D5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:D5')->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('A5:A' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
         $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
         $sheet->getStyle('C5:C' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('D5:D' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
-        $sheet->getStyle('E5:E' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
-        $sheet->getStyle('F5:F' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
-        $sheet->getStyle('G5:G5')->getAlignment()->setVertical('center')->setHorizontal('center');
-        $sheet->getStyle('G6:G' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
-        $sheet->getStyle('G6:G' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
-        $sheet->getStyle('H5:H5')->getAlignment()->setVertical('center')->setHorizontal('center');
-        $sheet->getStyle('H6:H' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
-        $sheet->getStyle('H6:H' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
-        $sheet->getStyle('I5:I5')->getAlignment()->setVertical('center')->setHorizontal('center');
-        $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
-        $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
+        // $sheet->getStyle('E5:E' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        // $sheet->getStyle('F5:F' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        // $sheet->getStyle('G5:G5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        // $sheet->getStyle('G6:G' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
+        // $sheet->getStyle('G6:G' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
+        // $sheet->getStyle('H5:H5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        // $sheet->getStyle('H6:H' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
+        // $sheet->getStyle('H6:H' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
+        // $sheet->getStyle('I5:I5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        // $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
+        // $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
         $sheet->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center');
 
         $merge = 0;
         $prevValue = '';
         $number = 0;
+        // return $data['produks'];
         foreach ($data['produks'] as $index => $value) {
             if (strtolower($prevValue) !== strtolower($value->nama_produk)) {
                 $prevValue = $value->nama_produk;
@@ -258,13 +279,14 @@ class LaporanController extends Controller
             $sheet->setCellValue('A' . $cell, $number)->mergeCells('A' . $cell . ':A' . $merge);
             $sheet->setCellValue('B' . $cell, strtoupper($value->nama_produk))->mergeCells('B' . $cell . ':B' . $merge);
             $sheet->setCellValue('C' . $cell, strtoupper($value->kemasan));
-            $sheet->setCellValue('D' . $cell, $value->pembelian);
-            $sheet->setCellValue('E' . $cell, $value->penjualan);
-            $sheet->setCellValue('F' . $cell, $value->stok_bulanan);
-            // $sheet->setCellValue('G' . $cell, number_format($value->harga));
-            $sheet->setCellValue('G' . $cell, $value->harga);
-            $sheet->setCellValue('H' . $cell, $value->dpp);
-            $sheet->setCellValue('I' . $cell, $value->ppn);
+            $sheet->setCellValue('D' . $cell, $value->stok);
+            // $sheet->setCellValue('E' . $cell, $value->penjualan);
+            // // $sheet->setCellValue('F' . $cell, $value->stok_bulanan);
+            // $sheet->setCellValue('F' . $cell, $value->stok);
+            // // $sheet->setCellValue('G' . $cell, number_format($value->harga));
+            // $sheet->setCellValue('G' . $cell, $value->harga);
+            // $sheet->setCellValue('H' . $cell, $value->dpp);
+            // $sheet->setCellValue('I' . $cell, $value->ppn);
         }
 
         $border = [
@@ -276,7 +298,7 @@ class LaporanController extends Controller
             ],
         ];
 
-        $sheet->getStyle('A5:I' . $cell)->applyFromArray($border);
+        $sheet->getStyle('A5:D' . $cell)->applyFromArray($border);
 
         if ($jenis == 'excel') {
             // Untuk download 
