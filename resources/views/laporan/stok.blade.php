@@ -37,12 +37,16 @@
                                         {{-- <th>Isi Perdos</th> --}}
                                         {{-- <th>Satuan</th> --}}
                                         {{-- <th>Harga Beli</th> --}}
+                                        <th>Stok Awal</th>
                                         <th>Pembelian</th>
                                         <th>Penjualan</th>
                                         <th>Stok</th>
-                                        <th>Harga</th>
+                                        <th>Jumlah Stn</th>
+                                        <th>Harga Stn</th>
+                                        <th>Disc Stn</th>
+                                        {{-- <th>Harga</th>
                                         <th>DPP</th>
-                                        <th>PPN</th>
+                                        <th>PPN</th> --}}
                                         {{-- <th>Action</th> --}}
                                     </tr>
                                 </thead>
@@ -61,6 +65,7 @@
 @section('scripts')
     <script>
         var bulan = $('#bulan').val();
+        // var bulan = 1;
         console.log(bulan);
         // datatable produk list
         var dataRow = function() {
@@ -90,23 +95,17 @@
                             }
                         },
                         // {
-                        //     data: 'jumlah_perdos',
-                        //     render: function(data, type, row) {
-                        //         return data;
-                        //     }
-                        // },
-                        // {
                         //     data: 'satuan',
                         //     render: function(data, type, row) {
                         //         return data.toUpperCase();
                         //     }
                         // },
-                        // {
-                        //     data: 'harga_beli',
-                        //     render: function(data, type, row) {
-                        //         return formatRupiah(data.toString(), '');
-                        //     }
-                        // },
+                        {
+                            data: 'stokAwal',
+                            render: function(data, type, row) {
+                                return `${data} Dos`;
+                            }
+                        },
                         {
                             data: 'pembelian',
                             render: function(data, type, row) {
@@ -120,29 +119,47 @@
                             }
                         },
                         {
-                            data: 'stok',
+                            data: 'stok_bulanan',
                             render: function(data, type, row) {
-                                return `${data}`;
+                                return `${data} Dos`;
                             }
                         },
                         {
-                            data: 'harga',
+                            data: 'jumlah_perdos',
+                            render: function(data, type, row) {
+                                return data;
+                            }
+                        },
+                        {
+                            data: 'harga_jual',
                             render: function(data, type, row) {
                                 return number_format(data, 1);
                             }
                         },
                         {
-                            data: 'dpp',
+                            data: 'disc',
                             render: function(data, type, row) {
                                 return number_format(data, 1);
                             }
                         },
-                        {
-                            data: 'ppn',
-                            render: function(data, type, row) {
-                                return number_format(data, 1);
-                            }
-                        },
+                        // {
+                        //     data: 'harga',
+                        //     render: function(data, type, row) {
+                        //         return number_format(data, 1);
+                        //     }
+                        // },
+                        // {
+                        //     data: 'dpp',
+                        //     render: function(data, type, row) {
+                        //         return number_format(data, 1);
+                        //     }
+                        // },
+                        // {
+                        //     data: 'ppn',
+                        //     render: function(data, type, row) {
+                        //         return number_format(data, 1);
+                        //     }
+                        // },
                         // {
                         //     data: 'id'
                         // }

@@ -319,7 +319,7 @@ class PembelianController extends Controller
             ->where('pembelians.tahun', session('tahun'))
             // ->orderBy('pembelians.bulan', 'ASC')
             // ->orderBy('pembelians.tahun', 'ASC')
-            // ->orderBy('pembelians.id', 'ASC')
+            ->orderBy('pembelians.id', 'DESC')
             ->orderBy('pembelians.tanggal_beli', 'DESC')
             ->get();
 
@@ -452,13 +452,15 @@ class PembelianController extends Controller
         }
         $sheet->getStyle('B' . ($cell + 3) . ':D' . ($cell + 11))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('B' . ($cell + 10))->getFont()->setUnderline(true);
+        $sheet->getStyle('E' . ($cell + 3) . ':F' . ($cell + 11))->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('E' . ($cell + 10))->getFont()->setUnderline(true);
 
         $sheet->setCellValue('B' . ($cell + 3), 'PENANGGUNG JAWAB');
         $sheet->setCellValue('B' . ($cell + 10), 'H. ILYAS');
         $sheet->setCellValue('B' . ($cell + 11), 'DIREKTUR');
         $sheet->setCellValue('E' . ($cell + 3), 'DIBUAT OLEH,')->mergeCells('E' . ($cell + 3) . ':F' . ($cell + 3));
         $sheet->setCellValue('E' . ($cell + 10), '');
-        $sheet->setCellValue('E' . ($cell + 11), 'ADMINISTRASI');
+        $sheet->setCellValue('E' . ($cell + 11), 'ADMINISTRASI')->mergeCells('E' . ($cell + 11) . ':F' . ($cell + 11));
 
         $border = [
             'borders' => [

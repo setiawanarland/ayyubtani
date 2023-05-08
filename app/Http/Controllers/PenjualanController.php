@@ -16,6 +16,8 @@ use App\Models\Piutang;
 use App\Models\Produk;
 use DB;
 use Illuminate\Http\Request;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class PenjualanController extends Controller
 {
@@ -56,11 +58,11 @@ class PenjualanController extends Controller
 
         $pembayaran = DB::table('pembayarans')->get();
 
-        // $lastPenjualan = Penjualan::where('tahun', session('tahun'))->get();
-        $lastPenjualan = Penjualan::max('invoice');
+        $lastPenjualan = Penjualan::where('tahun', session('tahun'))->get();
+        // $lastPenjualan = Penjualan::max('invoice');
 
-        // $invoice = "AT-" . substr(session('tahun'), -2) . "-" . sprintf("%05s", count($lastPenjualan) + 1);
-        $invoice = $lastPenjualan + 1;
+        $invoice = "AT-" . substr(session('tahun'), -2) . "-" . sprintf("%05s", count($lastPenjualan) + 1);
+        // $invoice = $lastPenjualan + 1;
 
         return view('penjualan.index', compact('page_title', 'page_description', 'breadcrumbs', 'kios', 'produk', 'pajak', 'pembayaran', 'invoice'));
     }
@@ -356,7 +358,8 @@ class PenjualanController extends Controller
             ->join('kios', 'penjualans.kios_id', 'kios.id')
             ->where('penjualans.tahun', session('tahun'))
             // ->orderBy('penjualans.tahun', 'ASC')
-            ->orderBy('penjualans.id', 'DESC')
+            // ->orderBy('penjualans.id', 'DESC')
+            ->orderBy('penjualans.invoice', 'DESC')
             ->get();
 
 
@@ -430,7 +433,8 @@ class PenjualanController extends Controller
                 $produk = Produk::where('id', $val->produk_id)->first();
                 $val->nama_produk = $produk->nama_produk;
                 $val->kemasan = $produk->kemasan;
-                $val->harga_jual = $produk->harga_jual;
+                $hargaSatuan = ("Btl" && str_contains($val->ket, "Btl")) ? $val->jumlah / intval(preg_replace("/\D/", "", $val->ket)) : ($val->jumlah / $produk->jumlah_perdos) / intval(preg_replace("/\D/", "", $val->ket));
+                $val->harga_jual = $hargaSatuan;
                 $val->harga_perdos = $produk->harga_perdos;
                 $val->satuan = $produk->satuan;
             }
@@ -441,6 +445,114 @@ class PenjualanController extends Controller
         }
 
         return $penjualan;
+    }
+
+    public function rekapPo(Request $request)
+    {
+        // return $request->all();
+        $spreadsheet = new Spreadsheet();
+
+        $spreadsheet->getProperties()->setCreator('CV AYYUB TANI')
+            ->setLastModifiedBy('CV AYYUB TANI')
+            ->setTitle('rekap po yang sudah diantar')
+            ->setSubject('rekap po yang sudah diantar')
+            ->setDescription('rekap po yang sudah diantar')
+            ->setKeywords('pdf php')
+            ->setCategory('rekap po yang sudah diantar');
+
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+        $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
+
+        $sheet->getRowDimension(1)->setRowHeight(17);
+        $sheet->getRowDimension(2)->setRowHeight(17);
+        $sheet->getRowDimension(3)->setRowHeight(7);
+        $spreadsheet->getDefaultStyle()->getFont()->setName('Times New Roman');
+        $spreadsheet->getDefaultStyle()->getFont()->setSize(10);
+        $spreadsheet->getActiveSheet()->getPageSetup()->setHorizontalCentered(true);
+        $spreadsheet->getActiveSheet()->getPageSetup()->setVerticalCentered(false);
+
+        //Margin PDF
+        $spreadsheet->getActiveSheet()->getPageMargins()->setTop(0.3);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setRight(0.3);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setLeft(0.3);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setBottom(0.3);
+
+        $sheet->setCellValue('A1', 'REKAP PO YANG SUDAH DIANTAR')->mergeCells('A1:F1');
+        $sheet->setCellValue('A2', 'CV. AYYUB TANI')->mergeCells('A2:F2');
+
+        $sheet->setCellValue('A5', 'No')->mergeCells('A5:A5');
+        $sheet->getColumnDimension('A')->setWidth(6);
+        $sheet->setCellValue('B5', 'Nama Produk');
+        $sheet->getColumnDimension('B')->setWidth(40);
+        $sheet->setCellValue('C5', 'Kemasan');
+        $sheet->getColumnDimension('C')->setWidth(25);
+        $sheet->setCellValue('D5', 'Isi Perdos');
+        $sheet->getColumnDimension('D')->setWidth(8);
+        $sheet->setCellValue('E5', 'Harga Satuan');
+        $sheet->getColumnDimension('E')->setWidth(20);
+        $sheet->setCellValue('F5', 'Harga Perdos');
+        $sheet->getColumnDimension('F')->setWidth(20);
+
+        $cell = 5;
+
+        $sheet->getStyle('A1:A3')->getFont()->setSize(12);
+        $sheet->getStyle('A:F')->getAlignment()->setWrapText(true);
+        $sheet->getStyle('A5:F5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:F5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        // $sheet->getStyle('A5:A' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        // $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
+        // $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
+        // $sheet->getStyle('C5:C' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        // $sheet->getStyle('D5:D' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        // $sheet->getStyle('E5:E' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        // $sheet->getStyle('F5:F' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        // $sheet->getStyle('G5:G5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        // $sheet->getStyle('G5:G' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        // $sheet->getStyle('E6:F' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
+        // $sheet->getStyle('E6:F' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
+        // $sheet->getStyle('H6:F' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
+        // $sheet->getStyle('H6:F' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
+        // $sheet->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center');
+
+        // $merge = 0;
+        // $prevValue = '';
+        // $number = 0;
+
+        // foreach ($request->data as $index => $value) {
+        //     if (strtolower($prevValue) !== strtolower($value->nama_produk)) {
+        //         $prevValue = $value->nama_produk;
+        //         $merge = $cell + $value->merge;
+        //         $number++;
+        //     }
+        //     $cell++;
+
+        //     $sheet->setCellValue('A' . $cell, $number)->mergeCells('A' . $cell . ':A' . $merge);
+        //     $sheet->setCellValue('B' . $cell, strtoupper($value->nama_produk))->mergeCells('B' . $cell . ':B' . $merge);
+        //     $sheet->setCellValue('C' . $cell, strtoupper($value->kemasan));
+        //     $sheet->setCellValue('D' . $cell, $value->jumlah_perdos);
+        //     $sheet->setCellValue('E' . $cell, $value->harga_jual);
+        //     $sheet->setCellValue('F' . $cell, $value->harga_perdos);
+        // }
+
+        $border = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['argb' => '0000000'],
+                ],
+            ],
+        ];
+
+        $sheet->getStyle('A5:F' . $cell)->applyFromArray($border);
+
+        // Untuk download 
+        $writer = new Xlsx($spreadsheet);
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Daftar Harga Produk CV. AYYUB TANI.xlsx"');
+
+
+        $writer->save('php://output');
     }
 
     public function listEditPenjualan(Request $request)

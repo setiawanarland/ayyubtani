@@ -31,7 +31,7 @@
 
                                 <div class="col-sm-6 my-1">
                                     <label class="" for="produk">Produk</label>
-                                    <select class="form-control" id="produk" name="produk">
+                                    <select class="form-control" id="produk" name="produk" autofocus>
                                         <option value="null">Pilih Produk</option>
                                         @foreach ($produk as $index => $value)
                                             <option value="{{ $value->id }}">
@@ -185,6 +185,7 @@
                                     <button class="btn btn-primary savePenjualan" type="submit">Save</button>
                                     <button class="btn btn-danger btn-cancel previewPenjualan"
                                         type="">Print</button>
+                                    <button class="btn btn-success btn-rekap rekapPo" type="button">Rekap</button>
                                 </div>
                             </div>
 
@@ -227,7 +228,8 @@
                                 satuan_pajak = data.satuan_pajak;
                             });
 
-                            dpp = grand_total / 1.11;
+                            // dpp = grand_total / 1.11;
+                            dpp = grand_total / 1.1;
                             ppn = grand_total - dpp;
                             total_disc = 0;
                             $('#dpp').val(number_format(dpp, 1));
@@ -700,23 +702,31 @@
                                                                                                                                                                                     
                                                                                                                                                                                     <table width="30%" style="float:right;margin-top: -1px;">
                                                                                                                                                                                     <tr style="">
-                                                                                                                                                                                        <th style="width: 30%;text-align:left;">GRAND TOTAL</th>
+                                                                                                                                                                                        <td style="width: 30%;text-align:left;">DPP</th>
                                                                                                                                                                                         <td style="width:1%;">:</td>
-                                                                                                                                                                                        <th class="grand_total" style="width:10%;text-align: right;">` +
+                                                                                                                                                                                        <td class="grand_total" style="width:10%;text-align: right;">` +
+                                number_format(
+                                    data
+                                    .dpp, 1) +
+                                `</td>
+                                                                                                                                                                                    </tr>
+                                                                                                                                                                                    <tr style="">
+                                                                                                                                                                                        <td style="width: 30%;">PPN</td>
+                                                                                                                                                                                        <td style="width:1%;">:</td>
+                                                                                                                                                                                        <td class="ppn" style="width:10%;text-align: right;">` +
+                                number_format(
+                                    data
+                                    .ppn, 1) +
+                                `</td>
+                                                                                                                                                                                    </tr>
+                                                                                                                                                                                    <tr style="">
+                                                                                                                                                                                        <td style="width: 30%; font-weight: bold;">GRAND TOTAL</td>
+                                                                                                                                                                                        <td style="width:1%;">:</td>
+                                                                                                                                                                                        <td class="disc" style="width:10%;text-align: right;font-weight: bold;">` +
                                 number_format(
                                     data
                                     .grand_total, 1) +
-                                `</th>
-                                                                                                                                                                                    </tr>
-                                                                                                                                                                                    <tr style="">
-                                                                                                                                                                                        <td style="width: 30%;"></td>
-                                                                                                                                                                                        <td style="width:1%;"></td>
-                                                                                                                                                                                        <td class="ppn" style="width:10%;text-align: right;"></td>
-                                                                                                                                                                                    </tr>
-                                                                                                                                                                                    <tr style="">
-                                                                                                                                                                                        <td style="width: 30%;"></td>
-                                                                                                                                                                                        <td style="width:1%;"></td>
-                                                                                                                                                                                        <td class="disc" style="width:10%;text-align: right;"></td>
+                                `</td>
                                                                                                                                                                                     </tr>
                                                                                                                                                                         <tr style="">
                                                                                                                                                                                             <th style="width: 30%;text-align:left;"></th>
@@ -773,7 +783,57 @@
                                 confirmButtonText: "OK",
                             })
                         });
-                }
+                },
+                po: function(_url, _data, _element) {
+                    console.log(_url);
+                    console.log(_data);
+                    console.log(_element);
+                    axios.post(_url, _data)
+                        .then(function(res) {
+                            var data = res.data;
+                            console.log(data);
+                            if (data.failed) {
+                                swal.fire({
+                                    text: "Maaf Terjadi Kesalahan",
+                                    title: "Error",
+                                    timer: 2000,
+                                    icon: "danger",
+                                    showConfirmButton: false,
+                                });
+                            } else if (data.invalid) {
+                                $.each(data.invalid, function(key, value) {
+                                    console.log(key);
+                                    $("input[name='" + key + "']").addClass('is-invalid').siblings(
+                                        '.invalid-feedback').html(value[0]);
+                                });
+                            } else if (data.success) {
+                                swal.fire({
+                                    text: "Data anda berhasil disimpan",
+                                    title: "Sukses",
+                                    icon: "success",
+                                    showConfirmButton: true,
+                                    confirmButtonText: "OK, Siip",
+                                }).then(function() {
+                                    $('.offset-area').toggleClass('show_hide');
+                                    $('.settings-btn').toggleClass('active');
+                                    var form = $('#produkForm');
+                                    form[0].reset();
+                                    dataRow.destroy();
+                                    dataRow.init();
+                                });
+                            }
+                        }).catch(function(res) {
+                            var data = res.data;
+                            console.log(data);
+                            swal.fire({
+                                text: "Terjadi Kesalahan Sistem",
+                                title: "Error",
+                                icon: "error",
+                                showConfirmButton: true,
+                                confirmButtonText: "OK",
+                            })
+                        });
+                },
             };
         }();
 
@@ -969,6 +1029,16 @@
             var formData = new FormData(dataForm);
 
             AxiosCall.print("{{ route('penjualan-preview') }}", formData,
+                "#penjualanForm");
+        });
+
+        $(document).on('click', '.rekapPo', function(e) {
+            e.preventDefault();
+
+            var dataForm = document.querySelector('#penjualanForm');
+            var formData = new FormData(dataForm);
+
+            AxiosCall.po("{{ route('rekap-po') }}", formData,
                 "#penjualanForm");
         });
 

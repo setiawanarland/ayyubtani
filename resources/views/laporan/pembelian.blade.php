@@ -40,6 +40,7 @@
                                         <th>Kios</th>
                                         <th>Pembelian</th>
                                         <th>Ket</th>
+                                        <th>Total</th>
                                         {{-- <th>Stok</th>
                                         <th>Harga</th>
                                         <th>DPP</th>
@@ -104,12 +105,6 @@
                         //     }
                         // },
                         // {
-                        //     data: 'harga_beli',
-                        //     render: function(data, type, row) {
-                        //         return formatRupiah(data.toString(), '');
-                        //     }
-                        // },
-                        // {
                         //     data: 'pembelian',
                         //     render: function(data, type, row) {
                         //         return `${data} Dos`;
@@ -146,6 +141,12 @@
                                 })
                                 html += '</ul>';
                                 return html;
+                            }
+                        },
+                        {
+                            data: 'grand_total',
+                            render: function(data, type, row) {
+                                return formatRupiah(data.toString(), '');
                             }
                         },
                     ],

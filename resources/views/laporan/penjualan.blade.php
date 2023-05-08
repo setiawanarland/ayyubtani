@@ -34,12 +34,12 @@
                                     <tr>
                                         <th>Invoice</th>
                                         <th>Tanggal</th>
-                                        {{-- <th>Isi Perdos</th> --}}
-                                        {{-- <th>Satuan</th> --}}
-                                        {{-- <th>Harga Beli</th> --}}
                                         <th>Kios</th>
                                         <th>Penjualan</th>
                                         <th>Ket</th>
+                                        <th>Total</th>
+                                        <th>DPP</th>
+                                        <th>PPN</th>
                                         {{-- <th>Stok</th>
                                         <th>Harga</th>
                                         <th>DPP</th>
@@ -117,6 +117,7 @@
                         // },
                         {
                             data: 'kios',
+                            width: '8rem',
                             render: function(data, type, row) {
                                 return `${data.pemilik.toUpperCase()}, ${data.nama_kios.toUpperCase()}, ${data.kabupaten.toUpperCase()}`;
                             }
@@ -147,18 +148,24 @@
                                 return html;
                             }
                         },
-                        // {
-                        //     data: 'dpp',
-                        //     render: function(data, type, row) {
-                        //         return number_format(data, 1);
-                        //     }
-                        // },
-                        // {
-                        //     data: 'ppn',
-                        //     render: function(data, type, row) {
-                        //         return number_format(data, 1);
-                        //     }
-                        // },
+                        {
+                            data: 'grand_total',
+                            render: function(data, type, row) {
+                                return number_format(data, 1);
+                            }
+                        },
+                        {
+                            data: 'dpp',
+                            render: function(data, type, row) {
+                                return number_format(data, 1);
+                            }
+                        },
+                        {
+                            data: 'ppn',
+                            render: function(data, type, row) {
+                                return number_format(data, 1);
+                            }
+                        },
                         // {
                         //     data: 'id'
                         // }
