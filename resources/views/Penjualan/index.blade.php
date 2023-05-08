@@ -1278,6 +1278,23 @@
                 todayHighlight: true,
             });
             $('#tanggal_jual').datepicker("setDate", new Date());
+
+            // Mousetrap.bind(['ctrl+c'], function(e) {
+            //     $(".savePenjualan").click();
+            // });
+
+            $(window).keydown(function(e) {
+                console.log(e.keyCode);
+                switch (e.keyCode) {
+                    case 16:
+                        $(".addTemp").click();
+                        break;
+                    case 220:
+                        $(".savePenjualan").click();
+                        break;
+
+                }
+            })
         });
     </script>
 @endsection
