@@ -30,13 +30,13 @@
                             href="{{ url('/pembelian') }}"><i
                                 class="ti-shopping-cart-full"></i><span>pembelian</span></a></li>
                     <li class="{{ Request::path() == 'pembelian/daftar' ? 'active' : '' }}"><a
-                            href="{{ url('/pembelian/daftar') }}"><i class="ti-shopping-cart-full"></i><span>daftar
+                            href="{{ url('/pembelian/daftar') }}"><i class="ti-layout-list-thumb-alt"></i><span>daftar
                                 pembelian</span></a></li>
                     <li class="{{ Request::path() == 'penjualan' ? 'active' : '' }}"><a
                             href="{{ url('/penjualan') }}"><i class="ti-shopping-cart"></i><span>penjualan</span></a>
                     </li>
                     <li class="{{ Request::path() == 'penjualan/daftar' ? 'active' : '' }}"><a
-                            href="{{ url('/penjualan/daftar') }}"><i class="ti-shopping-cart"></i><span>daftar
+                            href="{{ url('/penjualan/daftar') }}"><i class="ti-layout-list-thumb"></i><span>daftar
                                 penjualan</span></a></li>
 
                     <li>
@@ -72,11 +72,11 @@
                             </li>
                             <li class="{{ Request::path() == 'laporan/penjualan' ? 'active' : '' }}"><a
                                     href="{{ url('/laporan/penjualan') }}"><i
-                                        class="ti-shopping-cart"></i><span>penjualan</span></a>
+                                        class="ti-layout-cta-btn-right"></i><span>penjualan</span></a>
                             </li>
                             <li class="{{ Request::path() == 'laporan/pembelian' ? 'active' : '' }}"><a
                                     href="{{ url('/laporan/pembelian') }}"><i
-                                        class="ti-shopping-cart-full"></i><span>pembelian</span></a>
+                                        class="ti-layout-cta-btn-left"></i><span>pembelian</span></a>
                             </li>
                         </ul>
                     </li>

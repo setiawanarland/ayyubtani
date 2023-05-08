@@ -31,7 +31,7 @@
 
                                 <div class="col-sm-6 my-1">
                                     <label class="" for="produk">Produk</label>
-                                    <select class="form-control" id="produk" name="produk" autofocus>
+                                    <select class="form-control" id="produk" name="produk">
                                         <option value="null">Pilih Produk</option>
                                         @foreach ($produk as $index => $value)
                                             <option value="{{ $value->id }}">
@@ -1284,7 +1284,7 @@
             // });
 
             $(window).keydown(function(e) {
-                console.log(e.keyCode);
+                // console.log(e.keyCode);
                 switch (e.keyCode) {
                     case 16:
                         $(".addTemp").click();
@@ -1292,9 +1292,14 @@
                     case 220:
                         $(".savePenjualan").click();
                         break;
-
+                    case 190:
+                        $("#produk").select2('open');
+                        break;
+                    case 188:
+                        $("#kios").select2('open');
+                        break;
                 }
-            })
+            });
         });
     </script>
 @endsection

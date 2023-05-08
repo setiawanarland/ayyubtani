@@ -971,6 +971,18 @@
                 todayHighlight: true,
             });
             $('#tanggal_beli').datepicker("setDate", new Date());
+
+            $(window).keydown(function(e) {
+                switch (e.keyCode) {
+                    case 190:
+                        $("#produk").select2('open');
+                        break;
+                    case 188:
+                        $("#invoice").focus();
+                        break;
+                }
+            });
+
         });
     </script>
 @endsection

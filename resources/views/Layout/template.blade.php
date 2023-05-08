@@ -164,6 +164,19 @@
     <!-- mousetrap -->
     <script src="{{ asset('js/mousetrap.js') }}"></script>
 
+    <script>
+        $(window).keydown(function(e) {
+
+            switch (e.keyCode) {
+                case 221:
+                    $(".ti-shopping-cart-full").click();
+                    break;
+                case 219:
+                    $(".ti-shopping-cart").click();
+                    break;
+            }
+        });
+    </script>
     {{-- script --}}
     @yield('scripts')
 
