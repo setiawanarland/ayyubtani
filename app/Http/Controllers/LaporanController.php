@@ -436,16 +436,16 @@ class LaporanController extends Controller
         $writer->save('php://output');
     }
 
-    public function produk()
+    public function produkJual()
     {
         $page_title = 'Ayyub Tani';
         $page_description = 'Dashboard Admin Ayyub Tani';
-        $breadcrumbs = ['Laporan Produk'];
+        $breadcrumbs = ['Laporan Produk Jual'];
 
-        return view('laporan.produk', compact('page_title', 'page_description', 'breadcrumbs'));
+        return view('laporan.produkJual', compact('page_title', 'page_description', 'breadcrumbs'));
     }
 
-    public function listProduk(Request $request)
+    public function listProdukJual(Request $request)
     {
         $data = [];
         $bulan = request('bulan');
@@ -493,7 +493,7 @@ class LaporanController extends Controller
         return (new GeneralResponse)->default_json(true, 'success', $data, 200);
     }
 
-    public function rekapProduk(Request $request)
+    public function rekapProdukJual(Request $request)
     {
         $bulan = request('bulan');
         $jenis = request('jenis');
@@ -543,18 +543,18 @@ class LaporanController extends Controller
         $data['produks'] = $temp;
         // return $data;
 
-        return $this->laporanRekapProduk($data, $bulan, $jenis);
+        return $this->laporanRekapProdukJual($data, $bulan, $jenis);
     }
 
-    public function laporanRekapProduk($data, $bulan, $jenis)
+    public function laporanRekapProdukJual($data, $bulan, $jenis)
     {
         $spreadsheet = new Spreadsheet();
 
         $spreadsheet->getProperties()->setCreator('CV AYYUB TANI')
             ->setLastModifiedBy('CV AYYUB TANI')
-            ->setTitle('Laporan Rekap Produk Bulanan')
-            ->setSubject('Laporan Rekap Produk Bulanan')
-            ->setDescription('Laporan Rekap Produk Bulanan')
+            ->setTitle('Laporan Rekap Produk Jual Bulanan')
+            ->setSubject('Laporan Rekap Produk Jual Bulanan')
+            ->setDescription('Laporan Rekap Produk Jual Bulanan')
             ->setKeywords('pdf php')
             ->setCategory('Laporan Rekap Stok Bulanan');
 
@@ -580,7 +580,7 @@ class LaporanController extends Controller
         $tahun = ""  . session('tahun') . "-" . $bulan . "";
         $periode = ($bulan != 'all') ? strtoupper(strftime('%B %Y', mktime(0, 0, 0, $bulan + 1, 0, (int)session('tahun')))) : (int)session('tahun');
 
-        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI PRODUK')->mergeCells('A1:F1');
+        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI PRODUK JUAL')->mergeCells('A1:F1');
         $sheet->setCellValue('A2', 'CV. AYYUB TANI')->mergeCells('A2:F2');
         $sheet->setCellValue('A3', "PERIODE $periode")->mergeCells('A3:F3');
 
@@ -649,7 +649,235 @@ class LaporanController extends Controller
             // Untuk download 
             $writer = new Xlsx($spreadsheet);
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="Rekapitulasi Laporan Produk CV. AYYUB TANI ' . $periode . '.xlsx"');
+            header('Content-Disposition: attachment;filename="Rekapitulasi Laporan Produk Jual CV. AYYUB TANI ' . $periode . '.xlsx"');
+        } else {
+            $spreadsheet->getActiveSheet()->getHeaderFooter()
+                ->setOddHeader('&C&H' . url()->current());
+            $spreadsheet->getActiveSheet()->getHeaderFooter()
+                ->setOddFooter('&L&B &RPage &P of &N');
+            $class = \PhpOffice\PhpSpreadsheet\Writer\Pdf\Mpdf::class;
+            \PhpOffice\PhpSpreadsheet\IOFactory::registerWriter('Pdf', $class);
+            header('Content-Type: application/pdf');
+            header('Cache-Control: max-age=0');
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Pdf');
+        }
+
+        $writer->save('php://output');
+    }
+    public function produkBeli()
+    {
+        $page_title = 'Ayyub Tani';
+        $page_description = 'Dashboard Admin Ayyub Tani';
+        $breadcrumbs = ['Laporan Produk Beli'];
+
+        return view('laporan.produkBeli', compact('page_title', 'page_description', 'breadcrumbs'));
+    }
+
+    public function listProdukBeli(Request $request)
+    {
+        $data = [];
+        $bulan = request('bulan');
+        // return $bulan;
+        $stokBeli = 0;
+        $stokJual = 0;
+
+        $produks = DB::table('produks')->orderBy('nama_produk')->get();
+
+        foreach ($produks as $key => $value) {
+            $stokBeli = 0;
+            $stokJual = 0;
+
+            $detailPembelian = DB::table('detail_pembelians')
+                ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
+                ->where('produk_id', $value->id)
+                ->where('tahun', session('tahun'))
+                // ->whereRaw("$whereBeli")
+                ->when($bulan, function ($query, $bulan) {
+                    if ($bulan !== 'all') {
+                        return $query->whereMonth('tanggal_beli', "$bulan");
+                    }
+                })
+                ->get();
+
+            if (count($detailPembelian) > 0) {
+                foreach ($detailPembelian as $index => $val) {
+                    $stokBeli += intval(preg_replace("/\D/", "", $val->ket));
+                    $pembelian = DB::table('pembelians')->where('id', $val->pembelian_id)->first();
+                    $val->invoice = $pembelian->invoice;
+
+                    $supplier = DB::table('suppliers')->where('id', $pembelian->supplier_id)->first();
+                    $val->supplier = "$supplier->nama_supplier";
+                }
+            }
+
+            $value->pembelian = $stokBeli;
+            $value->detail_pembelian = $detailPembelian;
+
+            if (count($detailPembelian) > 0) {
+                $data[] = $value;
+            }
+        }
+
+        return (new GeneralResponse)->default_json(true, 'success', $data, 200);
+    }
+
+    public function rekapProdukBeli(Request $request)
+    {
+        $bulan = request('bulan');
+        $jenis = request('jenis');
+        $data = [];
+        $temp = [];
+        $stokBeli = 0;
+        $stokJual = 0;
+
+        $produks = DB::table('produks')->orderBy('nama_produk')->get();
+
+        foreach ($produks as $key => $value) {
+            $stokBeli = 0;
+            $stokJual = 0;
+
+            $detailPembelian = DB::table('detail_pembelians')
+                ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
+                ->where('produk_id', $value->id)
+                ->where('tahun', session('tahun'))
+                // ->whereRaw("$whereBeli")
+                ->when($bulan, function ($query, $bulan) {
+                    if ($bulan !== 'all') {
+                        return $query->whereMonth('tanggal_beli', "$bulan");
+                    }
+                })
+                ->get();
+
+            if (count($detailPembelian) > 0) {
+                foreach ($detailPembelian as $index => $val) {
+                    $stokBeli += intval(preg_replace("/\D/", "", $val->ket));
+                    $pembelian = DB::table('pembelians')->where('id', $val->pembelian_id)->first();
+                    $val->invoice = $pembelian->invoice;
+
+                    $supplier = DB::table('suppliers')->where('id', $pembelian->supplier_id)->first();
+                    $val->supplier = "$supplier->nama_supplier";
+                }
+            }
+
+            $value->pembelian = $stokBeli;
+            $value->detail_pembelian = $detailPembelian;
+
+            if (count($detailPembelian) > 0) {
+                $temp[] = $value;
+            }
+        }
+
+        $data['bulan'] = $bulan;
+        $data['produks'] = $temp;
+        // return $data;
+
+        return $this->laporanRekapProdukBeli($data, $bulan, $jenis);
+    }
+
+    public function laporanRekapProdukBeli($data, $bulan, $jenis)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $spreadsheet->getProperties()->setCreator('CV AYYUB TANI')
+            ->setLastModifiedBy('CV AYYUB TANI')
+            ->setTitle('Laporan Rekap Produk Beli Bulanan')
+            ->setSubject('Laporan Rekap Produk Beli Bulanan')
+            ->setDescription('Laporan Rekap Produk Beli Bulanan')
+            ->setKeywords('pdf php')
+            ->setCategory('Laporan Rekap Produk Beli Bulanan');
+
+        $sheet = $spreadsheet->getActiveSheet();
+        // $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+        $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+        $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_FOLIO);
+
+        $sheet->getRowDimension(1)->setRowHeight(17);
+        $sheet->getRowDimension(2)->setRowHeight(17);
+        $sheet->getRowDimension(3)->setRowHeight(7);
+        $spreadsheet->getDefaultStyle()->getFont()->setName('Times New Roman');
+        $spreadsheet->getDefaultStyle()->getFont()->setSize(10);
+        $spreadsheet->getActiveSheet()->getPageSetup()->setHorizontalCentered(true);
+        $spreadsheet->getActiveSheet()->getPageSetup()->setVerticalCentered(false);
+
+        // //Margin PDF
+        $spreadsheet->getActiveSheet()->getPageMargins()->setTop(0.3);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setRight(0.3);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setLeft(0.3);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setBottom(0.3);
+
+        $tahun = ""  . session('tahun') . "-" . $bulan . "";
+        $periode = ($bulan != 'all') ? strtoupper(strftime('%B %Y', mktime(0, 0, 0, $bulan + 1, 0, (int)session('tahun')))) : (int)session('tahun');
+
+        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI PRODUK BELI')->mergeCells('A1:F1');
+        $sheet->setCellValue('A2', 'CV. AYYUB TANI')->mergeCells('A2:F2');
+        $sheet->setCellValue('A3', "PERIODE $periode")->mergeCells('A3:F3');
+
+        $sheet->setCellValue('A5', 'No')->mergeCells('A5:A5');
+        $sheet->getColumnDimension('A')->setWidth(6);
+        $sheet->setCellValue('B5', 'Nama Produk');
+        $sheet->getColumnDimension('B')->setWidth(40);
+        $sheet->setCellValue('C5', 'Kemasan');
+        $sheet->getColumnDimension('C')->setWidth(25);
+        $sheet->setCellValue('D5', 'Invoice');
+        $sheet->getColumnDimension('D')->setWidth(15);
+        $sheet->setCellValue('E5', 'Pembelian');
+        $sheet->getColumnDimension('E')->setWidth(15);
+        $sheet->setCellValue('F5', 'Supplier');
+        $sheet->getColumnDimension('F')->setWidth(25);
+
+        $cell = 5;
+        $merge = 0;
+
+        // return $data;
+        foreach ($data['produks'] as $index => $value) {
+            // return $merge;
+            $cell++;
+            $merge = $cell + (count($value->detail_pembelian) - 1);
+
+            $sheet->setCellValue('A' . $cell, $index + 1)->mergeCells('A' . $cell . ':A' . $merge);
+            $sheet->setCellValue('B' . $cell, strtoupper($value->nama_produk))->mergeCells('B' . $cell . ':B' . $merge);
+            $sheet->setCellValue('C' . $cell, strtoupper($value->kemasan))->mergeCells('C' . $cell . ':C' . $merge);
+
+            $index = $cell;
+            foreach ($value->detail_pembelian as $k => $v) {
+                $sheet->setCellValue('D' . $index, $v->invoice);
+                $sheet->setCellValue('E' . $index, $v->ket);
+                $sheet->setCellValue('F' . $index, strtoupper($v->supplier));
+                $index++;
+            }
+
+            $cell = $merge;
+        }
+
+        $sheet->getStyle('A1:A3')->getFont()->setSize(12);
+        $sheet->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('A:F')->getAlignment()->setWrapText(true);
+        $sheet->getStyle('A5:F5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:F5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('A5:A' . $cell)->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
+        $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
+        $sheet->getStyle('C5:C' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('D5:D' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('E5:E' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('F5:F' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
+
+        $border = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['argb' => '0000000'],
+                ],
+            ],
+        ];
+
+        $sheet->getStyle('A5:F' . $cell)->applyFromArray($border);
+
+        if ($jenis == 'excel') {
+            // Untuk download 
+            $writer = new Xlsx($spreadsheet);
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="Rekapitulasi Laporan Produk Beli CV. AYYUB TANI ' . $periode . '.xlsx"');
         } else {
             $spreadsheet->getActiveSheet()->getHeaderFooter()
                 ->setOddHeader('&C&H' . url()->current());

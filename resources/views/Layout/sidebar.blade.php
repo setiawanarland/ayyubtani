@@ -66,9 +66,14 @@
                                     href="{{ url('/laporan/stok') }}"><i
                                         class="fa fa-file-text"></i><span>stok</span></a>
                             </li>
-                            <li class="{{ Request::path() == 'laporan/produk' ? 'active' : '' }}"><a
-                                    href="{{ url('/laporan/produk') }}"><i
-                                        class="fa fa-database"></i><span>produk</span></a>
+                            <li class="{{ Request::path() == 'laporan/produk-jual' ? 'active' : '' }}"><a
+                                    href="{{ url('/laporan/produk-jual') }}"><i
+                                        class="fa fa-credit-card"></i><span>produk
+                                        Jual</span></a>
+                            </li>
+                            <li class="{{ Request::path() == 'laporan/produk-beli' ? 'active' : '' }}"><a
+                                    href="{{ url('/laporan/produk-beli') }}"><i
+                                        class="fa fa-credit-card-alt"></i><span>produk Beli</span></a>
                             </li>
                             <li class="{{ Request::path() == 'laporan/penjualan' ? 'active' : '' }}"><a
                                     href="{{ url('/laporan/penjualan') }}"><i

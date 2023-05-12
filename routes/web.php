@@ -117,9 +117,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/stok', [LaporanController::class, 'stok'])->name('laporan-stok');
         Route::get('/stok-list', [LaporanController::class, 'list'])->name('stok-list');
         Route::get('/stok-rekap', [LaporanController::class, 'rekap'])->name('stok-rekap');
-        Route::get('/produk', [LaporanController::class, 'produk'])->name('laporan-produk');
-        Route::get('/produk-laporan', [LaporanController::class, 'listProduk'])->name('laporan-produk');
-        Route::get('/produk-rekap', [LaporanController::class, 'rekapProduk'])->name('produk-rekap');
+        Route::get('/produk-jual', [LaporanController::class, 'produkJual'])->name('laporan-produk');
+        Route::get('/produk-jual-laporan', [LaporanController::class, 'listProdukJual'])->name('laporan-produk-jual');
+        Route::get('/produk-jual-rekap', [LaporanController::class, 'rekapProdukJual'])->name('produk-rekap-jual');
+        Route::get('/produk-beli', [LaporanController::class, 'produkBeli'])->name('laporan-produk');
+        Route::get('/produk-beli-laporan', [LaporanController::class, 'listProdukBeli'])->name('laporan-produk-beli');
+        Route::get('/produk-beli-rekap', [LaporanController::class, 'rekapProdukBeli'])->name('produk-rekap-beli');
         Route::get('/penjualan', [LaporanController::class, 'penjualan'])->name('laporan-penjualan');
         Route::get('/penjualan-laporan', [LaporanController::class, 'listPenjualan'])->name('laporan-penjualan');
         Route::get('/penjualan-rekap', [LaporanController::class, 'rekapPenjualan'])->name('penjualan-rekap');

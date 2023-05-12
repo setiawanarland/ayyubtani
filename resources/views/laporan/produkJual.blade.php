@@ -72,7 +72,7 @@
                     ordering: false,
                     paging: false,
                     ajax: {
-                        url: "/laporan/produk-laporan",
+                        url: "/laporan/produk-jual-laporan",
                         type: "GET",
                         data: {
                             "bulan": bulan
@@ -321,7 +321,7 @@
             let bulan = $('#bulan').val();
             console.log(bulan);
 
-            url = `/laporan/produk-rekap/?bulan=${bulan}&jenis=pdf`;
+            url = `/laporan/produk-jual-rekap/?bulan=${bulan}&jenis=pdf`;
             window.open(url);
             // if (bulan !== 'all') {
             // } else {
@@ -338,7 +338,7 @@
             let bulan = $('#bulan').val();
             console.log(bulan);
 
-            url = `/laporan/produk-rekap/?bulan=${bulan}&jenis=excel`;
+            url = `/laporan/produk-jual-rekap/?bulan=${bulan}&jenis=excel`;
             window.open(url);
 
         });
