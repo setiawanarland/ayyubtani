@@ -111,6 +111,11 @@ class LaporanController extends Controller
                 }
             } else {
 
+                if (session('tahun') >= 2018) {
+                    $firstBeli = date('Y-m-d', strtotime('Jan 01'));
+                    $firstJual = date('Y-m-d', strtotime('Jan 01'));
+                }
+
                 $pembelianLalu = DB::table('detail_pembelians')
                     ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
                     ->where('produk_id', $value->id)
@@ -137,6 +142,10 @@ class LaporanController extends Controller
                 }
             }
 
+            // if (session('tahun') == 2018 && $bulan == 1 && ) {
+            //     $value->stokAwal = $value->stok;
+            // } else {
+            // }
 
             $value->stokAwal = $stokBeliLalu - $stokJualLalu;
             $value->stok_bulanan = $value->stokAwal + ($stokBeli - $stokJual);
@@ -456,7 +465,6 @@ class LaporanController extends Controller
         $produks = DB::table('produks')->orderBy('nama_produk')->get();
 
         foreach ($produks as $key => $value) {
-            $stokBeli = 0;
             $stokJual = 0;
 
             $detailPenjualan = DB::table('detail_penjualans')
@@ -580,9 +588,9 @@ class LaporanController extends Controller
         $tahun = ""  . session('tahun') . "-" . $bulan . "";
         $periode = ($bulan != 'all') ? strtoupper(strftime('%B %Y', mktime(0, 0, 0, $bulan + 1, 0, (int)session('tahun')))) : (int)session('tahun');
 
-        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI PRODUK JUAL')->mergeCells('A1:F1');
-        $sheet->setCellValue('A2', 'CV. AYYUB TANI')->mergeCells('A2:F2');
-        $sheet->setCellValue('A3', "PERIODE $periode")->mergeCells('A3:F3');
+        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI PRODUK JUAL')->mergeCells('A1:G1');
+        $sheet->setCellValue('A2', 'CV. AYYUB TANI')->mergeCells('A2:G2');
+        $sheet->setCellValue('A3', "PERIODE $periode")->mergeCells('A3:G3');
 
         $sheet->setCellValue('A5', 'No')->mergeCells('A5:A5');
         $sheet->getColumnDimension('A')->setWidth(6);
@@ -596,6 +604,8 @@ class LaporanController extends Controller
         $sheet->getColumnDimension('E')->setWidth(15);
         $sheet->setCellValue('F5', 'Kios');
         $sheet->getColumnDimension('F')->setWidth(25);
+        $sheet->setCellValue('G5', 'Total');
+        $sheet->getColumnDimension('G')->setWidth(15);
 
         $cell = 5;
         $merge = 0;
@@ -618,14 +628,16 @@ class LaporanController extends Controller
                 $index++;
             }
 
+            $sheet->setCellValue('G' . $cell, strtoupper($value->penjualan) . " Dos")->mergeCells('G' . $cell . ':G' . $merge);
+
             $cell = $merge;
         }
 
         $sheet->getStyle('A1:A3')->getFont()->setSize(12);
         $sheet->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center');
-        $sheet->getStyle('A:F')->getAlignment()->setWrapText(true);
-        $sheet->getStyle('A5:F5')->getFont()->setBold(true);
-        $sheet->getStyle('A5:F5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('A:G')->getAlignment()->setWrapText(true);
+        $sheet->getStyle('A5:G5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:G5')->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('A5:A' . $cell)->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
         $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
@@ -633,6 +645,7 @@ class LaporanController extends Controller
         $sheet->getStyle('D5:D' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('E5:E' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('F5:F' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
+        $sheet->getStyle('G5:G' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
 
         $border = [
             'borders' => [
@@ -643,7 +656,7 @@ class LaporanController extends Controller
             ],
         ];
 
-        $sheet->getStyle('A5:F' . $cell)->applyFromArray($border);
+        $sheet->getStyle('A5:G' . $cell)->applyFromArray($border);
 
         if ($jenis == 'excel') {
             // Untuk download 
@@ -679,13 +692,11 @@ class LaporanController extends Controller
         $bulan = request('bulan');
         // return $bulan;
         $stokBeli = 0;
-        $stokJual = 0;
 
         $produks = DB::table('produks')->orderBy('nama_produk')->get();
 
         foreach ($produks as $key => $value) {
             $stokBeli = 0;
-            $stokJual = 0;
 
             $detailPembelian = DB::table('detail_pembelians')
                 ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
@@ -734,7 +745,6 @@ class LaporanController extends Controller
 
         foreach ($produks as $key => $value) {
             $stokBeli = 0;
-            $stokJual = 0;
 
             $detailPembelian = DB::table('detail_pembelians')
                 ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
@@ -808,9 +818,9 @@ class LaporanController extends Controller
         $tahun = ""  . session('tahun') . "-" . $bulan . "";
         $periode = ($bulan != 'all') ? strtoupper(strftime('%B %Y', mktime(0, 0, 0, $bulan + 1, 0, (int)session('tahun')))) : (int)session('tahun');
 
-        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI PRODUK BELI')->mergeCells('A1:F1');
-        $sheet->setCellValue('A2', 'CV. AYYUB TANI')->mergeCells('A2:F2');
-        $sheet->setCellValue('A3', "PERIODE $periode")->mergeCells('A3:F3');
+        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI PRODUK BELI')->mergeCells('A1:G1');
+        $sheet->setCellValue('A2', 'CV. AYYUB TANI')->mergeCells('A2:G2');
+        $sheet->setCellValue('A3', "PERIODE $periode")->mergeCells('A3:G3');
 
         $sheet->setCellValue('A5', 'No')->mergeCells('A5:A5');
         $sheet->getColumnDimension('A')->setWidth(6);
@@ -824,6 +834,8 @@ class LaporanController extends Controller
         $sheet->getColumnDimension('E')->setWidth(15);
         $sheet->setCellValue('F5', 'Supplier');
         $sheet->getColumnDimension('F')->setWidth(25);
+        $sheet->setCellValue('G5', 'Total');
+        $sheet->getColumnDimension('G')->setWidth(15);
 
         $cell = 5;
         $merge = 0;
@@ -846,14 +858,16 @@ class LaporanController extends Controller
                 $index++;
             }
 
+            $sheet->setCellValue('G' . $cell, strtoupper($value->pembelian) . " Dos")->mergeCells('G' . $cell . ':G' . $merge);
+
             $cell = $merge;
         }
 
         $sheet->getStyle('A1:A3')->getFont()->setSize(12);
         $sheet->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center');
-        $sheet->getStyle('A:F')->getAlignment()->setWrapText(true);
-        $sheet->getStyle('A5:F5')->getFont()->setBold(true);
-        $sheet->getStyle('A5:F5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('A:G')->getAlignment()->setWrapText(true);
+        $sheet->getStyle('A5:G5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:G5')->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('A5:A' . $cell)->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
         $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
@@ -861,6 +875,7 @@ class LaporanController extends Controller
         $sheet->getStyle('D5:D' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('E5:E' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('F5:F' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
+        $sheet->getStyle('G5:G' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
 
         $border = [
             'borders' => [
@@ -871,7 +886,7 @@ class LaporanController extends Controller
             ],
         ];
 
-        $sheet->getStyle('A5:F' . $cell)->applyFromArray($border);
+        $sheet->getStyle('A5:G' . $cell)->applyFromArray($border);
 
         if ($jenis == 'excel') {
             // Untuk download 

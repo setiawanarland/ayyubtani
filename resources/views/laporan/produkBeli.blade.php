@@ -38,8 +38,9 @@
                                         {{-- <th>Satuan</th> --}}
                                         <th>Tgl. Beli</th>
                                         <th>Invoice</th>
-                                        <th>Penjualan</th>
+                                        <th>Pembelian</th>
                                         <th>Supplier</th>
+                                        <th>Total</th>
                                         {{-- <th>Stok</th>
                                         <th>Harga</th>
                                         <th>DPP</th>
@@ -164,6 +165,12 @@
                                 })
                                 html += '</ul>';
                                 return html;
+                            }
+                        },
+                        {
+                            data: 'pembelian',
+                            render: function(data, type, row) {
+                                return `${data} Dos`;
                             }
                         },
                         // {

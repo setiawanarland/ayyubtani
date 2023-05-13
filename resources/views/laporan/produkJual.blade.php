@@ -40,6 +40,7 @@
                                         <th>Invoice</th>
                                         <th>Penjualan</th>
                                         <th>Kios</th>
+                                        <th>Total</th>
                                         {{-- <th>Stok</th>
                                         <th>Harga</th>
                                         <th>DPP</th>
@@ -153,6 +154,12 @@
                                 return html;
                             }
                         },
+                        {
+                            data: 'penjualan',
+                            render: function(data, type, row) {
+                                return `${data} Dos`;
+                            }
+                        }
                         // {
                         //     data: 'dpp',
                         //     render: function(data, type, row) {
