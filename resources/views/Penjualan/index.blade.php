@@ -97,7 +97,7 @@
                                         @foreach ($kios as $index => $value)
                                             <option value="{{ $value->id }}">
                                                 {{ Str::upper($value->pemilik) }}, {{ Str::upper($value->nama_kios) }},
-                                                {{ Str::upper($value->kabupaten) }}
+                                                {{ Str::upper($value->alamat) }}, {{ Str::upper($value->kabupaten) }}
                                             </option>
                                         @endforeach
                                     </select>
