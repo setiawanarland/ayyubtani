@@ -51,6 +51,7 @@ class ProdukController extends Controller
             'kemasan' => 'required',
             'satuan' => 'required',
             'qty_kemasan' => 'required',
+            'qty_perdos' => 'required',
             'harga_beli' => 'required',
             'harga_jual' => 'required',
         ]);
@@ -86,6 +87,7 @@ class ProdukController extends Controller
         $data->satuan = $request->satuan;
         $data->jumlah_perdos = intval($request->jumlah_perdos);
         $data->qty_kemasan = floatval($request->qty_kemasan);
+        $data->qty_perdos = floatval($request->qty_perdos);
         $data->harga_beli = intval(preg_replace("/\D/", "", $request->harga_beli));
         $data->harga_jual = intval(preg_replace("/\D/", "", $request->harga_jual));
         $data->harga_perdos = intval(preg_replace("/\D/", "", $request->harga_perdos));

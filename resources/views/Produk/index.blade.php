@@ -81,6 +81,11 @@
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="form-group" style="margin-bottom: 0px;">
+                            <label for="qty_perdos" class="col-form-label">Qty Perdos</label>
+                            <input class="form-control" type="text" name="qty_perdos" id="qty_perdos" value="0">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0px;">
                             <label for="harga_beli" class="col-form-label">Harga Beli</label>
                             <input class="form-control" type="text" name="harga_beli" id="harga_beli">
                             <div class="invalid-feedback"></div>
