@@ -319,7 +319,8 @@ class PembelianController extends Controller
             ->where('pembelians.tahun', session('tahun'))
             // ->orderBy('pembelians.bulan', 'ASC')
             // ->orderBy('pembelians.tahun', 'ASC')
-            ->orderBy('pembelians.id', 'DESC')
+            // ->orderBy('pembelians.id', 'DESC')
+            ->orderBy('pembelians.invoice', 'DESC')
             ->orderBy('pembelians.tanggal_beli', 'DESC')
             ->get();
 
