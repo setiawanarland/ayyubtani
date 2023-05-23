@@ -85,8 +85,40 @@
                     <div class="card-body">
                         <h4 class="header-title">Detail Penjualan</h4>
 
-                        <button type="button" class="btn d-flex btn-danger mb-3 pull-right tempReset">Reset Keranjang
-                        </button>
+                        <div class="form-row align-items-end">
+                            <button type="button" class="btn d-flex btn-danger mb-3 pull-right tempReset">Reset Keranjang
+                            </button>
+                        </div>
+
+                        <form id="kiosBaruForm" action="" data-type="submit">
+                            <div class="form-row align-items-center">
+                                <div class="col-sm-2 col-md-2 my-2">
+                                    <input type="text" class="form-control" id="nama_kios" name="nama_kios"
+                                        placeholder="Kios Baru">
+                                </div>
+                                <div class="col-sm-2 col-md-2 my-2">
+                                    <input type="text" class="form-control" id="pemilik" name="pemilik"
+                                        placeholder="Pemilik Baru">
+                                </div>
+                                <div class="col-sm-2 col-md-2 my-2">
+                                    <input type="text" class="form-control" id="kabupaten" name="kabupaten"
+                                        placeholder="Kabupaten Baru">
+                                </div>
+                                <div class="col-sm-2 col-md-2 my-2">
+                                    <input type="text" class="form-control" id="alamat" name="alamat"
+                                        placeholder="Alamat Baru">
+                                </div>
+                                <div class="col-sm-2 col-md-2 my-2">
+                                    <input type="text" class="form-control" id="npwp" name="npwp"
+                                        placeholder="NPWP Baru">
+                                </div>
+                                <div class="col-sm-2 col-md-2 my-2">
+                                    <input type="text" class="form-control" id="nik" name="nik"
+                                        placeholder="NIK Baru">
+                                </div>
+                                <button class="btn btn-primary saveKiosBaru" type="submit">Save</button>
+                            </div>
+                        </form>
 
                         <form id="penjualanForm" action="" data-type="submit">
                             <div class="form-row align-items-center">
@@ -97,7 +129,8 @@
                                         @foreach ($kios as $index => $value)
                                             <option value="{{ $value->id }}">
                                                 {{ Str::upper($value->pemilik) }}, {{ Str::upper($value->nama_kios) }},
-                                                {{ Str::upper($value->alamat) }}, {{ Str::upper($value->kabupaten) }}
+                                                {{ Str::upper($value->nik) }}, {{ Str::upper($value->alamat) }},
+                                                {{ Str::upper($value->kabupaten) }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -834,6 +867,47 @@
                             })
                         });
                 },
+                newKios: function(_url, _data, _element) {
+                    axios.post(_url, _data)
+                        .then(function(res) {
+                            var data = res.data;
+                            if (data.fail) {
+                                swal.fire({
+                                    text: "Maaf Terjadi Kesalahan",
+                                    title: "Error",
+                                    timer: 2000,
+                                    icon: "danger",
+                                    showConfirmButton: false,
+                                });
+                            } else if (data.invalid) {
+                                console.log(data);
+                                $.each(data.invalid, function(key, value) {
+                                    console.log(key);
+                                    console.log('errorType', typeof error);
+                                    $("input[name='" + key + "']").addClass('is-invalid').siblings(
+                                        '.invalid-feedback').html(value[0]);
+                                });
+                            } else if (data.success) {
+                                swal.fire({
+                                    text: "Data anda berhasil disimpan",
+                                    title: "Sukses",
+                                    icon: "success",
+                                    showConfirmButton: true,
+                                    confirmButtonText: "OK, Siip",
+                                }).then(function() {
+                                    window.location = "{{ route('penjualan') }}";
+                                });
+                            }
+                        }).catch(function(error) {
+                            swal.fire({
+                                text: "Terjadi Kesalahan Sistem",
+                                title: "Error",
+                                icon: "error",
+                                showConfirmButton: true,
+                                confirmButtonText: "OK",
+                            })
+                        });
+                },
             };
         }();
 
@@ -1262,6 +1336,27 @@
 
             return s.join(dec)
         }
+
+        $('#npwp').on('keyup', function() {
+            $(this).val(formatNpwp($(this).val()));
+        });
+
+        function formatNpwp(value) {
+            if (typeof value === 'string') {
+                return value.replace(/(\d{2})(\d{3})(\d{3})(\d{1})(\d{3})(\d{3})/, '$1.$2.$3.$4-$5.$6');
+            }
+        };
+
+        // create new kios
+        $(document).on('submit', "#kiosBaruForm[data-type='submit']", function(e) {
+            e.preventDefault();
+
+            var form = document.querySelector('form');
+            var formData = new FormData(this);
+
+            AxiosCall.newKios("{{ route('kios-store') }}", formData,
+                "#kiosBaruForm");
+        });
 
 
         $(document).ready(function() {

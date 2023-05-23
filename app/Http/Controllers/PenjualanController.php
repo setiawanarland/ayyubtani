@@ -33,7 +33,7 @@ class PenjualanController extends Controller
         $breadcrumbs = ['Penjualan'];
 
         $kios = DB::table('kios')
-            ->select('id', 'nama_kios', 'pemilik', 'alamat', 'kabupaten')
+            ->select('id', 'nama_kios', 'pemilik', 'alamat', 'kabupaten', 'nik', 'npwp')
             ->get();
 
         $produk = DB::table('produks')
@@ -354,7 +354,7 @@ class PenjualanController extends Controller
 
     public function getListPenjualan()
     {
-        $data = Penjualan::select('penjualans.*', 'kios.nama_kios', 'kios.pemilik')
+        $data = Penjualan::select('penjualans.*', 'kios.nama_kios', 'kios.pemilik', 'kios.kabupaten')
             ->join('kios', 'penjualans.kios_id', 'kios.id')
             ->where('penjualans.tahun', session('tahun'))
             // ->orderBy('penjualans.tahun', 'ASC')
