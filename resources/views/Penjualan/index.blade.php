@@ -1399,6 +1399,9 @@
                     case 188:
                         $("#kios").select2('open');
                         break;
+                    case 192:
+                        $("#nama_kios").focus();
+                        break;
                 }
             });
         });
