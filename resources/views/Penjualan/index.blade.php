@@ -59,6 +59,7 @@
                                 <div class="col-sm-5 col-md-3 my-1">
                                     <label class="" for="harga_satuan">Harga Stn.</label>
                                     <input type="hidden" class="form-control" id="harga_lama" name="harga_lama">
+                                    <input type="hidden" class="form-control" id="hargados_lama" name="dosharga_lama">
                                     <input type="hidden" class="form-control" id="jumlah_perdos" name="jumlah_perdos">
                                     <input type="text" class="form-control" id="harga_satuan" name="harga_satuan">
                                 </div>
@@ -918,6 +919,7 @@
             let produk_id = $('#produk').val();
             let ketKemasan = parseInt($('#ket_kemasan').val().replace(/[^0-9]/g, ''));
             let hargaLama = parseInt($('#harga_lama').val().replace(/[^0-9]/g, ''));
+            let hargaDosLama = parseInt($('#hargados_lama').val().replace(/[^0-9]/g, ''));
             let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
             let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
             let ket = $('#ket').val();
@@ -953,6 +955,7 @@
                         'kios_id': kios_id,
                         'produk_id': produk_id,
                         'harga_lama': hargaLama,
+                        'hargados_lama': hargaDosLama,
                         'harga_satuan': hargaSatuan,
                         'harga_perdos': hargaPerdos,
                         'ketKemasan': ketKemasan,
@@ -1188,31 +1191,34 @@
             })
         });
 
-        $(document).on('keyup', '#disc', function(e) {
+        $('#harga_satuan, #disc').on('keyup', function(e) {
             $(this).val(formatRupiah($(this).val(), ''));
 
             let jumlahPerdos = $('#jumlah_perdos').val();
             let disc = parseInt($('#disc').val().replace(/[^0-9]/g, ''));
             let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
             let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
-
             hargaPerdos = (hargaSatuan * jumlahPerdos) - disc;
 
-            $('#harga_perdos').val(formatRupiah(hargaPerdos.toString(), ''));
+            console.log(Math.floor(hargaPerdos / 10) * 10);
+
+
+            $('#harga_perdos').val(formatRupiah((Math.floor(hargaPerdos / 10) * 10).toString(), ''));
 
         });
 
-        $(document).on('keyup', '#harga_satuan', function(e) {
-            let jumlahPerdos = $('#jumlah_perdos').val();
-            let disc = parseInt($('#disc').val().replace(/[^0-9]/g, ''));
-            let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
-            let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
-            hargaPerdos = (hargaSatuan * jumlahPerdos) - disc;
+        // $(document).on('keyup', '#harga_satuan', function(e) {
+        //     let jumlahPerdos = $('#jumlah_perdos').val();
+        //     let disc = parseInt($('#disc').val().replace(/[^0-9]/g, ''));
+        //     let hargaSatuan = parseInt($('#harga_satuan').val().replace(/[^0-9]/g, ''));
+        //     let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
+        //     hargaPerdos = (hargaSatuan * jumlahPerdos) - disc;
 
-            $('#harga_perdos').val(formatRupiah(hargaPerdos.toString(), ''));
-            console.log('harga satuan');
-            console.log(jumlahPerdos);
-        });
+
+        //     $('#harga_perdos').val(formatRupiah(hargaPerdos.toString(), ''));
+        //     console.log('harga satuan');
+        //     console.log(jumlahPerdos);
+        // });
 
         $(document).on('keyup', '#ket_kemasan', function(e) {
             let ketKemasan = parseInt($('#ket_kemasan').val().replace(/[^0-9]/g, ''));
