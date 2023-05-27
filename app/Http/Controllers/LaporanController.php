@@ -244,59 +244,24 @@ class LaporanController extends Controller
             $lastDate = date($currDate, strtotime('last day of -1 month'));
 
             if ($bulan == 'all') {
-                $pembelianLalu = DB::table('detail_pembelians')
-                    ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
+
+                $getStok = DB::table('stok_bulanan')
                     ->where('produk_id', $value->id)
                     ->where('tahun', session('tahun') - 1)
-                    ->get();
-
-                if (count($pembelianLalu) > 0) {
-                    foreach ($pembelianLalu as $index => $val) {
-                        $stokBeliLalu += intval(preg_replace("/\D/", "", $val->ket));
-                    }
-                }
-
-                $penjualanLalu = DB::table('detail_penjualans')
-                    ->join('penjualans', 'detail_penjualans.penjualan_id', 'penjualans.id')
-                    ->where('produk_id', $value->id)
-                    ->where('tahun', session('tahun') - 1)
-                    ->get();
-
-
-                if (count($penjualanLalu) > 0) {
-                    foreach ($penjualanLalu as $index => $val) {
-                        $stokJualLalu += intval(preg_replace("/\D/", "", $val->ket));
-                    }
-                }
+                    ->value('jumlah');
+                $value->stokAwal = ($getStok > 0) ? $getStok : 0;
             } else {
 
-                $pembelianLalu = DB::table('detail_pembelians')
-                    ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
+                $getStok = DB::table('stok_bulanan')
                     ->where('produk_id', $value->id)
-                    ->whereBetween('tanggal_beli', [$firstBeli, $lastDate])
-                    ->get();
+                    ->where('tahun', session('tahun'))
+                    ->where('bulan', $bulan - 1)
+                    ->value('jumlah');
 
-                if (count($pembelianLalu) > 0) {
-                    foreach ($pembelianLalu as $index => $val) {
-                        $stokBeliLalu += intval(preg_replace("/\D/", "", $val->ket));
-                    }
-                }
-
-                $penjualanLalu = DB::table('detail_penjualans')
-                    ->join('penjualans', 'detail_penjualans.penjualan_id', 'penjualans.id')
-                    ->where('produk_id', $value->id)
-                    ->whereBetween('tanggal_jual', [$firstJual, $lastDate])
-                    ->get();
-
-
-                if (count($penjualanLalu) > 0) {
-                    foreach ($penjualanLalu as $index => $val) {
-                        $stokJualLalu += intval(preg_replace("/\D/", "", $val->ket));
-                    }
-                }
+                $value->stokAwal = ($getStok > 0) ? $getStok : 0;
             }
 
-            $value->stokAwal = $stokBeliLalu - $stokJualLalu;
+            // $value->stokAwal = $stokBeliLalu - $stokJualLalu;
             $value->stok_bulanan = $value->stokAwal + ($stokBeli - $stokJual);
 
             // $value->stok_bulanan = $stokBeli - $stokJual;
@@ -352,16 +317,16 @@ class LaporanController extends Controller
         $tahun = ""  . session('tahun') . "-" . $bulan . "";
         $periode = ($bulan != 'all') ? strtoupper(strftime('%B %Y', mktime(0, 0, 0, $bulan + 1, 0, (int)session('tahun')))) : (int)session('tahun');
 
-        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI STOK BARANG')->mergeCells('A1:J1');
-        $sheet->setCellValue('A2', 'CV. AYYUB TANI')->mergeCells('A2:I2');
-        $sheet->setCellValue('A3', "PERIODE $periode")->mergeCells('A3:I3');
+        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI STOK BARANG')->mergeCells('A1:G1');
+        $sheet->setCellValue('A2', 'CV. AYYUB TANI')->mergeCells('A2:G2');
+        $sheet->setCellValue('A3', "PERIODE $periode")->mergeCells('A3:G3');
 
         $sheet->setCellValue('A5', 'No')->mergeCells('A5:A5');
         $sheet->getColumnDimension('A')->setWidth(6);
         $sheet->setCellValue('B5', 'Nama Produk');
         $sheet->getColumnDimension('B')->setWidth(30);
         $sheet->setCellValue('C5', 'Kemasan');
-        $sheet->getColumnDimension('C')->setWidth(25);
+        $sheet->getColumnDimension('C')->setWidth(40);
         $sheet->setCellValue('D5', 'Stok Awal');
         $sheet->getColumnDimension('D')->setWidth(8);
         $sheet->setCellValue('E5', 'Pembelian');
@@ -369,13 +334,13 @@ class LaporanController extends Controller
         $sheet->setCellValue('F5', 'Penjualan');
         $sheet->getColumnDimension('F')->setWidth(13);
         $sheet->setCellValue('G5', 'Stok Akhir');
-        $sheet->getColumnDimension('F')->setWidth(8);
-        $sheet->setCellValue('H5', 'Jml Kemasan');
-        $sheet->getColumnDimension('H')->setWidth(16);
-        $sheet->setCellValue('I5', 'Harga Stn');
-        $sheet->getColumnDimension('I')->setWidth(16);
-        $sheet->setCellValue('J5', 'Disc Stn');
-        $sheet->getColumnDimension('J')->setWidth(16);
+        // $sheet->getColumnDimension('F')->setWidth(8);
+        // $sheet->setCellValue('H5', 'Jml Kemasan');
+        // $sheet->getColumnDimension('H')->setWidth(16);
+        // $sheet->setCellValue('I5', 'Harga Stn');
+        // $sheet->getColumnDimension('I')->setWidth(16);
+        // $sheet->setCellValue('J5', 'Disc Stn');
+        // $sheet->getColumnDimension('J')->setWidth(16);
         // $sheet->setCellValue('H5', 'Harga');
         // $sheet->getColumnDimension('H')->setWidth(16);
         // $sheet->setCellValue('I5', 'DPP');
@@ -386,26 +351,26 @@ class LaporanController extends Controller
         $cell = 5;
 
         $sheet->getStyle('A1:A3')->getFont()->setSize(12);
-        $sheet->getStyle('A:J')->getAlignment()->setWrapText(true);
-        $sheet->getStyle('A5:J5')->getFont()->setBold(true);
-        $sheet->getStyle('A5:J5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('A:G')->getAlignment()->setWrapText(true);
+        $sheet->getStyle('A5:G5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:G5')->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('A5:A' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
         $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
-        $sheet->getStyle('C5:C' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('C5:C' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
         $sheet->getStyle('D5:D' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('E5:E' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('F5:F' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('G5:G' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
-        $sheet->getStyle('H5:H5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        // $sheet->getStyle('H5:H5')->getAlignment()->setVertical('center')->setHorizontal('center');
         // $sheet->getStyle('H6:H' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
         // $sheet->getStyle('H6:H' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
-        $sheet->getStyle('I5:I5')->getAlignment()->setVertical('center')->setHorizontal('center');
-        $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
-        $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
-        $sheet->getStyle('I5:J5')->getAlignment()->setVertical('center')->setHorizontal('center');
-        $sheet->getStyle('I6:J' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
-        $sheet->getStyle('I6:J' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
+        // $sheet->getStyle('I5:I5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        // $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
+        // $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
+        // $sheet->getStyle('I5:J5')->getAlignment()->setVertical('center')->setHorizontal('center');
+        // $sheet->getStyle('I6:J' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
+        // $sheet->getStyle('I6:J' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
         $sheet->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center');
 
 
@@ -422,9 +387,9 @@ class LaporanController extends Controller
             $sheet->setCellValue('F' . $cell, $value->penjualan);
             $sheet->setCellValue('G' . $cell, $value->stok_bulanan);
             // $sheet->setCellValue('G' . $cell, number_format($value->harga));
-            $sheet->setCellValue('H' . $cell, $value->jumlah_perdos);
-            $sheet->setCellValue('I' . $cell, $value->harga_jual);
-            $sheet->setCellValue('J' . $cell, $value->disc);
+            // $sheet->setCellValue('H' . $cell, $value->jumlah_perdos);
+            // $sheet->setCellValue('I' . $cell, $value->harga_jual);
+            // $sheet->setCellValue('J' . $cell, $value->disc);
         }
 
         $border = [
@@ -436,7 +401,7 @@ class LaporanController extends Controller
             ],
         ];
 
-        $sheet->getStyle('A5:J' . $cell)->applyFromArray($border);
+        $sheet->getStyle('A5:G' . $cell)->applyFromArray($border);
 
         if ($jenis == 'excel') {
             // Untuk download 
