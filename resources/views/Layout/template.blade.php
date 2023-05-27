@@ -10,7 +10,7 @@
     <meta name="description" content="@yield('page_description', $page_description ?? 'Ayyub Tani page describtion')" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <link rel="shortcut icon" type="image/png" href="{{ asset('images/icon/favicon.ico') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/author/newAt.ico') }}">
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/themify-icons.css') }}">
