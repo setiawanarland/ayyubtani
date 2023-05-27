@@ -21,7 +21,7 @@
     <div class="main-content-inner">
         <div class="row">
             <!-- data table start -->
-            <div class="col-12 mt-3">
+            <div class="col-12 mt-2">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="header-title">Pembelian</h4>
@@ -80,46 +80,67 @@
             </div>
             <!-- data table end -->
         </div>
+
         <div class="row">
-            <div class="col-12 mt-3">
+            <div class="col-12 mt-2">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="header-title">Detail Penjualan</h4>
+                        <div id="accordion1" class="according">
+                            <div class="card">
+                                <div class="card-header">
+                                    <a class="card-link" data-toggle="collapse" href="#accordion11">Tambah Kios Baru</a>
+                                </div>
+                                <div id="accordion11" class="collapse" data-parent="#accordion1">
+                                    <div class="card-body">
+                                        <form id="kiosBaruForm" action="" data-type="submit">
+                                            <div class="form-row align-items-center">
+                                                <div class="col-sm-2 col-md-2 my-2">
+                                                    <input type="text" class="form-control" id="pemilik" name="pemilik"
+                                                        placeholder="Pemilik Baru">
+                                                </div>
+                                                <div class="col-sm-2 col-md-2 my-2">
+                                                    <input type="text" class="form-control" id="nama_kios"
+                                                        name="nama_kios" placeholder="Kios Baru">
+                                                </div>
+                                                <div class="col-sm-2 col-md-2 my-2">
+                                                    <input type="text" class="form-control" id="kabupaten"
+                                                        name="kabupaten" placeholder="Kabupaten Baru">
+                                                </div>
+                                                <div class="col-sm-2 col-md-2 my-2">
+                                                    <input type="text" class="form-control" id="alamat"
+                                                        name="alamat" placeholder="Alamat Baru">
+                                                </div>
+                                                <div class="col-sm-2 col-md-2 my-2">
+                                                    <input type="text" class="form-control" id="npwp"
+                                                        name="npwp" placeholder="NPWP Baru">
+                                                </div>
+                                                <div class="col-sm-2 col-md-2 my-2">
+                                                    <input type="text" class="form-control" id="nik"
+                                                        name="nik" placeholder="NIK Baru">
+                                                </div>
+                                                <button class="btn btn-primary saveKiosBaru" hidden
+                                                    type="submit">Save</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                        <div class="form-row align-items-end">
-                            <button type="button" class="btn d-flex btn-danger mb-3 pull-right tempReset">Reset Keranjang
+        <div class="row">
+            <div class="col-12 mt-2">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-row  d-flex justify-content-between">
+                            <h4 class="header-title">Detail Penjualan</h4>
+                            <button type="button" class="btn btn-danger tempReset">Reset
+                                Keranjang
                             </button>
                         </div>
-
-                        <form id="kiosBaruForm" action="" data-type="submit">
-                            <div class="form-row align-items-center">
-                                <div class="col-sm-2 col-md-2 my-2">
-                                    <input type="text" class="form-control" id="nama_kios" name="nama_kios"
-                                        placeholder="Kios Baru">
-                                </div>
-                                <div class="col-sm-2 col-md-2 my-2">
-                                    <input type="text" class="form-control" id="pemilik" name="pemilik"
-                                        placeholder="Pemilik Baru">
-                                </div>
-                                <div class="col-sm-2 col-md-2 my-2">
-                                    <input type="text" class="form-control" id="kabupaten" name="kabupaten"
-                                        placeholder="Kabupaten Baru">
-                                </div>
-                                <div class="col-sm-2 col-md-2 my-2">
-                                    <input type="text" class="form-control" id="alamat" name="alamat"
-                                        placeholder="Alamat Baru">
-                                </div>
-                                <div class="col-sm-2 col-md-2 my-2">
-                                    <input type="text" class="form-control" id="npwp" name="npwp"
-                                        placeholder="NPWP Baru">
-                                </div>
-                                <div class="col-sm-2 col-md-2 my-2">
-                                    <input type="text" class="form-control" id="nik" name="nik"
-                                        placeholder="NIK Baru">
-                                </div>
-                                <button class="btn btn-primary saveKiosBaru" type="submit">Save</button>
-                            </div>
-                        </form>
 
                         <form id="penjualanForm" action="" data-type="submit">
                             <div class="form-row align-items-center">
@@ -1200,10 +1221,17 @@
             let hargaPerdos = parseInt($('#harga_perdos').val().replace(/[^0-9]/g, ''));
             hargaPerdos = (hargaSatuan * jumlahPerdos) - disc;
 
-            console.log(Math.floor(hargaPerdos / 10) * 10);
+            let lastOfHargaPerdos = hargaPerdos % 1000;
+
+            hargaPerdos = (lastOfHargaPerdos > 900) ? Math.round(hargaPerdos / 100) * 100 : Math.floor(hargaPerdos /
+                10) * 10;
+
+            // console.log(lastOfHargaPerdos);
+            // console.log(Math.round(hargaPerdos / 100) * 100);
+            // console.log(Math.floor(hargaPerdos / 100) * 100);
 
 
-            $('#harga_perdos').val(formatRupiah((Math.floor(hargaPerdos / 10) * 10).toString(), ''));
+            $('#harga_perdos').val(formatRupiah(hargaPerdos.toString(), ''));
 
         });
 
@@ -1400,7 +1428,8 @@
                         $("#kios").select2('open');
                         break;
                     case 192:
-                        $("#nama_kios").focus();
+                        $("#accordion11").addClass("show");
+                        $("#pemilik").focus();
                         break;
                 }
             });

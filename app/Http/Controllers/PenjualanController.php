@@ -96,7 +96,7 @@ class PenjualanController extends Controller
 
     public function temp(Request $request)
     {
-        if (($request->harga_lama != $request->harga_satuan) || ($request->hargados_lama != $request->harga_perdos)) {
+        if (($request->harga_lama != $request->harga_satuan)) {
             $produk = Produk::where('id', $request->produk_id)->first();
             $produk->harga_jual = floatval(preg_replace('/[^\d\.]+/', '', $request->harga_satuan));
             $produk->harga_perdos = floatval(preg_replace('/[^\d\.]+/', '', $request->harga_perdos));
