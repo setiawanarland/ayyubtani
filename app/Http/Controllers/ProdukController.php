@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Response\GeneralResponse;
 use App\Models\Produk;
+use App\Models\StokBulanan as ModelsStokBulanan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use DB;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use StokBulanan;
 use Validator;
 
 setlocale(LC_ALL, 'IND');
@@ -22,7 +24,9 @@ class ProdukController extends Controller
         $page_description = 'Dashboard Admin Ayyub Tani';
         $breadcrumbs = ['Daftar Produk'];
 
-        return view('produk.index', compact('page_title', 'page_description', 'breadcrumbs'));
+        $bulan = [1 => 'Januari', 'Febuari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+        return view('produk.index', compact('page_title', 'page_description', 'breadcrumbs', 'bulan'));
     }
 
     public function list()
@@ -525,5 +529,43 @@ class ProdukController extends Controller
         }
 
         $writer->save('php://output');
+    }
+
+    public function rekapBulanan(Request $request)
+    {
+        $produks = DB::table("produks")
+            ->orderBy('nama_produk', 'ASC')
+            ->get();
+
+        $res = [];
+
+        foreach ($produks as $key => $value) {
+            if ($value->stok != 0) {
+                $getStokBulanan = DB::table('stok_bulanan')
+                    ->where('produk_id', $value->id)
+                    ->where('tahun', $request->tahun)
+                    ->where('bulan', $request->bulan)
+                    ->first();
+
+                if ($getStokBulanan) {
+                    return (new GeneralResponse)->default_json(false, "Stok bulanan sudah ada!", $res, 400);
+                }
+
+                $data = new ModelsStokBulanan();
+                $data->produk_id = $value->id;
+                $data->tahun = $request->tahun;
+                $data->bulan = $request->bulan;
+                $data->jumlah = $value->stok;
+                $data->save();
+
+                $res[] = $data;
+            }
+        }
+
+        if ($res) {
+            return (new GeneralResponse)->default_json(true, "Success", $res, 201);
+        } else {
+            return (new GeneralResponse)->default_json(false, "Error", $res, 400);
+        }
     }
 }

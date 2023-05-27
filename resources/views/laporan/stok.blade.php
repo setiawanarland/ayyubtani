@@ -41,9 +41,9 @@
                                         <th>Pembelian</th>
                                         <th>Penjualan</th>
                                         <th>Stok</th>
-                                        <th>Jumlah Stn</th>
+                                        {{-- <th>Jumlah Stn</th>
                                         <th>Harga Stn</th>
-                                        <th>Disc Stn</th>
+                                        <th>Disc Stn</th> --}}
                                         {{-- <th>Harga</th>
                                         <th>DPP</th>
                                         <th>PPN</th> --}}
@@ -124,24 +124,24 @@
                                 return `${data} Dos`;
                             }
                         },
-                        {
-                            data: 'jumlah_perdos',
-                            render: function(data, type, row) {
-                                return data;
-                            }
-                        },
-                        {
-                            data: 'harga_jual',
-                            render: function(data, type, row) {
-                                return number_format(data, 1);
-                            }
-                        },
-                        {
-                            data: 'disc',
-                            render: function(data, type, row) {
-                                return number_format(data, 1);
-                            }
-                        },
+                        // {
+                        //     data: 'jumlah_perdos',
+                        //     render: function(data, type, row) {
+                        //         return data;
+                        //     }
+                        // },
+                        // {
+                        //     data: 'harga_jual',
+                        //     render: function(data, type, row) {
+                        //         return number_format(data, 1);
+                        //     }
+                        // },
+                        // {
+                        //     data: 'disc',
+                        //     render: function(data, type, row) {
+                        //         return number_format(data, 1);
+                        //     }
+                        // },
                         // {
                         //     data: 'harga',
                         //     render: function(data, type, row) {

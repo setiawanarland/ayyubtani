@@ -85,61 +85,74 @@ class LaporanController extends Controller
             // return $lastDate;
 
             if ($bulan == 'all') {
-                $pembelianLalu = DB::table('detail_pembelians')
-                    ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
+                $getStok = DB::table('stok_bulanan')
                     ->where('produk_id', $value->id)
                     ->where('tahun', session('tahun') - 1)
-                    ->get();
+                    ->value('jumlah');
 
-                if (count($pembelianLalu) > 0) {
-                    foreach ($pembelianLalu as $index => $val) {
-                        $stokBeliLalu += intval(preg_replace("/\D/", "", $val->ket));
-                    }
-                }
+                // return $getStok;
+                $value->stokAwal = ($getStok > 0) ? $getStok : 0;
 
-                $penjualanLalu = DB::table('detail_penjualans')
-                    ->join('penjualans', 'detail_penjualans.penjualan_id', 'penjualans.id')
-                    ->where('produk_id', $value->id)
-                    ->where('tahun', session('tahun') - 1)
-                    ->get();
+                // if (count($pembelianLalu) > 0) {
+                //     foreach ($pembelianLalu as $index => $val) {
+                //         $stokBeliLalu += intval(preg_replace("/\D/", "", $val->ket));
+                //     }
+                // }
+
+                // $penjualanLalu = DB::table('detail_penjualans')
+                //     ->join('penjualans', 'detail_penjualans.penjualan_id', 'penjualans.id')
+                //     ->where('produk_id', $value->id)
+                //     ->where('tahun', session('tahun') - 1)
+                //     ->get();
 
 
-                if (count($penjualanLalu) > 0) {
-                    foreach ($penjualanLalu as $index => $val) {
-                        $stokJualLalu += intval(preg_replace("/\D/", "", $val->ket));
-                    }
-                }
+                // if (count($penjualanLalu) > 0) {
+                //     foreach ($penjualanLalu as $index => $val) {
+                //         $stokJualLalu += intval(preg_replace("/\D/", "", $val->ket));
+                //     }
+                // }
             } else {
 
-                if (session('tahun') >= 2018) {
-                    $firstBeli = date('Y-m-d', strtotime('Jan 01'));
-                    $firstJual = date('Y-m-d', strtotime('Jan 01'));
-                }
-
-                $pembelianLalu = DB::table('detail_pembelians')
-                    ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
+                $getStok = DB::table('stok_bulanan')
                     ->where('produk_id', $value->id)
-                    ->whereBetween('tanggal_beli', [$firstBeli, $lastDate])
-                    ->get();
+                    ->where('tahun', session('tahun'))
+                    ->where('bulan', $bulan - 1)
+                    // ->get();
+                    ->value('jumlah');
 
-                if (count($pembelianLalu) > 0) {
-                    foreach ($pembelianLalu as $index => $val) {
-                        $stokBeliLalu += intval(preg_replace("/\D/", "", $val->ket));
-                    }
-                }
+                // return var_dump($getStok);
 
-                $penjualanLalu = DB::table('detail_penjualans')
-                    ->join('penjualans', 'detail_penjualans.penjualan_id', 'penjualans.id')
-                    ->where('produk_id', $value->id)
-                    ->whereBetween('tanggal_jual', [$firstJual, $lastDate])
-                    ->get();
+                $value->stokAwal = ($getStok > 0) ? $getStok : 0;
+
+                // if (session('tahun') >= 2018) {
+                //     $firstBeli = date('Y-m-d', strtotime('Jan 01'));
+                //     $firstJual = date('Y-m-d', strtotime('Jan 01'));
+                // }
+
+                // $pembelianLalu = DB::table('detail_pembelians')
+                //     ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
+                //     ->where('produk_id', $value->id)
+                //     ->whereBetween('tanggal_beli', [$firstBeli, $lastDate])
+                //     ->get();
+
+                // if (count($pembelianLalu) > 0) {
+                //     foreach ($pembelianLalu as $index => $val) {
+                //         $stokBeliLalu += intval(preg_replace("/\D/", "", $val->ket));
+                //     }
+                // }
+
+                // $penjualanLalu = DB::table('detail_penjualans')
+                //     ->join('penjualans', 'detail_penjualans.penjualan_id', 'penjualans.id')
+                //     ->where('produk_id', $value->id)
+                //     ->whereBetween('tanggal_jual', [$firstJual, $lastDate])
+                //     ->get();
 
 
-                if (count($penjualanLalu) > 0) {
-                    foreach ($penjualanLalu as $index => $val) {
-                        $stokJualLalu += intval(preg_replace("/\D/", "", $val->ket));
-                    }
-                }
+                // if (count($penjualanLalu) > 0) {
+                //     foreach ($penjualanLalu as $index => $val) {
+                //         $stokJualLalu += intval(preg_replace("/\D/", "", $val->ket));
+                //     }
+                // }
             }
 
             // if (session('tahun') == 2018 && $bulan == 1 && ) {
@@ -147,16 +160,16 @@ class LaporanController extends Controller
             // } else {
             // }
 
-            $value->stokAwal = $stokBeliLalu - $stokJualLalu;
+            // $value->stokAwal = $stokBeliLalu - $stokJualLalu;
             $value->stok_bulanan = $value->stokAwal + ($stokBeli - $stokJual);
             $value->beli = $stokBeli;
             $value->jual = $stokJual;
             $value->harga = $value->stok_bulanan * $value->harga_perdos;
             $value->dpp = $value->harga / 1.1;
             $value->ppn = $value->harga - $value->dpp;
-
+            // return $value;
             // $data[] = $value;
-            if ($value->stokAwal !== 0 || $value->beli !== 0 || $value->jual !== 0 || $value->stok_bulanan !== 0) {
+            if ($value->stok_bulanan !== 0 || $value->beli !== 0 || $value->jual !== 0 || $value->stok_bulanan !== 0) {
                 $data[] = $value;
             }
         }

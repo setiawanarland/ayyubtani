@@ -4,12 +4,44 @@
     <div class="main-content-inner">
         <div class="row">
             <!-- data table start -->
-            <div class="col-12 mt-5">
+            <div class="col-12 mt-2">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="header-title">Rekap Stok Produk</h4>
+
+                        <div class="form-row align-items-center">
+
+                            <div class="col-sm-3 my-1">
+                                <label class="" for="bulan">Pilih Bulan</label>
+                                <select class="form-control" id="bulan" name="bulan">
+                                    <option value="null">Pilih Bulan</option>
+                                    @foreach ($bulan as $index => $value)
+                                        <option value="{{ $index }}">
+                                            {{ Str::upper($value) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-auto my-1" style="padding-top: 30px;">
+                                <button type="button" class="btn btn-primary btn-xs rekapBulanan">
+                                    <i class="fa fa-spinner"></i> Rekap
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- data table start -->
+            <div class="col-12 mt-2">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="header-title">Data Produk</h4>
                         <button type="button" class="btn d-flex btn-success mb-3 pull-right cetak">Cetak Data</button>
-                        <button type="button" class="btn d-flex btn-primary mb-3 pull-right tambahData">Tambah Data</button>
+                        <button type="button" class="btn d-flex btn-primary mb-3 pull-right tambahData">Tambah
+                            Data</button>
                         <div class="data-tables">
                             <table id="produkTable" class="text-cente">
                                 <thead class="bg-light text-capitalize">
@@ -445,6 +477,64 @@
 
         });
 
+        // rekap bulanan
+        $(document).on('click', ".rekapBulanan", function(e) {
+            e.preventDefault();
+
+            let monthName = {!! json_encode($bulan) !!};
+            let year = {!! json_encode(session('tahun')) !!};
+            let bulan = $('#bulan').val();
+
+            if (bulan != 'null') {
+                Swal.fire({
+                    title: `Apakah kamu yakin akan melakukan rekap data stok bulan ${monthName[bulan]} ${year}?`,
+                    text: "Data akan direkap!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `/produk/rekap-bulanan?bulan=${bulan}&tahun=${year}`,
+                            type: 'POST',
+                            data: {
+                                '_method': 'POST',
+                                '_token': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(response) {
+                                Swal.fire('Success!',
+                                        'Data berhasil direkap.',
+                                        'success')
+                                    .then(function() {
+                                        $('#bulan').val('null').trigger('change');
+                                        dataRow.destroy();
+                                        dataRow.init();
+                                    });
+                            },
+                            error: function(res) {
+                                swal.fire({
+                                    title: "Failed!",
+                                    text: `${res.responseJSON.message}`,
+                                    icon: "warning",
+                                });
+                            }
+                        })
+                    }
+                })
+            } else {
+                swal.fire({
+                    text: "Silakan Pilih Bulan!",
+                    title: "Error",
+                    icon: "error",
+                    showConfirmButton: true,
+                    confirmButtonText: "OK",
+                });
+            }
+
+
+        });
 
 
 
@@ -471,7 +561,7 @@
 
         $(document).ready(function() {
             dataRow.init();
-
+            $('#bulan').select2();
         });
     </script>
 @endsection
