@@ -243,11 +243,12 @@ class LaporanController extends Controller
             $currDate = date(session('tahun') . "-$bulan-01");
             $lastDate = date($currDate, strtotime('last day of -1 month'));
 
-            if ($bulan == 'all') {
+            if ($bulan == 'all' || $bulan == 1) {
 
                 $getStok = DB::table('stok_bulanan')
                     ->where('produk_id', $value->id)
                     ->where('tahun', session('tahun') - 1)
+                    ->where('bulan', 12)
                     ->value('jumlah');
                 $value->stokAwal = ($getStok > 0) ? $getStok : 0;
             } else {
