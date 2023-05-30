@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Response\GeneralResponse;
 use App\Models\Produk;
 use App\Models\StokBulanan as ModelsStokBulanan;
+use App\Models\StokTahunan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use DB;
@@ -24,9 +25,7 @@ class ProdukController extends Controller
         $page_description = 'Dashboard Admin Ayyub Tani';
         $breadcrumbs = ['Daftar Produk'];
 
-        $bulan = [1 => 'Januari', 'Febuari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-
-        return view('produk.index', compact('page_title', 'page_description', 'breadcrumbs', 'bulan'));
+        return view('produk.index', compact('page_title', 'page_description', 'breadcrumbs',));
     }
 
     public function list()
@@ -531,7 +530,7 @@ class ProdukController extends Controller
         $writer->save('php://output');
     }
 
-    public function rekapBulanan(Request $request)
+    public function rekapTahunan(Request $request)
     {
         $produks = DB::table("produks")
             ->orderBy('nama_produk', 'ASC')
@@ -541,20 +540,18 @@ class ProdukController extends Controller
 
         foreach ($produks as $key => $value) {
             if ($value->stok != 0) {
-                $getStokBulanan = DB::table('stok_bulanan')
+                $getStokBulanan = DB::table('stok_tahunans')
                     ->where('produk_id', $value->id)
                     ->where('tahun', $request->tahun)
-                    ->where('bulan', $request->bulan)
                     ->first();
 
                 if ($getStokBulanan) {
-                    return (new GeneralResponse)->default_json(false, "Stok bulanan sudah ada!", $res, 400);
+                    return (new GeneralResponse)->default_json(false, "Stok tahunan sudah ada!", $res, 400);
                 }
 
-                $data = new ModelsStokBulanan();
+                $data = new StokTahunan();
                 $data->produk_id = $value->id;
                 $data->tahun = $request->tahun;
-                $data->bulan = $request->bulan;
                 $data->jumlah = $value->stok;
                 $data->save();
 
