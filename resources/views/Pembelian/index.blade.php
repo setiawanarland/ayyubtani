@@ -12,7 +12,7 @@
                             @csrf
                             <div class="form-row align-items-center">
 
-                                <div class="col-sm-3 my-1">
+                                <div class="col-sm-5 my-1">
                                     <label class="" for="produk">Produk</label>
                                     <select class="form-control" id="produk" name="produk">
                                         <option value="null">Pilih Produk</option>

@@ -1224,7 +1224,7 @@
             let lastOfHargaPerdos = hargaPerdos % 1000;
 
             hargaPerdos = (lastOfHargaPerdos > 900) ? Math.round(hargaPerdos / 100) * 100 : Math.floor(hargaPerdos /
-                10) * 10;
+                100) * 100;
 
             // console.log(lastOfHargaPerdos);
             // console.log(Math.round(hargaPerdos / 100) * 100);
