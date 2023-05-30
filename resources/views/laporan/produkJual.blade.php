@@ -36,7 +36,7 @@
                                         <th>Kemasan</th>
                                         {{-- <th>Isi Perdos</th> --}}
                                         {{-- <th>Satuan</th> --}}
-                                        {{-- <th>Harga Beli</th> --}}
+                                        <th>Tgl. Jual</th>
                                         <th>Invoice</th>
                                         <th>Penjualan</th>
                                         <th>Kios</th>
@@ -115,6 +115,19 @@
                         //         return `${data} Dos`;
                         //     }
                         // },
+                        {
+                            data: 'detail_penjualan',
+                            render: function(data, type, row) {
+                                let html = '';
+                                html += '<ul>';
+                                $.each(data, function(x, y) {
+                                    html +=
+                                        `<li>${y.tanggal_jual}<li>`;
+                                })
+                                html += '</ul>';
+                                return html;
+                            }
+                        },
                         {
                             data: 'detail_penjualan',
                             render: function(data, type, row) {
