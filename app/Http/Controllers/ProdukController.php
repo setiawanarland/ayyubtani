@@ -372,13 +372,16 @@ class ProdukController extends Controller
         $data = [];
         $temp = [];
 
-        $produks = DB::table('produks')->orderBy('nama_produk')->get();
+        $produks = DB::table('produks')
+            ->orderBy('nama_produk')
+            ->orderBy('kemasan')
+            ->get();
 
         foreach ($produks as $key => $value) {
 
             $dataProduk = DB::table('produks')->where('nama_produk', $value->nama_produk)->get();
 
-            $value->merge = count($dataProduk);
+            // $value->merge = count($dataProduk);
 
             $satuanKemasan = ($value->satuan == "ltr") ? "Btl" : "Bks";
             $ketKemasan = $value->jumlah_perdos;
@@ -394,7 +397,9 @@ class ProdukController extends Controller
 
             $value->stok = $stok;
 
-            $temp[] = $value;
+            if ($value->stok != 0) {
+                $temp[] = $value;
+            }
         }
 
         $data['bulan'] = $bulan;
@@ -466,7 +471,7 @@ class ProdukController extends Controller
         $sheet->getStyle('A5:A' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
         $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
-        $sheet->getStyle('C5:C' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('C5:C' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
         $sheet->getStyle('D5:D' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('E5:E' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
         $sheet->getStyle('F5:F' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
@@ -483,15 +488,15 @@ class ProdukController extends Controller
         $number = 0;
 
         foreach ($data['produks'] as $index => $value) {
-            if (strtolower($prevValue) !== strtolower($value->nama_produk)) {
-                $prevValue = $value->nama_produk;
-                $merge = $cell + $value->merge;
-                $number++;
-            }
+            // if (strtolower($prevValue) !== strtolower($value->nama_produk)) {
+            //     $prevValue = $value->nama_produk;
+            //     $merge = $cell + $value->merge;
+            //     $number++;
+            // }
             $cell++;
 
-            $sheet->setCellValue('A' . $cell, $number)->mergeCells('A' . $cell . ':A' . $merge);
-            $sheet->setCellValue('B' . $cell, strtoupper($value->nama_produk))->mergeCells('B' . $cell . ':B' . $merge);
+            $sheet->setCellValue('A' . $cell, ++$index);
+            $sheet->setCellValue('B' . $cell, strtoupper($value->nama_produk));
             $sheet->setCellValue('C' . $cell, strtoupper($value->kemasan));
             $sheet->setCellValue('D' . $cell, $value->jumlah_perdos);
             $sheet->setCellValue('E' . $cell, $value->harga_jual);
