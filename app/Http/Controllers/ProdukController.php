@@ -537,6 +537,15 @@ class ProdukController extends Controller
 
     public function rekapTahunan(Request $request)
     {
+        $getPenjualan = DB::table('penjualans')
+            ->where('tahun', $request->tahun)
+            ->where('bulan', 12)
+            ->get();
+
+        if (count($getPenjualan) <= 0) {
+            return (new GeneralResponse)->default_json(false, "Input semua transaksi terlebih dahulu untuk melakukan rekap tahunan!", null, 400);
+        }
+
         $produks = DB::table("produks")
             ->orderBy('nama_produk', 'ASC')
             ->get();
@@ -545,6 +554,7 @@ class ProdukController extends Controller
 
         foreach ($produks as $key => $value) {
             if ($value->stok != 0) {
+
                 $getStokBulanan = DB::table('stok_tahunans')
                     ->where('produk_id', $value->id)
                     ->where('tahun', $request->tahun)
@@ -558,7 +568,10 @@ class ProdukController extends Controller
                 $data->produk_id = $value->id;
                 $data->tahun = $request->tahun;
                 $data->jumlah = $value->stok;
-                $data->save();
+
+                if ($value->stok > 0) {
+                    $data->save();
+                }
 
                 $res[] = $data;
             }

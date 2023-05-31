@@ -473,7 +473,7 @@
 
 
             Swal.fire({
-                title: `Apakah kamu yakin akan melakukan rekap data stok bulan ${monthName[bulan]} ${year}?`,
+                title: `Apakah kamu yakin akan melakukan rekap data stok tahun ${year}?`,
                 text: "Data akan direkap!",
                 icon: 'warning',
                 showCancelButton: true,
