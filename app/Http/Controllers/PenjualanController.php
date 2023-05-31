@@ -38,6 +38,7 @@ class PenjualanController extends Controller
 
         $produk = DB::table('produks')
             ->orderBy('nama_produk', 'ASC')
+            ->orderBy('kemasan', 'ASC')
             ->get();
 
         foreach ($produk as $key => $value) {
