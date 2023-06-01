@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Response\GeneralResponse;
+use App\Models\Pembelian;
+use App\Models\Penjualan;
+use App\Models\Produk;
+use App\Models\StokTahunan;
 use DB;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -18,7 +22,12 @@ class LaporanController extends Controller
         $page_description = 'Dashboard Admin Ayyub Tani';
         $breadcrumbs = ['Laporan Stok'];
 
-        return view('laporan.stok', compact('page_title', 'page_description', 'breadcrumbs'));
+        $produk = DB::table('produks')
+            ->orderBy('nama_produk', 'ASC')
+            ->orderBy('kemasan', 'ASC')
+            ->get();
+
+        return view('laporan.stok', compact('page_title', 'page_description', 'breadcrumbs', 'produk'));
     }
 
     public function list(Request $request)
@@ -179,122 +188,106 @@ class LaporanController extends Controller
 
     public function rekap(Request $request)
     {
-        $bulan = request('bulan');
         $jenis = request('jenis');
         $data = [];
         $temp = [];
-        $stokBeli = 0;
-        $stokJual = 0;
-        $stokBeliLalu = 0;
-        $stokJualLalu = 0;
+        $listProduk = [];
+        $dateTransaction = [];
 
-        $produks = DB::table('produks')->orderBy('nama_produk')->get();
-
-        foreach ($produks as $key => $value) {
-            $stokBeli = 0;
-            $stokJual = 0;
-            $stokBeliLalu = 0;
-            $stokJualLalu = 0;
-
-            $pembelian = DB::table('detail_pembelians')
-                ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
-                ->where('produk_id', $value->id)
-                ->where('tahun', session('tahun'))
-                // ->whereRaw("$whereBeli")
-                ->when($bulan, function ($query, $bulan) {
-                    if ($bulan !== 'all') {
-                        return $query->whereMonth('tanggal_beli', "$bulan");
-                    }
-                })
-                ->get();
-
-            if (count($pembelian) > 0) {
-                foreach ($pembelian as $index => $val) {
-                    $stokBeli += intval(preg_replace("/\D/", "", $val->ket));
-                }
-            }
-
-            $penjualan = DB::table('detail_penjualans')
-                ->join('penjualans', 'detail_penjualans.penjualan_id', 'penjualans.id')
-                ->where('produk_id', $value->id)
-                ->where('tahun', session('tahun'))
-                ->when($bulan, function ($query, $bulan) {
-                    if ($bulan !== 'all') {
-                        return $query->whereMonth('tanggal_jual', "$bulan");
-                    }
-                })
-                ->get();
-
-            if (count($penjualan) > 0) {
-                foreach ($penjualan as $index => $val) {
-                    $stokJual += intval(preg_replace("/\D/", "", $val->ket));
-                }
-            }
-
-            $value->pembelian = $stokBeli;
-            $value->penjualan = $stokJual;
-
-
-            $firstBeli = DB::table('pembelians')
-                ->min('tanggal_beli');
-            $firstJual = DB::table('penjualans')
-                ->min('tanggal_jual');
-
-            $currDate = date(session('tahun') . "-$bulan-01");
-            $lastDate = date($currDate, strtotime('last day of -1 month'));
-
-            if ($bulan == 'all' || $bulan == 1) {
-
-                $getStok = DB::table('stok_bulanan')
-                    ->where('produk_id', $value->id)
-                    ->where('tahun', session('tahun') - 1)
-                    ->where('bulan', 12)
-                    ->value('jumlah');
-                $value->stokAwal = ($getStok > 0) ? $getStok : 0;
-            } else {
-
-                $getStok = DB::table('stok_bulanan')
-                    ->where('produk_id', $value->id)
-                    ->where('tahun', session('tahun'))
-                    ->where('bulan', $bulan - 1)
-                    ->value('jumlah');
-
-                $value->stokAwal = ($getStok > 0) ? $getStok : 0;
-            }
-
-            // $value->stokAwal = $stokBeliLalu - $stokJualLalu;
-            $value->stok_bulanan = $value->stokAwal + ($stokBeli - $stokJual);
-
-            // $value->stok_bulanan = $stokBeli - $stokJual;
-            // $value->stok_bulanan = $value->stok;
-            $value->harga = $value->stok_bulanan * $value->harga_perdos;
-            $value->dpp = $value->harga / 1.1;
-            $value->ppn = $value->harga - $value->dpp;
-
-            // $temp[] = $value;
-            if ($value->stok_bulanan !== 0) {
-                $temp[] = $value;
-            }
+        $transBeli = Pembelian::select('tanggal_beli')
+            ->where('tahun', session('tahun'))
+            ->get();
+        foreach ($transBeli as $key => $value) {
+            $dateTransaction[$value->tanggal_beli] = $value->tanggal_beli;
         }
 
-        $data['bulan'] = $bulan;
+        $transJual = Penjualan::select('tanggal_jual')
+            ->where('tahun', session('tahun'))
+            ->get();
+        foreach ($transJual as $key => $value) {
+            $dateTransaction[$value->tanggal_jual] = $value->tanggal_jual;
+        }
+        // return $request->produk;
+
+        $stok = StokTahunan::where('tahun', session('tahun') - 1)->where('produk_id', $request->produk)->get()->toArray();
+        foreach ($stok as $key => $value) {
+            // return $value['produk_id'];
+            $listProduk[$value['produk_id']]['id'] = $value['produk_id'];
+            $listProduk[$value['produk_id']]['stok_awal'] = $value['jumlah'];
+        }
+
+        $produks = produk::select('id', 'nama_produk', 'kemasan', 'stok')
+            // ->where('stok', '!=', 0)
+            ->where('id', $request->produk)
+            ->orderBy('nama_produk')
+            ->orderBy('kemasan')
+            ->get()->toArray();
+
+        foreach ($produks as $key => $value) {
+            $listProduk[$value['id']]['id'] = $value['id'];
+        }
+
+        // $listProduk[123]['id'] = 123;
+        // $listProduk[124]['id'] = 124;
+        $produkSort = collect($listProduk)->sortKeys()->toArray();
+        foreach ($produkSort as $key => $value) {
+
+            $transProduk = [];
+            $stokAwal = (isset($value['stok_awal'])) ? $value['stok_awal'] : 0;
+
+
+            $produk = Produk::select('id', 'nama_produk', 'kemasan', 'stok')->where('id', $value['id'])->first();
+
+            foreach ($dateTransaction as $key => $val) {
+                $produkBeli = Produk::select('produks.nama_produk', 'produks.kemasan', 'pembelians.tanggal_beli', 'pembelians.invoice', 'detail_pembelians.ket as ket_beli')
+                    ->join('detail_pembelians', 'produks.id', 'detail_pembelians.produk_id')
+                    ->join('pembelians', 'detail_pembelians.pembelian_id', 'pembelians.id')
+                    ->where('pembelians.tanggal_beli', $val)
+                    ->where('produks.id', $value['id'])
+                    ->get()->toArray();
+
+                if (count($produkBeli) > 0) {
+                    $transProduk["$val"]['beli'] = $produkBeli;
+                }
+
+                $produkJual = Produk::select('produks.nama_produk', 'produks.kemasan', 'penjualans.tanggal_jual', 'penjualans.invoice', 'detail_penjualans.ket as ket_jual')
+                    ->join('detail_penjualans', 'produks.id', 'detail_penjualans.produk_id')
+                    ->join('penjualans', 'detail_penjualans.penjualan_id', 'penjualans.id')
+                    ->where('penjualans.tanggal_jual', $val)
+                    // ->where('penjualans.tanggal_jual', "2019-12-31")
+                    ->where('produks.id', $value['id'])
+                    ->get()->toArray();
+
+                if (count($produkJual) > 0) {
+                    $transProduk["$val"]['jual'] = $produkJual;
+                }
+            }
+            // return $transProduk;
+            // ddkrsort($transProduk);
+
+            $temp["$produk->id $produk->nama_produk"] = $produk;
+            $temp["$produk->id $produk->nama_produk"]['stok_awal'] = $stokAwal;
+            $temp["$produk->id $produk->nama_produk"]['trans'] = $transProduk;
+        }
+
+
         $data['produks'] = $temp;
         // return $data;
 
-        return $this->laporanRekapStok($data, $bulan, $jenis);
+        return $this->laporanRekapStok($data, $jenis);
     }
 
-    public function laporanRekapStok($data, $bulan, $jenis)
+    public function laporanRekapStok($data, $jenis)
     {
         $spreadsheet = new Spreadsheet();
 
         $spreadsheet->getProperties()->setCreator('CV AYYUB TANI')
             ->setLastModifiedBy('CV AYYUB TANI')
-            ->setTitle('Laporan Rekap Stok Bulanan')
-            ->setSubject('Laporan Rekap Stok Bulanan')
-            ->setDescription('Laporan Rekap Stok Bulanan')
+            ->setTitle('Laporan Rekap Stok Tahunan')
+            ->setSubject('Laporan Rekap Stok Tahunan')
+            ->setDescription('Laporan Rekap Stok Tahunan')
             ->setKeywords('pdf php')
-            ->setCategory('Laporan Rekap Stok Bulanan');
+            ->setCategory('Laporan Rekap Stok Tahunan');
 
         $sheet = $spreadsheet->getActiveSheet();
         // $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
@@ -315,82 +308,117 @@ class LaporanController extends Controller
         $spreadsheet->getActiveSheet()->getPageMargins()->setLeft(0.3);
         $spreadsheet->getActiveSheet()->getPageMargins()->setBottom(0.3);
 
-        $tahun = ""  . session('tahun') . "-" . $bulan . "";
-        $periode = ($bulan != 'all') ? strtoupper(strftime('%B %Y', mktime(0, 0, 0, $bulan + 1, 0, (int)session('tahun')))) : (int)session('tahun');
 
-        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI STOK BARANG')->mergeCells('A1:G1');
+
+        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI STOK PRODUK')->mergeCells('A1:G1');
         $sheet->setCellValue('A2', 'CV. AYYUB TANI')->mergeCells('A2:G2');
-        $sheet->setCellValue('A3', "PERIODE $periode")->mergeCells('A3:G3');
-
-        $sheet->setCellValue('A5', 'No')->mergeCells('A5:A5');
-        $sheet->getColumnDimension('A')->setWidth(6);
-        $sheet->setCellValue('B5', 'Nama Produk');
-        $sheet->getColumnDimension('B')->setWidth(30);
-        $sheet->setCellValue('C5', 'Kemasan');
-        $sheet->getColumnDimension('C')->setWidth(40);
-        $sheet->setCellValue('D5', 'Stok Awal');
-        $sheet->getColumnDimension('D')->setWidth(8);
-        $sheet->setCellValue('E5', 'Pembelian');
-        $sheet->getColumnDimension('E')->setWidth(13);
-        $sheet->setCellValue('F5', 'Penjualan');
-        $sheet->getColumnDimension('F')->setWidth(13);
-        $sheet->setCellValue('G5', 'Stok Akhir');
-        // $sheet->getColumnDimension('F')->setWidth(8);
-        // $sheet->setCellValue('H5', 'Jml Kemasan');
-        // $sheet->getColumnDimension('H')->setWidth(16);
-        // $sheet->setCellValue('I5', 'Harga Stn');
-        // $sheet->getColumnDimension('I')->setWidth(16);
-        // $sheet->setCellValue('J5', 'Disc Stn');
-        // $sheet->getColumnDimension('J')->setWidth(16);
-        // $sheet->setCellValue('H5', 'Harga');
-        // $sheet->getColumnDimension('H')->setWidth(16);
-        // $sheet->setCellValue('I5', 'DPP');
-        // $sheet->getColumnDimension('I')->setWidth(16);
-        // $sheet->setCellValue('J5', 'PPN');
-        // $sheet->getColumnDimension('J')->setWidth(16);
+        $sheet->setCellValue('A3', "PERIODE " . session('tahun'))->mergeCells('A3:G3');
 
         $cell = 5;
+        $merge = 0;
 
         $sheet->getStyle('A1:A3')->getFont()->setSize(12);
         $sheet->getStyle('A:G')->getAlignment()->setWrapText(true);
         $sheet->getStyle('A5:G5')->getFont()->setBold(true);
         $sheet->getStyle('A5:G5')->getAlignment()->setVertical('center')->setHorizontal('center');
-        $sheet->getStyle('A5:A' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
-        $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
-        $sheet->getStyle('B5:B' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
-        $sheet->getStyle('C5:C' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center');
-        $sheet->getStyle('D5:D' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
-        $sheet->getStyle('E5:E' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
-        $sheet->getStyle('F5:F' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
-        $sheet->getStyle('G5:G' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('center');
-        // $sheet->getStyle('H5:H5')->getAlignment()->setVertical('center')->setHorizontal('center');
-        // $sheet->getStyle('H6:H' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
-        // $sheet->getStyle('H6:H' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
-        // $sheet->getStyle('I5:I5')->getAlignment()->setVertical('center')->setHorizontal('center');
-        // $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
-        // $sheet->getStyle('I6:I' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
-        // $sheet->getStyle('I5:J5')->getAlignment()->setVertical('center')->setHorizontal('center');
-        // $sheet->getStyle('I6:J' . (count($data['produks']) + $cell))->getAlignment()->setVertical('center')->setHorizontal('right');
-        // $sheet->getStyle('I6:J' . (count($data['produks']) + $cell))->getNumberFormat()->setFormatCode('#,##0');
         $sheet->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center');
 
+        $number = 0;
+        $numHeader = 0;
+        $stokAkhir = 0;
 
         foreach ($data['produks'] as $index => $value) {
             // return $value;
-
             $cell++;
+            $numHeader = $cell;
+            $stokAkhir = $value->stok_awal;
 
-            $sheet->setCellValue('A' . $cell, $index + 1);
-            $sheet->setCellValue('B' . $cell, strtoupper($value->nama_produk));
-            $sheet->setCellValue('C' . $cell, strtoupper($value->kemasan));
-            $sheet->setCellValue('D' . $cell, $value->stokAwal);
-            $sheet->setCellValue('E' . $cell, $value->pembelian);
-            $sheet->setCellValue('F' . $cell, $value->penjualan);
-            $sheet->setCellValue('G' . $cell, $value->stok_bulanan);
-            // $sheet->setCellValue('G' . $cell, number_format($value->harga));
-            // $sheet->setCellValue('H' . $cell, $value->jumlah_perdos);
-            // $sheet->setCellValue('I' . $cell, $value->harga_jual);
-            // $sheet->setCellValue('J' . $cell, $value->disc);
+            $sheet->setCellValue('A' . $numHeader, strtoupper($value->nama_produk) . ' ' . strtoupper($value->kemasan))->mergeCells('A' . $numHeader . ':E' . $numHeader);
+            $sheet->setCellValue('F' . $numHeader, 'Stok Awal');
+            $sheet->setCellValue('G' . $numHeader, $value->stok_awal);
+            $sheet->getStyle('A' . $numHeader . ':G' . $numHeader)->getFont()->setSize(20);
+            $sheet->getStyle('A' . $numHeader . ':G' . $numHeader)->getFont()->setBold(true);
+            $sheet->getRowDimension($numHeader)->setRowHeight(50);
+            $sheet->setCellValue('A' . ++$cell, 'NO.');
+            $sheet->setCellValue('B' . $cell, 'TGL. TRANSAKSI');
+            $sheet->getColumnDimension('B')->setWidth(36);
+            $sheet->setCellValue('C' . $cell, 'INVC. BELI');
+            $sheet->getColumnDimension('C')->setWidth(16);
+            $sheet->setCellValue('D' . $cell, 'INVC. JUAL');
+            $sheet->getColumnDimension('D')->setWidth(16);
+            $sheet->setCellValue('E' . $cell, 'BELI');
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->setCellValue('F' . $cell, 'JUAL');
+            $sheet->getColumnDimension('F')->setWidth(15);
+            $sheet->setCellValue('G' . $cell, 'STOK AKHIR');
+            $sheet->getColumnDimension('G')->setWidth(15);
+
+            $sheet->getStyle('A5:A' .  $cell)->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('B5:B' .  $cell)->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('C5:C' .  $cell)->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('D5:D' .  $cell)->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('E5:E' .  $cell)->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('F5:F' .  $cell)->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('G5:G' .  $cell)->getAlignment()->setVertical('center')->setHorizontal('center');
+            $sheet->getStyle('A' . $cell . ':G' . $cell)->getFont()->setBold(true);
+
+            $trans = collect($value['trans'])->sortKeys()->toArray();
+
+            if (count($trans) > 0) {
+                foreach ($trans as $key => $val) {
+                    $cell++;
+                    $number++;
+                    // $merge++;
+                    $maxBeli = (isset($val['beli'])) ? count($val['beli']) : 0;
+                    $maxJual = (isset($val['jual'])) ? count($val['jual']) : 0;
+                    $merge = $cell + (max($maxBeli, $maxJual) - 1);
+                    // $merge += max($maxBeli, $maxJual);
+
+                    // return "cell : $cell number : $number merge : $merge";
+
+                    $sheet->setCellValue('A' . $cell, "$number. ")->mergeCells('A' . $cell . ':A' . $merge);
+                    $sheet->setCellValue('B' . $cell, date('d-m-Y', strtotime($key)))->mergeCells('B' . $cell . ':B' . $merge);
+                    $sheet->getStyle('A' . $cell . ':A' .  $merge)->getAlignment()->setVertical('center')->setHorizontal('center');
+                    $sheet->getStyle('B' . $cell . ':B' .  $merge)->getAlignment()->setVertical('center');
+
+                    if (isset($val['beli'])) {
+                        $count = $cell;
+                        foreach ($val['beli'] as $k => $v) {
+                            $sheet->setCellValue('C' . $count, $v['invoice']);
+                            $sheet->setCellValue('E' . $count, intval(preg_replace('/[^\d\.]+/', '', $v['ket_beli'])));
+                            $sheet->getStyle('E' . $count . ':E' .  $count)->getAlignment()->setVertical('center')->setHorizontal('center');
+
+                            $stokAkhir += intval(preg_replace('/[^\d\.]+/', '', $v['ket_beli']));
+                            $sheet->setCellValue('G' . $count, $stokAkhir);
+                            $sheet->getStyle('G' . $count . ':G' .  $count)->getAlignment()->setVertical('center')->setHorizontal('center');
+                            $count++;
+                        }
+                    }
+
+                    if (isset($val['jual'])) {
+                        // return $val['jual'];
+                        $count = $cell;
+                        foreach ($val['jual'] as $k => $v) {
+                            $sheet->setCellValue('D' . $count, $v['invoice']);
+                            $sheet->setCellValue('F' . $count, intval(preg_replace('/[^\d\.]+/', '', $v['ket_jual'])));
+                            $sheet->getStyle('F' . $count . ':F' .  $count)->getAlignment()->setVertical('center')->setHorizontal('center');
+
+                            $stokAkhir -= intval(preg_replace('/[^\d\.]+/', '', $v['ket_jual']));
+                            $sheet->setCellValue('G' . $count, $stokAkhir);
+                            $sheet->getStyle('G' . $count . ':G' .  $count)->getAlignment()->setVertical('center')->setHorizontal('center');
+                            $count++;
+                        }
+                    }
+
+                    $cell = $merge;
+                }
+            } else {
+                $sheet->getStyle('A' . $cell . ':G' . $cell)->getFont()->setBold(true);
+                $cell++;
+                $sheet->setCellValue('A' . $cell, 'Transaksi produk yang dipilih belum ada')->mergeCells('A' . $cell . ':G' . $cell);
+                $sheet->getStyle('A' . $cell . ':G' . $cell)->getAlignment()->setVertical('center')->setHorizontal('center');
+                $sheet->getStyle('A' . $cell . ':G' . $cell)->getFont()->setItalic(true);
+            }
         }
 
         $border = [
@@ -402,16 +430,17 @@ class LaporanController extends Controller
             ],
         ];
 
-        $sheet->getStyle('A5:G' . $cell)->applyFromArray($border);
+        $sheet->getStyle('A6:G' . $cell)->applyFromArray($border);
 
         if ($jenis == 'excel') {
             // Untuk download 
             $writer = new Xlsx($spreadsheet);
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="Rekapitulasi Laporan Stok CV. AYYUB TANI ' . $periode . '.xlsx"');
+            header('Content-Disposition: attachment;filename="Rekapitulasi Laporan Stok CV. AYYUB TANI ' . session('tahun') . '.xlsx"');
         } else {
             $spreadsheet->getActiveSheet()->getHeaderFooter()
-                ->setOddHeader('&C&H' . url()->current());
+                ->setOddHeader('&C&HPlease treat this document as confidential!');
+            // dd($spreadsheet->getActiveSheet()->getHeaderFooter()->getOddHeader());
             $spreadsheet->getActiveSheet()->getHeaderFooter()
                 ->setOddFooter('&L&B &RPage &P of &N');
             $class = \PhpOffice\PhpSpreadsheet\Writer\Pdf\Mpdf::class;

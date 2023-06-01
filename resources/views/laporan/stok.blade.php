@@ -10,50 +10,39 @@
                         <h4 class="header-title">Laporan Stok</h4>
                         <div class="form-row align-items-center">
                             <div class="col-sm-4">
-                                <select class="form-control" id="bulan" name="bulan">
-                                    <option value="all">SEMUA BULAN</option>
-                                    @php
-                                        $bulan = [1 => 'Januari', 'Febuari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-                                    @endphp
-                                    @foreach ($bulan as $index => $value)
-                                        <option value="{{ $index }}">
-                                            {{ Str::upper($value) }}
+                                <select class="form-control" id="produk" name="produk">
+                                    <option value="null">Pilih Produk</option>
+                                    @foreach ($produk as $index => $value)
+                                        <option value="{{ $value->id }}">
+                                            {{ Str::upper($value->nama_produk) }} {{ Str::upper($value->kemasan) }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
 
                             <div class="col-sm-2 mt-2">
-                                <button type="button" class="btn btn-primary mb-3 cetak">Excel</button>
+                                {{-- <button type="button" class="btn btn-primary mb-3 cetak">Excel</button> --}}
                                 <button type="button" class="btn btn-danger mb-3 lihat">Lihat</button>
                             </div>
                         </div>
-                        <div class="data-tables">
+
+                        {{-- <div class="data-tables">
                             <table id="produkTable" class="text-cente">
                                 <thead class="bg-light text-capitalize">
                                     <tr>
                                         <th>Nama Produk</th>
                                         <th>Kemasan</th>
-                                        {{-- <th>Isi Perdos</th> --}}
-                                        {{-- <th>Satuan</th> --}}
-                                        {{-- <th>Harga Beli</th> --}}
                                         <th>Stok Awal</th>
                                         <th>Pembelian</th>
                                         <th>Penjualan</th>
                                         <th>Stok</th>
-                                        {{-- <th>Jumlah Stn</th>
-                                        <th>Harga Stn</th>
-                                        <th>Disc Stn</th> --}}
-                                        {{-- <th>Harga</th>
-                                        <th>DPP</th>
-                                        <th>PPN</th> --}}
-                                        {{-- <th>Action</th> --}}
                                     </tr>
                                 </thead>
                                 <tbody>
                                 </tbody>
                             </table>
-                        </div>
+                        </div> --}}
+
                     </div>
                 </div>
             </div>
@@ -313,19 +302,21 @@
 
         $('.lihat').on('click', function() {
 
-            let bulan = $('#bulan').val();
-            console.log(bulan);
+            let produk = $('#produk').val();
+            // console.log(bulan);
 
-            url = `/laporan/stok-rekap/?bulan=${bulan}&jenis=pdf`;
+            if (produk == 'null') {
+                return Swal.fire(
+                    "Perhatian!",
+                    "Pilih produk terlebih dahulu",
+                    "warning"
+                );
+            }
+
+            url = `/laporan/stok-rekap/?produk=${produk}&jenis=pdf`;
+            // url = `/laporan/stok-rekap/?jenis=pdf`;
             window.open(url);
-            // if (bulan !== 'all') {
-            // } else {
-            //     Swal.fire(
-            //         "Perhatian",
-            //         "Pilih bulan terlebih dahulu",
-            //         "warning"
-            //     );
-            // }
+
 
         });
 
@@ -393,7 +384,7 @@
 
         $(document).ready(function() {
             dataRow.init();
-            $('#bulan').select2();
+            $('#produk').select2();
 
         });
     </script>
