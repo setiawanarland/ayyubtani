@@ -573,6 +573,13 @@ class ProdukController extends Controller
                     $data->save();
                 }
 
+                if ($value->stok < 0) {
+                    $produk = Produk::where('id', $value->id)->first();
+                    $produk->stok = 0;
+                    $produk->qty = 0;
+                    $produk->save();
+                }
+
                 $res[] = $data;
             }
         }
