@@ -21,7 +21,7 @@
                             </div>
 
                             <div class="col-sm-2 mt-2">
-                                {{-- <button type="button" class="btn btn-primary mb-3 cetak">Excel</button> --}}
+                                <button type="button" class="btn btn-primary mb-3 cetak">Excel</button>
                                 <button type="button" class="btn btn-danger mb-3 lihat">Lihat</button>
                             </div>
                         </div>
@@ -321,10 +321,19 @@
         });
 
         $('.cetak').on('click', function() {
-            let bulan = $('#bulan').val();
-            console.log(bulan);
+            let produk = $('#produk').val();
+            // console.log(bulan);
 
-            url = `/laporan/stok-rekap/?bulan=${bulan}&jenis=excel`;
+            if (produk == 'null') {
+                return Swal.fire(
+                    "Perhatian!",
+                    "Pilih produk terlebih dahulu",
+                    "warning"
+                );
+            }
+
+            url = `/laporan/stok-rekap/?produk=${produk}&jenis=excel`;
+            // url = `/laporan/stok-rekap/?jenis=pdf`;
             window.open(url);
 
         });

@@ -309,8 +309,7 @@ class LaporanController extends Controller
         $spreadsheet->getActiveSheet()->getPageMargins()->setBottom(0.3);
 
 
-
-        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI STOK PRODUK')->mergeCells('A1:G1');
+        $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI STOK PRODUK ' . strtoupper(reset($data['produks'])['nama_produk']) . ' ' . strtoupper(reset($data['produks'])['kemasan']))->mergeCells('A1:G1');
         $sheet->setCellValue('A2', 'CV. AYYUB TANI')->mergeCells('A2:G2');
         $sheet->setCellValue('A3', "PERIODE " . session('tahun'))->mergeCells('A3:G3');
 
@@ -333,7 +332,7 @@ class LaporanController extends Controller
             $numHeader = $cell;
             $stokAkhir = $value->stok_awal;
 
-            $sheet->setCellValue('A' . $numHeader, strtoupper($value->nama_produk) . ' ' . strtoupper($value->kemasan))->mergeCells('A' . $numHeader . ':E' . $numHeader);
+            $sheet->setCellValue('A' . $numHeader, strtoupper($value->nama_produk) . ', ' . strtoupper($value->kemasan))->mergeCells('A' . $numHeader . ':E' . $numHeader);
             $sheet->setCellValue('F' . $numHeader, 'Stok Awal');
             $sheet->setCellValue('G' . $numHeader, $value->stok_awal);
             $sheet->getStyle('A' . $numHeader . ':G' . $numHeader)->getFont()->setSize(20);
@@ -436,7 +435,7 @@ class LaporanController extends Controller
             // Untuk download 
             $writer = new Xlsx($spreadsheet);
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="Rekapitulasi Laporan Stok CV. AYYUB TANI ' . session('tahun') . '.xlsx"');
+            header('Content-Disposition: attachment;filename="Rekapitulasi Stok ' . strtoupper(reset($data['produks'])['nama_produk']) . ', ' . strtoupper(reset($data['produks'])['kemasan']) . ' Tahun ' . session('tahun') . '.xlsx"');
         } else {
             $spreadsheet->getActiveSheet()->getHeaderFooter()
                 ->setOddHeader('&C&HPlease treat this document as confidential!');
