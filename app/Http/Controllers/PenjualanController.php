@@ -320,12 +320,14 @@ class PenjualanController extends Controller
         if ($request->pembayaran == 1) {
             $piutang = new Piutang();
             $piutang->penjualan_id = $penjualan->id;
+            $piutang->kios_id = $request->kios;
+            $piutang->tanggal_piutang = date('Y-m-d', strtotime($request->tanggal_jual));
             $piutang->bulan = $dataPiutang['bulan'];
             $piutang->tahun = $dataPiutang['tahun'];
-            $piutang->ket = '';
-            $piutang->debet = floatval(preg_replace('/[^\d\.]+/', '', $request->grand_total));
-            $piutang->kredit = 0;
-            $piutang->sisa = floatval(preg_replace('/[^\d\.]+/', '', $request->grand_total)) - $piutang->kredit;
+            $piutang->ket = $request->invoice;
+            $piutang->total = floatval(preg_replace('/[^\d\.]+/', '', $request->grand_total));
+            $piutang->kredit = floatval(preg_replace('/[^\d\.]+/', '', 0));
+            $piutang->sisa = floatval(preg_replace('/[^\d\.]+/', '', $request->grand_total));
             $piutang->save();
         }
 

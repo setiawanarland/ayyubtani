@@ -16,14 +16,15 @@ class CreatePiutangsTable extends Migration
         Schema::create('piutangs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('penjualan_id')->constrained('penjualans');
-            $table->date('tanggal_bayar')->nullable();
+            $table->foreignId('kios_id')->constrained('kios');
+            $table->date('tanggal_piutang');
             $table->string('bulan', 10);
             $table->string('tahun', 10);
             $table->string('ket', 50);
-            $table->decimal('debet', 15, 1);
+            $table->decimal('total', 15, 1);
             $table->decimal('kredit', 15, 1);
             $table->decimal('sisa', 15, 1);
-            $table->enum('status', ['lunas', 'belum'])->default('belum');
+            $table->enum('status_lunas', [0, 1])->default(0);
             $table->timestamps();
         });
     }

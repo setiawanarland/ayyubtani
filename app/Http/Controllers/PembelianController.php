@@ -282,12 +282,14 @@ class PembelianController extends Controller
 
         $hutang = new Hutang();
         $hutang->pembelian_id = $pembelian->id;
+        $hutang->supplier_id = $request->supplier;
+        $hutang->tanggal_hutang = date('Y-m-d', strtotime($request->tanggal_beli));
         $hutang->bulan = $dataHutang['bulan'];
         $hutang->tahun = $dataHutang['tahun'];
-        $hutang->ket = '';
-        $hutang->debet = intval(preg_replace("/\D/", "", $request->grand_total));
-        $hutang->kredit = 0;
-        $hutang->sisa = intval(preg_replace("/\D/", "", $request->grand_total)) - $hutang->kredit;
+        $hutang->ket = $request->invoice;
+        $hutang->total = floatval(preg_replace("/\D/", "", $request->grand_total));
+        $hutang->kredit = floatval(preg_replace("/\D/", "", 0));
+        $hutang->sisa = floatval(preg_replace("/\D/", "", $request->grand_total));
         $hutang->save();
 
         $temp = DetailPembelianTemp::truncate();
