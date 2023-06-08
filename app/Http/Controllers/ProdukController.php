@@ -309,23 +309,22 @@ class ProdukController extends Controller
         //     }
         // }
 
-        $hutangs = Hutang::where('sisa', 0)->get();
+        // $penjualans = Penjualan::get();
 
-        foreach ($hutangs as $key => $value) {
-            $pembelian = Pembelian::where('id', $value->pembelian_id)->first();
-            // return $pembelian;
+        // foreach ($penjualans as $key => $value) {
+        //     $penjualan = Penjualan::where('id', $value->id)->first();
+        //     // return $pembelian;
 
-            if ($pembelian) {
-                $hutangs = Hutang::where('id', $value->id)->first();
-                $hutangs->supplier_id = $pembelian->supplier_id;
-                $hutangs->tanggal_hutang = $pembelian->tanggal_beli;
-                $hutangs->ket = $pembelian->invoice;
-                $hutangs->sisa = floatval(preg_replace('/[^\d\.]+/', '', $pembelian->grand_total));
-                $hutangs->save();
-            }
-        }
+        //     if ($penjualan) {
+        //         $hutangs->invoice = $pembelian->supplier_id;
+        //         $hutangs->tanggal_hutang = $pembelian->tanggal_beli;
+        //         $hutangs->ket = $pembelian->invoice;
+        //         $hutangs->sisa = floatval(preg_replace('/[^\d\.]+/', '', $pembelian->grand_total));
+        //         $hutangs->save();
+        //     }
+        // }
 
-        return "ok";
+        // return "ok";
     }
 
     public function cetakk(Request $request)
