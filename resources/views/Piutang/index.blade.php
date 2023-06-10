@@ -14,8 +14,8 @@
                                 <thead class="bg-light text-capitalize">
                                     <tr>
                                         <th>Nama Kios</th>
-                                        <th>Debet</th>
-                                        <th>Kredit</th>
+                                        {{-- <th>Debet</th>
+                                        <th>Kredit</th> --}}
                                         <th>Sisa Hutang</th>
                                         <th>Action</th>
                                     </tr>
@@ -25,16 +25,16 @@
                                         <tr style="background-color: aquamarine">
                                             <td class="text-left">{{ Str::upper($value->pemilik) }},
                                                 {{ Str::upper($value->nama_kios) }}</td>
-                                            <td class="text-right">{{ number_format($value->debet, 1) }}</td>
-                                            <td class="text-right">{{ number_format($value->kredit, 1) }}</td>
-                                            <td class="text-right">{{ number_format($value->sisa, 1) }}</td>
-                                            <td>
+                                            <td class="text-right">{{ number_format($value->totalPiutangKios) }}</td>
+                                            {{-- <td class="text-right">{{ number_format($value->kredit, 1) }}</td>
+                                            <td class="text-right">{{ number_format($value->sisa, 1) }}</td> --}}
+                                            {{-- <td>
                                                 <button type="button" class="btn btn-sm bayarPiutang" data-toggle="modal"
                                                     data-target="#bayarPiutangModal" data-id="{{ $value->id }}}"
                                                     style="background-color:forestgreen"
                                                     {{ $value->sisa <= 0 ? 'disabled' : '' }}><i
                                                         class="fa fa-money"></i></button>
-                                            </td>
+                                            </td> --}}
                                             {{-- <td>{{ $val->invoice }}</td>
                                             <td class="text-right">{{ number_format($val->debet) }}</td>
                                             <td>
@@ -43,14 +43,15 @@
                                                 @endif
                                             </td>
                                             <td>{{ $val->ket }}</td>
-                                            <td class="text-right">{{ number_format($val->kredit) }}</td>
+                                            <td class="text-right">{{ number_format($val->kredit) }}</td> --}}
                                             <td>
-                                                <button type="button" class="btn btn-sm bayarPiutang" data-toggle="modal"
-                                                    data-target="#bayarPiutangModal" data-id="{{ $val->id }}}"
-                                                    style="background-color:forestgreen"
-                                                    {{ $val->sisa <= 0 ? 'disabled' : '' }}><i
-                                                        class="fa fa-money"></i></button>
-                                            </td> --}}
+                                                {{-- <button type="button" class="btn btn-sm detailPiutang"
+                                                    data-id="{{ $value->id }}" style="background-color:forestgreen">
+                                                    <i class="fa fa-money"></i>
+                                                </button> --}}
+                                                <a href="{{ url('/piutang/detail-piutang') }}/{{ $value->id }}"
+                                                    class="btn btn-primary"><i class="fa fa-money"></i></a>
+                                            </td>
                                         </tr>
 
                                         {{-- <tr class="text-uppercase"
@@ -68,11 +69,11 @@
                                     @endforeach
 
                                     <tr class="text-uppercase pt-5"
-                                        style="background-color: {{ $data['total_piutang'] != 0 ? 'gold' : 'lightgreen' }} ">
+                                        style="background-color: {{ $data['totalPiutang'] != 0 ? 'gold' : 'lightgreen' }} ">
                                         <th colspan="1">total piutang </th>
-                                        <th class="text-right">{{ number_format($data['total_piutang']) }}</th>
-                                        <th colspan="1">total sisa </th>
-                                        <th class="text-right">{{ number_format($data['total_sisa']) }}</th>
+                                        <th class="text-right">{{ number_format($data['totalPiutang']) }}</th>
+                                        {{-- <th colspan="1">total sisa </th>
+                                        <th class="text-right">{{ number_format($data['total_sisa']) }}</th> --}}
                                         <th class="text-right"></th>
                                     </tr>
 
@@ -182,17 +183,6 @@
 
             };
         }();
-
-
-
-
-
-
-        // format npwp
-        $(document).on('click', '.bayarPiutang', function() {
-            console.log('ok');
-            window.location = "{{ route('hutang') }}";
-        });
 
         function formatNpwp(value) {
             if (typeof value === 'string') {

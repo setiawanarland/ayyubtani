@@ -23,4 +23,14 @@ class Kios extends Model
     {
         return $this->hasMany(penjualan::class, 'id', 'kios_id');
     }
+
+    public function piutang()
+    {
+        return $this->hasMany(Piutang::class, 'kios_id', 'id');
+    }
+
+    public function bayarPiutang()
+    {
+        return $this->hasMany(BayarPiutang::class, 'kios_id', 'id');
+    }
 }

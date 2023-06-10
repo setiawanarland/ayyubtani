@@ -112,6 +112,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('piutang')->group(function () {
         Route::get('/', [PiutangController::class, 'index'])->name('piutang');
         Route::get('/list', [PiutangController::class, 'list'])->name('piutang-list');
+        Route::get('/detail-piutang/{kiosId}', [PiutangController::class, 'detailPiutang'])->name('detail-piutang');
+        Route::post('/bayar-piutang', [PiutangController::class, 'bayarPiutang'])->name('bayar-piutang');
     });
 
     Route::prefix('laporan')->group(function () {

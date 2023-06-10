@@ -6,7 +6,10 @@ use App\Models\Piutang;
 use App\Http\Requests\StorePiutangRequest;
 use App\Http\Requests\UpdatePiutangRequest;
 use App\Http\Response\GeneralResponse;
+use App\Models\BayarPiutang;
+use App\Models\Kios;
 use DB;
+use Illuminate\Http\Request;
 
 class PiutangController extends Controller
 {
@@ -22,6 +25,7 @@ class PiutangController extends Controller
         $breadcrumbs = ['Daftar Piutang'];
 
         $data = [];
+        $temp = [];
 
         $debet = 0;
         $kredit = 0;
@@ -30,49 +34,34 @@ class PiutangController extends Controller
         $totalPiutang = 0;
         $totalSisa = 0;
 
-        $kios = DB::table('kios')->get();
+        $kios = DB::table('kios')->orderBy('pemilik')->orderBy('nama_kios')->get();
         foreach ($kios as $key => $value) {
-            $debet = 0;
+            $totalPiutangKios = 0;
             $kredit = 0;
             $sisa = 0;
 
-            $penjualan = DB::table("penjualans")
-                ->select('penjualans.id')
-                ->join('kios', 'penjualans.kios_id', 'kios.id')
-                ->where('penjualans.kios_id', $value->id)
-                ->orderBy('penjualans.bulan', 'ASC')
-                ->orderBy('penjualans.tahun', 'ASC')
-                ->get();
-            $value->penjualan = $penjualan;
-            foreach ($penjualan as $index => $val) {
-                $piutang = DB::table("piutangs")
-                    ->join('penjualans', 'piutangs.penjualan_id', 'penjualans.id')
-                    ->where('piutangs.penjualan_id', $val->id)
-                    ->where('piutangs.tahun', session('tahun'))
-                    ->orderBy('piutangs.bulan', 'ASC')
-                    ->orderBy('piutangs.tahun', 'ASC')
-                    ->first();
-                // return $piutang;
-                if ($piutang) {
-                    $debet += $piutang->debet;
-                    $kredit += $piutang->kredit;
-                    $sisa += $piutang->sisa;
-                }
-                // return $sisa;
+            $piutangs = Piutang::join('kios', 'piutangs.kios_id', 'kios.id')
+                ->where('kios_id', $value->id)
+                ->where('status_lunas', '0')
+                ->sum('piutangs.total');
+
+            $bayarPiutangs = BayarPiutang::join('kios', 'bayar_piutangs.kios_id', 'kios.id')
+                ->where('kios_id', $value->id)
+                ->sum('bayar_piutangs.total');
+            // return $bayarPiutangs;
+            $totalPiutangKios = $piutangs - $bayarPiutangs;
+
+            $value->totalPiutangKios = $totalPiutangKios;
+
+            if ($value->totalPiutangKios > 0) {
+                $temp[] = $value;
             }
 
-            $value->debet = $debet;
-            $value->kredit = $kredit;
-            $value->sisa = $sisa;
-
-            $totalPiutang += $value->debet;
-            $totalSisa += $value->sisa;
+            $totalPiutang += $value->totalPiutangKios;
         }
 
-        $data['kios'] = $kios;
-        $data['total_piutang'] = $totalPiutang;
-        $data['total_sisa'] = $totalSisa;
-        // return $data;
+        $data['kios'] = $temp;
+        $data['totalPiutang'] = $totalPiutang;
 
         return view('piutang.index', compact('page_title', 'page_description', 'breadcrumbs', 'data'));
     }
@@ -163,5 +152,99 @@ class PiutangController extends Controller
     public function destroy(Piutang $piutang)
     {
         //
+    }
+
+    public function detailPiutang($kiosId)
+    {
+        $page_title = 'Ayyub Tani';
+        $page_description = 'Dashboard Admin Ayyub Tani';
+        $breadcrumbs = ['Detail Piutang'];
+
+        $data = [];
+        $temp = [];
+        $dateTransaction = [];
+        $totalPiutang = 0;
+
+        $transPiutang = Piutang::select('tanggal_piutang')
+            ->where('kios_id', $kiosId)
+            ->get();
+        foreach ($transPiutang as $key => $value) {
+            $dateTransaction[$value->tanggal_piutang] = $value->tanggal_piutang;
+        }
+
+        $transBayarPiutang = BayarPiutang::select('tanggal_bayar')
+            ->where('kios_id', $kiosId)
+            ->get();
+        foreach ($transBayarPiutang as $key => $value) {
+            $dateTransaction[$value->tanggal_bayar] = $value->tanggal_bayar;
+        }
+
+        $dateSort = collect($dateTransaction)->sortKeys()->toArray();
+
+        $kios = Kios::where('kios.id', $kiosId)
+            ->first();
+
+        foreach ($dateSort as $key => $value) {
+            $piutang = Piutang::join('kios', 'piutangs.kios_id', 'kios.id')
+                ->where('tanggal_piutang', $value)
+                ->where('kios_id', $kios->id)
+                ->get();
+
+            if (count($piutang) > 0) {
+                foreach ($piutang as $key => $val) {
+
+                    $temp['tanggal_transaksi'] = $val->tanggal_piutang;
+                    $temp['keterangan'] = $val->ket;
+                    $temp['debet'] = $val->total;
+                    $temp['kredit'] = 0;
+                    $totalPiutang += ($temp['debet'] - $temp['kredit']);
+                    $temp['total'] = $totalPiutang;
+                    $data[] = $temp;
+                    $kios->transaksi = $data;
+                }
+            }
+
+            $bayarPiutang = BayarPiutang::join('kios', 'bayar_piutangs.kios_id', 'kios.id')
+                ->where('tanggal_bayar', $value)
+                ->where('kios_id', $kios->id)
+                ->get();
+
+            if (count($bayarPiutang) > 0) {
+                foreach ($bayarPiutang as $key => $val) {
+                    $temp['tanggal_transaksi'] = $val->tanggal_bayar;
+                    $temp['keterangan'] = $val->ket;
+                    $temp['debet'] = 0;
+                    $temp['kredit'] = $val->total;
+                    $totalPiutang += ($temp['debet'] - $temp['kredit']);
+                    $temp['total'] = $totalPiutang;
+                    $data[] = $temp;
+                    $kios->transaksi = $data;
+                }
+            }
+        }
+
+        return view('piutang.detail', compact('page_title', 'page_description', 'breadcrumbs', 'kios'));
+    }
+
+    public function bayarPiutang(Request $request)
+    {
+        $dataPembayaran = [];
+        $dataPembayaran['bulan'] = date('m', strtotime($request->tanggal_bayar));
+        $dataPembayaran['tahun'] = date('Y', strtotime($request->tanggal_bayar));
+
+        $data = new BayarPiutang();
+        $data->kios_id = $request->kios_id;
+        $data->tanggal_bayar = date('Y-m-d', strtotime($request->tanggal_bayar));
+        $data->bulan = $dataPembayaran['bulan'];
+        $data->tahun = $dataPembayaran['tahun'];
+        $data->ket = $request->keterangan;
+        $data->total = floatval(preg_replace("/\D/", "", $request->total));
+        $data->save();
+
+        if ($data) {
+            return (new GeneralResponse)->default_json(true, "Success", $data, 201);
+        } else {
+            return (new GeneralResponse)->default_json(false, "Error", $data, 403);
+        }
     }
 }

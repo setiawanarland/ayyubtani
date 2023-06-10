@@ -5,22 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Piutang extends Model
+class BayarPiutang extends Model
 {
     use HasFactory;
 
-    protected $table = 'piutangs';
+    protected $table = 'bayar_piutangs';
     protected $fillable = [
-        'penjualan_id',
         'kios_id',
-        'tanggal_piutang',
+        'tanggal_bayar',
         'bulan',
         'tahun',
         'ket',
         'total',
-        'kredit',
-        'sisa',
-        'status',
     ];
 
     public function kios()
