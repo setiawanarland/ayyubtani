@@ -423,9 +423,10 @@ class ProdukController extends Controller
 
             $value->stok = $stok;
 
-            if ($value->stok != 0) {
-                $temp[] = $value;
-            }
+            $temp[] = $value;
+            // if ($value->stok != 0) {
+            //     $temp[] = $value;
+            // }
         }
 
         $data['bulan'] = $bulan;
