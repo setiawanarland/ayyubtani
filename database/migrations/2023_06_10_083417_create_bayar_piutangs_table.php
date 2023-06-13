@@ -19,7 +19,7 @@ class CreateBayarPiutangsTable extends Migration
             $table->date('tanggal_bayar');
             $table->string('bulan', 10);
             $table->string('tahun', 10);
-            $table->string('ket', 50);
+            $table->string('ket', 100);
             $table->decimal('total', 15, 1);
             $table->timestamps();
         });
