@@ -132,6 +132,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/pembelian', [LaporanController::class, 'pembelian'])->name('laporan-pembelian');
         Route::get('/pembelian-laporan', [LaporanController::class, 'listPembelian'])->name('laporan-pembelian');
         Route::get('/pembelian-rekap', [LaporanController::class, 'rekapPembelian'])->name('pembelian-rekap');
+        Route::get('/pembayaran-piutang', [LaporanController::class, 'pembayaranPiutang'])->name('pembayaran-piutang');
+        Route::get('/pembayaran-piutang-list', [LaporanController::class, 'listPembayaranPiutang'])->name('pembayaran-piutang-list');
     });
 
     Route::prefix('pajak')->group(function () {

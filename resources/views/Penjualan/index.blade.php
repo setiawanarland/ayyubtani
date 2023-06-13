@@ -283,8 +283,8 @@
                                 satuan_pajak = data.satuan_pajak;
                             });
 
-                            // dpp = grand_total / 1.11;
-                            dpp = grand_total / 1.1;
+                            dpp = grand_total / 1.11;
+                            // dpp = grand_total / 1.1;
                             ppn = grand_total - dpp;
                             total_disc = 0;
                             $('#dpp').val(number_format(dpp, 1));

@@ -84,6 +84,10 @@
                                     href="{{ url('/laporan/pembelian') }}"><i
                                         class="ti-layout-cta-btn-left"></i><span>pembelian</span></a>
                             </li>
+                            <li class="{{ Request::path() == 'laporan/pembayaran-piutang' ? 'active' : '' }}"><a
+                                    href="{{ url('/laporan/pembayaran-piutang') }}"><i
+                                        class="ti-arrow-down"></i><span>pembayaran piutang</span></a>
+                            </li>
                         </ul>
                     </li>
                     <li>

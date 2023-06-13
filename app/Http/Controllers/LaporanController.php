@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Response\GeneralResponse;
+use App\Models\Kios;
 use App\Models\Pembelian;
 use App\Models\Penjualan;
 use App\Models\Produk;
@@ -1418,5 +1419,32 @@ class LaporanController extends Controller
         }
 
         $writer->save('php://output');
+    }
+
+    public function pembayaranPiutang()
+    {
+        $page_title = 'Ayyub Tani';
+        $page_description = 'Dashboard Admin Ayyub Tani';
+        $breadcrumbs = ['Laporan Pembayaran Piutang'];
+
+        // $pembayaranPiutang = Kios::join('bayar_piutangs', 'kios.id', 'bayar_piutangs.kios_id')
+        // ->orderBy('tanggal_bayar')
+        // ->get();
+
+        // return $pembayaranPiutang;
+
+        return view('laporan.pembayaran_piutang', compact('page_title', 'page_description', 'breadcrumbs'));
+    }
+
+    public function listPembayaranPiutang(Request $request)
+    {
+        // $data = [];
+        // $bulan = request('bulan');
+
+        $pembayaranPiutang = Kios::join('bayar_piutangs', 'kios.id', 'bayar_piutangs.kios_id')
+            ->orderBy('tanggal_bayar')
+            ->get();
+
+        return (new GeneralResponse)->default_json(true, 'success', $pembayaranPiutang, 200);
     }
 }

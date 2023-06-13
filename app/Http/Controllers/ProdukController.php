@@ -187,7 +187,6 @@ class ProdukController extends Controller
     {
         // $hasil = [];
         // $data = [];
-        // $produk = Produk::where('satuan', 'btl')->get();
         // foreach ($produk as $key => $value) {
         //     $data[] = explode(' ', $value->kemasan);
         // }
@@ -196,15 +195,13 @@ class ProdukController extends Controller
         //     // return $value[0];
         //     $hasil[] = ($value[0] * $value[3]) / 1000;
         // }
+        $produk = Produk::get();
 
-        // foreach ($produk as $key => $value) {
-        //     // return "ok";
-        //     $baru = $hasil[$key];
-        //     $dataProduk = Produk::where('id', $value->id)->first();
-        //     $dataProduk->satuan = "ltr";
-        //     $dataProduk->qty_perdos = $baru;
-        //     $dataProduk->save();
-        // }
+        foreach ($produk as $key => $value) {
+            $dataProduk = Produk::where('id', $value->id)->first();
+            $dataProduk->harga_perdos = $dataProduk->jumlah_perdos * $dataProduk->harga_jual;
+            $dataProduk->save();
+        }
 
 
         // return $produk;
@@ -324,7 +321,7 @@ class ProdukController extends Controller
         //     }
         // }
 
-        // return "ok";
+        return "ok";
     }
 
     public function cetakk(Request $request)
