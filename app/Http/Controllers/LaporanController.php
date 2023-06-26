@@ -1442,7 +1442,7 @@ class LaporanController extends Controller
         // $bulan = request('bulan');
 
         $pembayaranPiutang = Kios::join('bayar_piutangs', 'kios.id', 'bayar_piutangs.kios_id')
-            ->orderBy('tanggal_bayar')
+            ->orderBy('tanggal_bayar', 'DESC')
             ->get();
 
         return (new GeneralResponse)->default_json(true, 'success', $pembayaranPiutang, 200);

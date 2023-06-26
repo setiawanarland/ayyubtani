@@ -16,6 +16,7 @@
                                         <th>Nama Kios</th>
                                         {{-- <th>Debet</th>
                                         <th>Kredit</th> --}}
+                                        <th>Alamat</th>
                                         <th>Sisa Hutang</th>
                                         <th>Action</th>
                                     </tr>
@@ -24,7 +25,10 @@
                                     @foreach ($data['kios'] as $key => $value)
                                         <tr style="background-color: aquamarine">
                                             <td class="text-left">{{ Str::upper($value->pemilik) }},
-                                                {{ Str::upper($value->nama_kios) }}, {{ Str::upper($value->kabupaten) }}
+                                                {{ Str::upper($value->nama_kios) }}
+                                            </td>
+                                            <td class="text-left">{{ Str::upper($value->alamat) }},
+                                                {{ Str::upper($value->kabupaten) }}
                                             </td>
                                             <td class="text-right">{{ number_format($value->totalPiutangKios) }}</td>
                                             {{-- <td class="text-right">{{ number_format($value->kredit, 1) }}</td>
@@ -71,7 +75,7 @@
 
                                     <tr class="text-uppercase pt-5"
                                         style="background-color: {{ $data['totalPiutang'] != 0 ? 'gold' : 'lightgreen' }} ">
-                                        <th colspan="1">total piutang </th>
+                                        <th colspan="2">total piutang </th>
                                         <th class="text-right">{{ number_format($data['totalPiutang']) }}</th>
                                         {{-- <th colspan="1">total sisa </th>
                                         <th class="text-right">{{ number_format($data['total_sisa']) }}</th> --}}

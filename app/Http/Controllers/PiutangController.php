@@ -34,7 +34,7 @@ class PiutangController extends Controller
         $totalPiutang = 0;
         $totalSisa = 0;
 
-        $kios = DB::table('kios')->orderBy('pemilik')->orderBy('nama_kios')->get();
+        $kios = DB::table('kios')->orderBy('kabupaten')->orderBy('nama_kios')->get();
         foreach ($kios as $key => $value) {
             $totalPiutangKios = 0;
             $kredit = 0;
