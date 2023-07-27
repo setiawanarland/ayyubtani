@@ -75,6 +75,16 @@
                         <input class="form-control" type="hidden" name="id" id="id">
 
                         <div class="form-group" style="margin-bottom: 0px;">
+                            <label for="nama_produk" class="col-form-label">Supplier</label>
+                            <select class="form-control" id="supplier_id" name="supplier_id">
+                                @foreach ($supplier as $index => $value)
+                                    <option value="{{ $value->id }}">{{ Str::upper($value->nama_supplier) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0px;">
                             <label for="nama_produk" class="col-form-label">Nama Produk</label>
                             <input class="form-control" type="text" name="nama_produk" id="nama_produk" autofocus>
                             <div class="invalid-feedback"></div>
@@ -102,7 +112,8 @@
                         </div>
                         <div class="form-group" style="margin-bottom: 0px;">
                             <label for="qty_perdos" class="col-form-label">Qty Perdos</label>
-                            <input class="form-control" type="text" name="qty_perdos" id="qty_perdos" value="0">
+                            <input class="form-control" type="text" name="qty_perdos" id="qty_perdos"
+                                value="0">
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="form-group" style="margin-bottom: 0px;">

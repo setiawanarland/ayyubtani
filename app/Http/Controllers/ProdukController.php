@@ -31,7 +31,11 @@ class ProdukController extends Controller
         $page_description = 'Dashboard Admin Ayyub Tani';
         $breadcrumbs = ['Daftar Produk'];
 
-        return view('produk.index', compact('page_title', 'page_description', 'breadcrumbs',));
+        $supplier = DB::table('suppliers')
+            ->select('id', 'nama_supplier',)
+            ->get();
+
+        return view('produk.index', compact('page_title', 'page_description', 'breadcrumbs', 'supplier'));
     }
 
     public function list()
@@ -91,6 +95,7 @@ class ProdukController extends Controller
     {
         // return floatval($request->qty_kemasan);
         $data = new Produk();
+        $data->supplier_id = $request->supplier_id;
         $data->nama_produk = $request->nama_produk;
         $data->kemasan = $request->kemasan;
         $data->satuan = $request->satuan;
