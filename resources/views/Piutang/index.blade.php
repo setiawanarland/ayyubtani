@@ -13,10 +13,11 @@
                             <table id="piutangTable" class="text-center table table-bordered">
                                 <thead class="bg-light text-capitalize">
                                     <tr>
+                                        {{-- <th>Pemilik</th> --}}
                                         <th>Nama Kios</th>
+                                        <th>Alamat</th>
                                         {{-- <th>Debet</th>
                                         <th>Kredit</th> --}}
-                                        <th>Alamat</th>
                                         <th>Sisa Hutang</th>
                                         <th>Action</th>
                                     </tr>
@@ -75,7 +76,8 @@
 
                                     <tr class="text-uppercase pt-5"
                                         style="background-color: {{ $data['totalPiutang'] != 0 ? 'gold' : 'lightgreen' }} ">
-                                        <th colspan="2">total piutang </th>
+                                        <th colspan="1">total piutang </th>
+                                        <th class="text-right"></th>
                                         <th class="text-right">{{ number_format($data['totalPiutang']) }}</th>
                                         {{-- <th colspan="1">total sisa </th>
                                         <th class="text-right">{{ number_format($data['total_sisa']) }}</th> --}}
