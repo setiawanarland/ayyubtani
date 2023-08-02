@@ -62,8 +62,8 @@ class PenjualanController extends Controller
         $lastPenjualan = Penjualan::where('tahun', session('tahun'))->get();
         // $lastPenjualan = Penjualan::max('invoice');
 
-        // $invoice = "AT-" . substr(session('tahun'), -2) . "-" . sprintf("%05s", count($lastPenjualan) + 1);
-        $invoice = "V" . substr(session('tahun'), -2) . "-" . sprintf("%05s", count($lastPenjualan) + 1);
+        $invoice = "AT-" . substr(session('tahun'), -2) . "-" . sprintf("%05s", count($lastPenjualan) + 1);
+        // $invoice = "V" . substr(session('tahun'), -2) . "-" . sprintf("%05s", count($lastPenjualan) + 1);
         // $invoice = $lastPenjualan + 1;
 
         return view('penjualan.index', compact('page_title', 'page_description', 'breadcrumbs', 'kios', 'produk', 'pajak', 'pembayaran', 'invoice'));
@@ -110,8 +110,11 @@ class PenjualanController extends Controller
         // $hargaSatuan = $produk->harga_jual;
         // $jumlah = $produk->harga_perdos * $request->ket;
         $jumlah = $produk->harga_perdos;
+        // harga dpp dari ppn 10%
+        $dpp = 100 / 110 * $jumlah;
         $jumlahDisc = $request->disc;
-        $jumlahAfterDisc = ($jumlah - $jumlahDisc) * $request->ket;
+        $jumlahAfterDisc = ($dpp - $jumlahDisc) * $request->ket;
+        // $jumlahAfterDisc = ($jumlah - $jumlahDisc) * $request->ket;
         // return "$jumlah, $jumlahDisc, $jumlahAfterDisc";
 
         $dataDetail = DetailPenjualanTemp::where('produk_id', $request->produk_id)->first();
@@ -361,9 +364,9 @@ class PenjualanController extends Controller
         $data = Penjualan::select('penjualans.*', 'kios.nama_kios', 'kios.pemilik', 'kios.kabupaten')
             ->join('kios', 'penjualans.kios_id', 'kios.id')
             ->where('penjualans.tahun', session('tahun'))
-            // ->orderBy('penjualans.tahun', 'ASC')
+            ->orderBy('penjualans.tanggal_jual', 'DESC')
             // ->orderBy('penjualans.id', 'DESC')
-            ->orderBy('penjualans.invoice', 'DESC')
+            // ->orderBy('penjualans.invoice', 'DESC')
             ->get();
 
 
@@ -439,7 +442,7 @@ class PenjualanController extends Controller
                 $val->kemasan = $produk->kemasan;
                 $hargaSatuan = ("Btl" && str_contains($val->ket, "Btl")) ? $val->jumlah / intval(preg_replace("/\D/", "", $val->ket)) : ($val->jumlah / $produk->jumlah_perdos) / intval(preg_replace("/\D/", "", $val->ket));
                 $val->harga_jual = $hargaSatuan;
-                $val->harga_perdos = $produk->harga_perdos;
+                $val->dpp = 100 / 110 * $produk->harga_perdos;
                 $val->satuan = $produk->satuan;
             }
             $value->jatuh_tempo = $jatuhTempo;
