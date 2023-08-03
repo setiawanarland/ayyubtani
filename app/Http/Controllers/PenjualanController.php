@@ -366,7 +366,7 @@ class PenjualanController extends Controller
             ->where('penjualans.tahun', session('tahun'))
             ->orderBy('penjualans.tanggal_jual', 'DESC')
             // ->orderBy('penjualans.id', 'DESC')
-            // ->orderBy('penjualans.invoice', 'DESC')
+            ->orderBy('penjualans.invoice', 'DESC')
             ->get();
 
 
