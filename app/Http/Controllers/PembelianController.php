@@ -182,6 +182,7 @@ class PembelianController extends Controller
     public function produkNew(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'supplier_id' => 'required',
             'nama_produk' => 'required',
             'kemasan' => 'required',
             'satuan' => 'required',
@@ -195,10 +196,12 @@ class PembelianController extends Controller
         }
 
         $produk = new Produk();
+        $produk->supplier_id = $request->supplier_id;
         $produk->nama_produk = $request->nama_produk;
         $produk->kemasan = $request->kemasan;
         $produk->satuan = $request->satuan;
         $produk->jumlah_perdos = floatval(preg_replace('/[^\d\.]+/', '', $request->jumlah_perdos));
+        $produk->qty_kemasan = floatval(preg_replace('/[^\d\.]+/', '', $request->qty_kemasan));
         $produk->qty_perdos = floatval(preg_replace('/[^\d\.]+/', '', $request->qty_perdos));
         $produk->harga_beli = intval(preg_replace("/\D/", "", $request->harga_beli));
         $produk->harga_jual = intval(preg_replace("/\D/", "", $request->harga_jual));
