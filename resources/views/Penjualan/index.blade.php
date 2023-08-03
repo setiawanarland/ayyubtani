@@ -188,7 +188,7 @@
                                             <th width="10%">Qty</th>
                                             {{-- <th width="15%">Harga Stn. <br> ({{ $pajak->nama_pajak }})</th> --}}
                                             <th width="10%">Satuan</th>
-                                            <th width="15%">Harga</th>
+                                            <th width="15%">Harga Perdos</th>
                                             <th width="15%">Disc.</th>
                                             <th width="15%">Jumlah</th>
                                             <th>#</th>
@@ -283,13 +283,16 @@
                                 satuan_pajak = data.satuan_pajak;
                             });
 
-                            dpp = grand_total / 1.11;
+                            dpp = grand_total;
+                            // dpp = grand_total / 1.11;
                             // dpp = grand_total / 1.1;
-                            ppn = grand_total - dpp;
+                            // ppn = grand_total - dpp;
+                            // ppn 10%
+                            ppn = dpp * 10 / 100;
                             total_disc = 0;
-                            $('#dpp').val(number_format(dpp, 1));
-                            $('#ppn').val(number_format(ppn, 1));
-                            $('#grand_total').val(number_format(grand_total, 1));
+                            $('#dpp').val(number_format(dpp, 0));
+                            $('#ppn').val(number_format(ppn, 0));
+                            $('#grand_total').val(number_format(dpp + ppn, 0));
                             // $('#dpp').val(formatRupiah(dpp.toString(), ''));
                             // $('#ppn').val(formatRupiah(ppn.toString(), ''));
                             $('#total_disc').val(formatRupiah(total_disc.toString(), ''));
@@ -355,11 +358,12 @@
 
                         },
                         {
-                            data: 'harga_jual',
+                            data: 'harga_perdos',
                             render: function(data, type, row) {
+                                let dpp = 100 / 110 * data;
                                 return `
                                     <input type="text" class="form-control harga_beli" id="harga_beli" name="harga_beli[]" value="` +
-                                    number_format(data, 1) + `">
+                                    number_format(dpp, 0) + `">
                                 `;
                             }
                         },
@@ -368,7 +372,7 @@
                             render: function(data, type, row) {
                                 return `
                                 <input type="text" class="form-control disc" id="disc" name="disc[]" value="` +
-                                    number_format(data, 1) + `">
+                                    number_format(data, 0) + `">
                                 `;
                             }
                         },
@@ -378,7 +382,7 @@
 
                                 return `
                                     <input type="text" class="form-control jumlah" id="jumlah" name="jumlah[]" value="` +
-                                    number_format(data, 1) + `">
+                                    number_format(data, 0) + `">
                                 `;
                             }
                         },
