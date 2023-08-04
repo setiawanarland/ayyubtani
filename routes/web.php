@@ -79,6 +79,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/list-pembelian', [PembelianController::class, 'listPembelian'])->name('pembelian-list');
         Route::get('/show/{id}', [PembelianController::class, 'show'])->name('pembelian-show');
         Route::get('/po', [PembelianController::class, 'po'])->name('po');
+        Route::delete('/delete/{id}', [PembelianController::class, 'destroy'])->name('pembelian-delete');
     });
 
     Route::prefix('hutang')->group(function () {

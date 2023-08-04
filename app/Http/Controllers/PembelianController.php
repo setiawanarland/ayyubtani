@@ -526,14 +526,44 @@ class PembelianController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\pembelian  $pembelian
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(pembelian $pembelian)
+    public function destroy(Pembelian $pembelian, $id)
     {
-        //
+        $pembelian = pembelian::where('id', $id)->first();
+        $detailpembelian = DetailPembelian::where('pembelian_id', $pembelian->id)->get();
+        $piutang = Hutang::where('pembelian_id', $pembelian->id)->first();
+
+        foreach ($detailpembelian as $key => $value) {
+            $produk = Produk::where('id', $value->produk_id)->first();
+
+            $stokBeli = intval(preg_replace("/\D/", "", $value->ket));
+            $stok = $produk->stok;
+            $qtyBeli = floatval(preg_replace('/[^\d\.]+/', '', $value->qty));
+            $qty = $produk->qty;
+            $stokBaru = $stokBeli - $stok;
+            $qtyBaru = $qtyBeli - $qty;
+
+            $produk->stok = $stokBaru;
+            $produk->qty = $qtyBaru;
+
+            $produk->save();
+
+            if ($produk) {
+                $detail = DetailPembelian::where('id', $value->id)->first();
+                $detail->delete();
+            } else {
+                return (new GeneralResponse)->default_json(false, "Error", $produk, 401);
+            }
+        }
+
+        if ($piutang) {
+            $piutang->delete();
+        }
+        $data = $pembelian->delete();
+
+        if ($data) {
+            return (new GeneralResponse)->default_json(true, "Success", $data, 200);
+        } else {
+            return (new GeneralResponse)->default_json(false, "Error", $data, 401);
+        }
     }
 }
