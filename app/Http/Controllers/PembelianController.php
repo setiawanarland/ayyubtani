@@ -539,8 +539,8 @@ class PembelianController extends Controller
             $stok = $produk->stok;
             $qtyBeli = floatval(preg_replace('/[^\d\.]+/', '', $value->qty));
             $qty = $produk->qty;
-            $stokBaru = $stokBeli - $stok;
-            $qtyBaru = $qtyBeli - $qty;
+            $stokBaru = $stok - $stokBeli;
+            $qtyBaru = $qty - $qtyBeli;
 
             $produk->stok = $stokBaru;
             $produk->qty = $qtyBaru;
