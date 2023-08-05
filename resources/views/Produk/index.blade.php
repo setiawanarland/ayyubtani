@@ -2,24 +2,7 @@
 
 @section('content')
     <div class="main-content-inner">
-        <div class="row">
-            <!-- data table start -->
-            <div class="col-12 mt-2">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="header-title">Rekap Stok Produk</h4>
 
-                        <div class="form-row align-items-center">
-                            <div class="col-auto my-1" style="padding-top: 30px;">
-                                <button type="button" class="btn btn-primary btn-xs rekapTahunan">
-                                    <i class="fa fa-spinner"></i> Rekap
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div class="row">
             <!-- data table start -->
@@ -27,9 +10,23 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="header-title">Data Produk</h4>
-                        <button type="button" class="btn d-flex btn-success mb-3 pull-right cetak">Cetak Data</button>
-                        <button type="button" class="btn d-flex btn-primary mb-3 pull-right tambahData">Tambah
-                            Data</button>
+                        <label for="supplier_id_cetak" class="col-form-label">Pilih Supplier untuk cetak data</label>
+                        <div class="col-4 mt-2 align-items-center">
+                            <select class="form-control mb-1" id="supplier_id_cetak" name="supplier_id_cetak">
+                                @foreach ($supplier as $index => $value)
+                                    <option value="{{ $value->id }}">{{ Str::upper($value->nama_supplier) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="invalid-feedback"></div>
+                            <button type="button" class="btn d-inline btn-primary mb-2 tambahData">Tambah
+                                Data</button>
+                            <button type="button" class="btn d-inline btn-success mb-2 cetak">Cetak
+                                Data</button>
+                            <button type="button" class="btn d-inline btn-warning mb-2 rekapTahunan">
+                                Rekap
+                            </button>
+                        </div>
                         <div class="data-tables">
                             <table id="produkTable" class="text-cente">
                                 <thead class="bg-light text-capitalize">
@@ -112,8 +109,7 @@
                         </div>
                         <div class="form-group" style="margin-bottom: 0px;">
                             <label for="qty_perdos" class="col-form-label">Qty Perdos</label>
-                            <input class="form-control" type="text" name="qty_perdos" id="qty_perdos"
-                                value="0">
+                            <input class="form-control" type="text" name="qty_perdos" id="qty_perdos" value="0">
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="form-group" style="margin-bottom: 0px;">
@@ -468,10 +464,11 @@
 
         $('.cetak').on('click', function() {
             const d = new Date();
+            let supplier_id = $('#supplier_id_cetak').val();
             let bulan = d.getMonth() + 1;
             console.log(bulan);
 
-            url = `/produk/cetak/?bulan=${bulan}&jenis=excel`;
+            url = `/produk/cetak/?supplier_id=${supplier_id}&bulan=${bulan}&jenis=excel`;
             window.open(url);
 
         });

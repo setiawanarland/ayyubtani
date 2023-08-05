@@ -272,13 +272,14 @@ class ProdukController extends Controller
 
     public function cetak(Request $request)
     {
-
+        $supplier_id = request('supplier_id');
         $bulan = request('bulan');
         $jenis = request('jenis');
         $data = [];
         $temp = [];
 
         $produks = DB::table('produks')
+            ->where('supplier_id', $supplier_id)
             ->orderBy('nama_produk')
             ->orderBy('kemasan')
             ->get();
