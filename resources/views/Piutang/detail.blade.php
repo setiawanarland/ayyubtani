@@ -9,7 +9,7 @@
                     <div class="card-body">
                         <h4 class="header-title">Detail Piutang</h4>
 
-                        <button type="button" class="btn btn-sm bayarPiutang" data-toggle="modal"
+                        <button type="button" class="btn btn-sm bayarPiutang pull-right mb-2" data-toggle="modal"
                             data-target="#bayarPiutangModal" data-id="{{ $kios->id }}"
                             style="background-color:forestgreen">
                             <i class="fa fa-money"></i>
