@@ -25,6 +25,7 @@ class CreateProduksTable extends Migration
             $table->bigInteger('harga_perdos');
             $table->integer('stok')->default(0);
             $table->float('qty')->default(0);
+            $table->enum('active', ['0', '1']);
             $table->timestamps();
         });
     }

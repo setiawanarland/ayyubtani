@@ -280,6 +280,7 @@ class ProdukController extends Controller
 
         $produks = DB::table('produks')
             ->where('supplier_id', $supplier_id)
+            ->where('active', '1')
             ->orderBy('nama_produk')
             ->orderBy('kemasan')
             ->get();
