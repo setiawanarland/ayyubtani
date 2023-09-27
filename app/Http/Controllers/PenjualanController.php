@@ -37,6 +37,7 @@ class PenjualanController extends Controller
             ->get();
 
         $produk = DB::table('produks')
+            ->where('active', '1')
             ->orderBy('nama_produk', 'ASC')
             ->orderBy('kemasan', 'ASC')
             ->get();

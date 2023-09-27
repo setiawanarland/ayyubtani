@@ -37,6 +37,7 @@ class PembelianController extends Controller
 
         $produk = DB::table('produks')
             ->select('id', 'nama_produk', 'kemasan')
+            ->where('active', '1')
             ->orderBy('nama_produk')
             ->orderBy('kemasan')
             ->get();
