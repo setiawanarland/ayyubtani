@@ -48,6 +48,7 @@ class ProdukController extends Controller
     {
         $produk = DB::table("produks")
             ->orderBy('nama_produk', 'ASC')
+            ->where('active', '1')
             ->get();
 
         if ($produk) {

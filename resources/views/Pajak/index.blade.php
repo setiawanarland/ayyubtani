@@ -7,7 +7,11 @@
             <div class="col-12 mt-5">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="header-title">Data Produk</h4>
+                        <h4 class="header-title">Data Pajak</h4>
+                        <div class="alert alert-danger" role="alert">
+                            <strong>PPN 10% - Untuk transaksi di bawah tanggal 1 April 2022.</strong><br>
+                            <strong>PPN 11% - Untuk transaksi di atas tanggal 1 April 2022.</strong>
+                        </div>
                         <button type="button" class="btn d-flex btn-primary mb-3 pull-right tambahData">Tambah Data</button>
                         <div class="data-tables">
                             <table id="pajakTable" class="text-cente">
@@ -36,7 +40,7 @@
         <div class="offset-close"><i class="ti-close"></i></div>
         <ul class="nav offset-menu-tab">
             <li>
-                <h6 class="active">Tambah Data Produk</h6>
+                <h6 class="active">Tambah Data Pajak</h6>
             </li>
         </ul>
         <div class="offset-content tab-content">

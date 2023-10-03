@@ -27,6 +27,10 @@
                         <h4 class="header-title">Pembelian</h4>
                         <form action="" data-type="submit">
                             @csrf
+
+                            <input type="hidden" class="form-control" id="pajak" name="pajak"
+                                value="{{ $pajak->satuan_pajak }}">
+
                             <div class="form-row align-items-center">
 
                                 <div class="col-sm-6 my-1">
@@ -95,8 +99,8 @@
                                         <form id="kiosBaruForm" action="" data-type="submit">
                                             <div class="form-row align-items-center">
                                                 <div class="col-sm-2 col-md-2 my-2">
-                                                    <input type="text" class="form-control" id="pemilik" name="pemilik"
-                                                        placeholder="Pemilik Baru">
+                                                    <input type="text" class="form-control" id="pemilik"
+                                                        name="pemilik" placeholder="Pemilik Baru">
                                                 </div>
                                                 <div class="col-sm-2 col-md-2 my-2">
                                                     <input type="text" class="form-control" id="nama_kios"
@@ -260,6 +264,8 @@
         var ppn;
         var total_disc;
         var grand_total;
+        // var pajak = $('#pajak').val();
+        // return pajak;
         // datatable detail pembelian
         var dataRow = function() {
             var init = function() {
@@ -278,17 +284,22 @@
                             ppn = 0;
                             grand_total = 0;
                             data.data.map(function(data) {
-                                console.log(parseFloat(data.jumlah));
+                                // console.log(data.satuan_pajak);
                                 grand_total += parseFloat(data.jumlah);
                                 satuan_pajak = data.satuan_pajak;
                             });
 
-                            dpp = grand_total;
-                            // dpp = grand_total / 1.11;
-                            // dpp = grand_total / 1.1;
-                            // ppn = grand_total - dpp;
-                            // ppn 10%
-                            ppn = dpp * 10 / 100;
+                            switch (satuan_pajak) {
+                                case 10:
+                                    dpp = grand_total / 1.1;
+                                    break;
+                                case 11:
+                                    dpp = grand_total / 1.11;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            ppn = dpp * satuan_pajak / 100;
                             total_disc = 0;
                             $('#dpp').val(number_format(dpp, 0));
                             $('#ppn').val(number_format(ppn, 0));
@@ -360,7 +371,9 @@
                         {
                             data: 'harga_perdos',
                             render: function(data, type, row) {
-                                let dpp = 100 / 110 * data;
+                                // let dpp = data / 1.1;
+                                // let dpp = data / 1.11;
+                                let dpp = data;
                                 return `
                                     <input type="text" class="form-control harga_beli" id="harga_beli" name="harga_beli[]" value="` +
                                     number_format(dpp, 0) + `">
@@ -1411,10 +1424,40 @@
                 todayHighlight: true,
             });
             $('#tanggal_jual').datepicker("setDate", new Date());
+            $(document).on('change', '#tanggal_jual', function(e) {
+                let pajak = $('#pajak').val();
+                let tanggalJual = $(this).val();
+                var dateParts = tanggalJual.split('-');
+                var dateObject = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
+                let changePajak;
 
-            // Mousetrap.bind(['ctrl+c'], function(e) {
-            //     $(".savePenjualan").click();
-            // });
+                switch (true) {
+                    case (pajak == 10 && dateObject >= new Date('4-1-2022')):
+                        changePajak = false;
+                        break;
+                    case (pajak == 10 && dateObject < new Date('4-1-2022')):
+                        changePajak = true;
+                        break;
+                    case (pajak == 11 && dateObject < new Date('4-1-2022')):
+                        changePajak = false;
+                        break;
+                    case (pajak == 11 && dateObject >= new Date('4-1-2022')):
+                        changePajak = true;
+                        break;
+                    default:
+                        break;
+                }
+
+                if (!changePajak) {
+                    Swal.fire({
+                        title: 'Perhatian!',
+                        text: `PPN aktif ${pajak}% dan tanggal yang dipilih tidak sesuai. Silakan mengubah PPN.`,
+                        icon: 'warning'
+                    }).then(function() {
+                        window.location = "{{ route('pajak') }}";
+                    });
+                }
+            });
 
             $(window).keydown(function(e) {
                 // console.log(e.keyCode);

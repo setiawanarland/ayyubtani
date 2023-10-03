@@ -54,9 +54,10 @@ class PenjualanController extends Controller
         }
 
         $pajak = DB::table('pajaks')
-            ->select('nama_pajak')
+            ->select('satuan_pajak')
             ->where('active', '1')
             ->first();
+
 
         $pembayaran = DB::table('pembayarans')->get();
 
@@ -112,7 +113,12 @@ class PenjualanController extends Controller
         // $jumlah = $produk->harga_perdos * $request->ket;
         $jumlah = $produk->harga_perdos;
         // harga dpp dari ppn 10%
-        $dpp = 100 / 110 * $jumlah;
+        // $dpp = 100 / 110 * $jumlah;
+        // $dpp = $jumlah / 1.11;
+        // harga dpp dari ppn 11%
+        // $dpp = 100 / 110 * $jumlah;
+        // $dpp = $jumlah / 1.11;
+        $dpp = $jumlah;
         $jumlahDisc = $request->disc;
         $jumlahAfterDisc = ($dpp - $jumlahDisc) * $request->ket;
         // $jumlahAfterDisc = ($jumlah - $jumlahDisc) * $request->ket;
@@ -443,7 +449,8 @@ class PenjualanController extends Controller
                 $val->kemasan = $produk->kemasan;
                 $hargaSatuan = ("Btl" && str_contains($val->ket, "Btl")) ? $val->jumlah / intval(preg_replace("/\D/", "", $val->ket)) : ($val->jumlah / $produk->jumlah_perdos) / intval(preg_replace("/\D/", "", $val->ket));
                 $val->harga_jual = $hargaSatuan;
-                $val->dpp = 100 / 110 * $produk->harga_perdos;
+                // $val->dpp = 100 / 110 * $produk->harga_perdos;
+                $val->dpp = $produk->harga_perdos / 1.11;
                 $val->satuan = $produk->satuan;
             }
             $value->jatuh_tempo = $jatuhTempo;
