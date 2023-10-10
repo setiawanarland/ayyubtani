@@ -207,6 +207,7 @@ class PembelianController extends Controller
         $produk->harga_beli = intval(preg_replace("/\D/", "", $request->harga_beli));
         $produk->harga_jual = intval(preg_replace("/\D/", "", $request->harga_jual));
         $produk->harga_perdos = intval(preg_replace("/\D/", "", $request->harga_perdos));
+        $produk->active = '1';
         $produk->save();
         // return $produk;
 
