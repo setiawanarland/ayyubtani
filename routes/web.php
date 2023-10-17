@@ -30,6 +30,7 @@ Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('set-login');
 Route::get('/logout', [AuthController::class, 'logout'])->name('set-logout');
 Route::get('set-tahun', [Controller::class, 'setTahun'])->name('set-tahun');
+Route::get('set-bulan', [Controller::class, 'setBulan'])->name('set-bulan');
 
 Route::get('/produk/test', [ProdukController::class, 'test'])->name('test');
 

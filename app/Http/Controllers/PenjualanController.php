@@ -357,7 +357,12 @@ class PenjualanController extends Controller
         $page_description = 'Dashboard Admin Ayyub Tani';
         $breadcrumbs = ['Daftar Penjualan'];
 
-        return view('penjualan.daftar', compact('page_title', 'page_description', 'breadcrumbs',));
+        $totalPenjualan = DB::table('penjualans')
+            ->where('bulan',  (int) session('bulan'))
+            ->where('tahun',  session('tahun'))
+            ->sum('grand_total');
+
+        return view('penjualan.daftar', compact('page_title', 'page_description', 'breadcrumbs', 'totalPenjualan'));
     }
 
     public function listPenjualan()

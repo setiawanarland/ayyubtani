@@ -22,4 +22,11 @@ class Controller extends BaseController
         session(['tahun' => request('tahun', date('Y'))]);
         return redirect()->back();
     }
+
+    public function setBulan()
+    {
+        session()->forget(['bulan']);
+        session(['bulan' => request('bulan', date('M'))]);
+        return redirect()->back();
+    }
 }
