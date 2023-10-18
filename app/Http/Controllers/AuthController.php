@@ -39,7 +39,7 @@ class AuthController extends Controller
             $data = response()->json($response);
             session(['user' => $data->original]);
             session(['tahun' => date("Y")]);
-            session(['bulan' => date('F', mktime(0, 0, 0, date("m"), 10))]);
+            session(['bulan' => date('m')]);
 
             return redirect('/dashboard');
         } else {
