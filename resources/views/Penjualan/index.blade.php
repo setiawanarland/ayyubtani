@@ -442,9 +442,11 @@
                 post: function(_url, _data, _element) {
                     axios.post(_url, _data)
                         .then(function(res) {
+                            $('#preloader').show();
                             var data = res.data;
                             console.log(data);
                             if (data.fail) {
+                                $('#preloader').hide();
                                 swal.fire({
                                     text: "Maaf Terjadi Kesalahan",
                                     title: "Error",
@@ -453,6 +455,7 @@
                                     showConfirmButton: false,
                                 });
                             } else if (data.invalid) {
+                                $('#preloader').hide();
                                 console.log(data);
                                 $.each(data.invalid, function(key, value) {
                                     console.log(key);
@@ -461,6 +464,7 @@
                                         '.invalid-feedback').html(value[0]);
                                 });
                             } else if (data.success) {
+                                $('#preloader').hide();
                                 swal.fire({
                                     text: "Data anda berhasil disimpan",
                                     title: "Sukses",
@@ -474,6 +478,7 @@
                                 });
                             }
                         }).catch(function(error) {
+                            $('#preloader').hide();
                             console.log(error);
                             swal.fire({
                                 text: "Maaf Terjadi Kesalahan",
@@ -984,6 +989,7 @@
             }
 
             if ((produk_id != 'null') && (ket != 0)) {
+                $('#preloader').show();
                 $.ajax({
                     url: `/penjualan/temp`,
                     type: 'POST',
@@ -1002,6 +1008,7 @@
                     },
                     success: function(response) {
                         if (response.status !== false) {
+                            $('#preloader').hide();
                             dataRow.destroy();
                             dataRow.init();
 
@@ -1013,6 +1020,7 @@
                             $('#harga_satuan').val(0);
                             $('#harga_perdos').val(0);
                         } else {
+                            $('#preloader').hide();
                             swal.fire({
                                 title: "Failed!",
                                 text: `${response.message}`,
@@ -1021,6 +1029,7 @@
                         }
                     },
                     error: function(error) {
+                        $('#preloader').hide();
 
                         Swal.fire({
                                 title: "Failed!",
@@ -1055,6 +1064,7 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    $('#preloader').show();
                     $.ajax({
                         url: `/penjualan/tempdelete/${id}`,
                         type: 'POST',
@@ -1064,6 +1074,7 @@
                         },
                         success: function(response) {
                             if (response.status !== false) {
+                                $('#preloader').hide();
                                 Swal.fire('Deleted!',
                                         'Data berhasil dihapus.',
                                         'success')
@@ -1076,6 +1087,7 @@
                                         $('#ket').val(0);
                                     });
                             } else {
+                                $('#preloader').hide();
                                 swal.fire({
                                     title: "Failed!",
                                     text: `${res.message}`,
@@ -1101,6 +1113,7 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    $('#preloader').show();
                     $.ajax({
                         url: `/penjualan/tempreset`,
                         type: 'POST',
@@ -1110,6 +1123,7 @@
                         },
                         success: function(response) {
                             if (response.status !== false) {
+                                $('#preloader').hide();
                                 Swal.fire('Deleted!',
                                         'Data berhasil dihapus.',
                                         'success')
@@ -1122,6 +1136,7 @@
                                         $('#ket').val(0);
                                     });
                             } else {
+                                $('#preloader').hide();
                                 swal.fire({
                                     title: "Failed!",
                                     text: `${res.message}`,

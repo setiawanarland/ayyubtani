@@ -8,7 +8,7 @@
 
     var preloader = $('#preloader');
     $(window).on('load', function() {
-        preloader.fadeOut('slow', function() { $(this).remove(); });
+        preloader.fadeOut('slow', function() { $(this).hide(); });
     });
 
     /*================================

@@ -145,72 +145,81 @@
                     .getFullYear();
 
                 let element = `
-                                                                <table id="" class="text-cente" style="width: 100%;">
-                                                                    <tr>
-                                                                        <td colspan="6" style="font-size: 30px;">
-                                                                            ` + data.supplier.nama_supplier.toUpperCase() + `
-                                                                        </td>
-                                                                        <td colspan="3">
-                                                                            Makassar, ` + tanggal_beli + `
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colspan="6" style="padding-bottom: 20px;">` +
+                                                                            <table id="" class="text-cente" style="width: 100%;">
+                                                                                <tr>
+                                                                                    <td colspan="6" style="font-size: 30px;">
+                                                                                        ` + data.supplier.nama_supplier
+                    .toUpperCase() + `
+                                                                                    </td>
+                                                                                    <td colspan="3">
+                                                                                        Makassar, ` + tanggal_beli +
+                    `
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td colspan="6" style="padding-bottom: 20px;">` +
                     data
                     .supplier
                     .alamat
                     .toUpperCase() +
                     `</td>
-                                                                    </tr>
+                                                                                </tr>
 
-                                                                    <tr>
-                                                                        <td colspan="2" style="padding-top:-20px;padding-bottom: 20px;">NO. INVOICE </td>
-                                                                        <td colspan="4" style="padding-top:-20px;padding-bottom: 20px;">: ` +
+                                                                                <tr>
+                                                                                    <td colspan="2" style="padding-top:-20px;padding-bottom: 20px;">NO. INVOICE </td>
+                                                                                    <td colspan="4" style="padding-top:-20px;padding-bottom: 20px;">: ` +
                     data
                     .pembelian
                     .invoice.toUpperCase() + `</td>
-                                                                    </tr>
+                                                                                </tr>
 
-                                                                </table>
-                                                                <table id="item">
-                                                                    <tr class="">
-                                                                        <th style="width: 1%;">No.</th>
-                                                                        <th colspan="2" style="width: 25%;">Nama Produk</th>
-                                                                        <th style="width: 5%;">Ket.</th>
-                                                                        <th style="width: 8%;">Disc.</th>
-                                                                        <th style="width: 15%;">Jumlah</th>
-                                                                    </tr>`;
+                                                                            </table>
+                                                                            <table id="item">
+                                                                                <tr class="">
+                                                                                    <th style="width: 1%;">No.</th>
+                                                                                    <th colspan="2" style="width: 25%;">Nama Produk</th>
+                                                                                    <th style="width: 5%;">Ket.</th>
+                                                                                    <th style="width: 8%;">Disc.</th>
+                                                                                    <th style="width: 15%;">Jumlah</th>
+                                                                                </tr>`;
 
                 data.detailPembelian.map(function(value, index) {
                     console.log(value);
                     no = index + 1;
                     element += `
-                                                                        <tr class="">
-                                                                            <td style="width: 1%;">` + no + `</td>
-                                                                            <td colspan="2" style="width: 25%;">` + value
+                                                                                    <tr class="">
+                                                                                        <td style="width: 1%;">` + no +
+                        `</td>
+                                                                                        <td colspan="2" style="width: 25%;">` +
+                        value
                         .nama_produk
                         .toUpperCase() +
                         ` ` +
                         value
                         .kemasan_produk.toUpperCase() + `</td>
-                                                                            <td style="width: 10%;">` + value.ket
+                                                                                        <td style="width: 10%;">` + value
+                        .ket
                         .toUpperCase() + `</td>
-                                                                            <td style="width: 8%;">` + formatRupiah(value
+                                                                                        <td style="width: 8%;">` +
+                        formatRupiah(
+                            value
                             .disc
                             .toString(),
-                            "") + `</td>
-                                                                            <td style="width: 15%;text-align: right;">` +
+                            "") +
+                        `</td>
+                                                                                        <td style="width: 15%;text-align: right;">` +
                         formatRupiah(
                             value
                             .jumlah
                             .toString(),
                             "") + `</td>
-                                                                        </tr>`;
+                                                                                    </tr>`;
                 });
 
-                element += `
-                                                                </table>
-                                                                <table width="50%" style="float:right;margin-top: 10px;">`;
+                element +=
+                    `
+                                                                            </table>
+                                                                            <table width="50%" style="float:right;margin-top: 10px;">`;
                 //                             <tr>
                 //                                 <td style="width:20%;">DPP </td>
                 //                                 <td style="width:1%;">:</td>
@@ -241,14 +250,14 @@
                 //                             </tr>
                 element +=
                     `<tr>
-                                                                        <th style="width: 20%;">GRAND TOTAL</th>
-                                                                        <th style="width:1%;">:</th>
-                                                                        <th class="grand_total" style="width:20%;text-align: right;font-weight:bold">` +
+                                                                                    <th style="width: 20%;">GRAND TOTAL</th>
+                                                                                    <th style="width:1%;">:</th>
+                                                                                    <th class="grand_total" style="width:20%;text-align: right;font-weight:bold">` +
                     formatRupiah(data.pembelian.grand_total
                         .toString(), '') + `</th>
-                                                                    </tr>
-                                                                </table>
-                                                                `;
+                                                                                </tr>
+                                                                            </table>
+                                                                            `;
 
                 $('.modalDetail').children().remove();
                 $('.modalDetail').append(element);
@@ -288,6 +297,7 @@
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
+                $('#preloader').show();
                 $.ajax({
                     url: `/pembelian/delete/${id}`,
                     type: 'POST',
@@ -296,6 +306,7 @@
                         '_token': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
+                        $('#preloader').hide();
                         if (response.status !== false) {
                             Swal.fire('Deleted!',
                                     'Data berhasil dihapus.',

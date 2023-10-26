@@ -415,9 +415,11 @@
                 post: function(_url, _data, _element) {
                     axios.post(_url, _data)
                         .then(function(res) {
+                            $('#preloader').show();
                             var data = res.data;
                             console.log(data);
                             if (data.fail) {
+                                $('#preloader').hide();
                                 swal.fire({
                                     text: "Maaf Terjadi Kesalahan",
                                     title: "Error",
@@ -426,6 +428,7 @@
                                     showConfirmButton: false,
                                 });
                             } else if (data.invalid) {
+                                $('#preloader').hide();
                                 console.log(data);
                                 $.each(data.invalid, function(key, value) {
                                     console.log(key);
@@ -434,6 +437,7 @@
                                         '.invalid-feedback').html(value[0]);
                                 });
                             } else if (data.success) {
+                                $('#preloader').hide();
                                 swal.fire({
                                     text: "Data anda berhasil disimpan",
                                     title: "Sukses",
@@ -447,6 +451,7 @@
                                 });
                             }
                         }).catch(function(error) {
+                            $('#preloader').hide();
                             console.log(error);
                             swal.fire({
                                 text: "Pilih Supplier dan masukkan invoice terlebih dahulu",
@@ -737,6 +742,9 @@
             }
 
             if ((produk_id != 'null') && (ket != 0)) {
+
+                $('#preloader').show();
+
                 $.ajax({
                     url: `/pembelian/temp`,
                     type: 'POST',
@@ -749,6 +757,7 @@
                         'disc': disc,
                     },
                     success: function(response) {
+                        $('#preloader').hide();
                         if (response.status !== false) {
                             dataRow.destroy();
                             dataRow.init();
@@ -765,6 +774,7 @@
                         }
                     },
                     error: function(error) {
+                        $('#preloader').hide();
 
                         Swal.fire({
                                 title: "Failed!",
@@ -799,6 +809,7 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    $('#preloader').show();
                     $.ajax({
                         url: `/pembelian/tempdelete/${id}`,
                         type: 'POST',
@@ -807,6 +818,7 @@
                             '_token': $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function(response) {
+                            $('#preloader').hide();
                             if (response.status !== false) {
                                 Swal.fire('Deleted!',
                                         'Data berhasil dihapus.',
@@ -845,6 +857,7 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    $('#preloader').show();
                     $.ajax({
                         url: `/pembelian/tempreset`,
                         type: 'POST',
@@ -853,6 +866,7 @@
                             '_token': $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function(response) {
+                            $('#preloader').hide();
                             if (response.status !== false) {
                                 Swal.fire('Deleted!',
                                         'Data berhasil dihapus.',
