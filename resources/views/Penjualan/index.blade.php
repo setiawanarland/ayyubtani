@@ -24,7 +24,7 @@
             <div class="col-12 mt-2">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="header-title">Pembelian</h4>
+                        <h4 class="header-title">Penjualan</h4>
                         <form action="" data-type="submit">
                             @csrf
 
