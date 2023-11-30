@@ -64,7 +64,7 @@ class PenjualanController extends Controller
         $lastPenjualan = Penjualan::where('tahun', session('tahun'))->get();
         // $lastPenjualan = Penjualan::max('invoice');
 
-        $invoice = "AT-" . substr(session('tahun'), -2) . "-" . sprintf("%05s", count($lastPenjualan) + 1);
+        $invoice = "AT" . substr(session('tahun'), -2) . "-" . sprintf("%05s", count($lastPenjualan) + 1);
         // $invoice = "V" . substr(session('tahun'), -2) . "-" . sprintf("%05s", count($lastPenjualan) + 1);
         // $invoice = $lastPenjualan + 1;
 
