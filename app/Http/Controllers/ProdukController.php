@@ -106,6 +106,7 @@ class ProdukController extends Controller
         $data->harga_beli = intval(preg_replace("/\D/", "", $request->harga_beli));
         $data->harga_jual = intval(preg_replace("/\D/", "", $request->harga_jual));
         $data->harga_perdos = intval(preg_replace("/\D/", "", $request->harga_perdos));
+        $data->active = '1';
         $data->save();
         // return $data;
 
