@@ -276,15 +276,15 @@ class PenjualanController extends Controller
         $dataPenjualan['bulan'] = date('m', strtotime($request->tanggal_jual));
         $dataPenjualan['tahun'] = date('Y', strtotime($request->tanggal_jual));
 
-        if ($request->kios == 111) {
+        // if ($request->kios == 111) {
 
-            $kios = Kios::where('id', $request->kios)->first();
+        //     $kios = Kios::where('id', $request->kios)->first();
 
-            $randomKios = $this->randomKios($kios->pemilik);
+        //     $randomKios = $this->randomKios($kios->pemilik);
 
-            $kios->pemilik = $randomKios;
-            $kios->save();
-        }
+        //     $kios->pemilik = $randomKios;
+        //     $kios->save();
+        // }
 
         $penjualan = new Penjualan();
         $penjualan->kios_id = $request->kios;
@@ -452,7 +452,8 @@ class PenjualanController extends Controller
                 $produk = Produk::where('id', $val->produk_id)->first();
                 $val->nama_produk = $produk->nama_produk;
                 $val->kemasan = $produk->kemasan;
-                $hargaSatuan = ("Btl" && str_contains($val->ket, "Btl")) ? $val->jumlah / intval(preg_replace("/\D/", "", $val->ket)) : ($val->jumlah / $produk->jumlah_perdos) / intval(preg_replace("/\D/", "", $val->ket));
+                // $hargaSatuan = ("Btl" && str_contains($val->ket, "Btl")) ? $val->jumlah / intval(preg_replace("/\D/", "", $val->ket)) : ($val->jumlah / $produk->jumlah_perdos) / intval(preg_replace("/\D/", "", $val->ket));
+                $hargaSatuan = $val->jumlah / intval(preg_replace("/\D/", "", $val->ket));
                 $val->harga_jual = $hargaSatuan;
                 // $val->dpp = 100 / 110 * $produk->harga_perdos;
                 $val->dpp = $produk->harga_perdos / 1.11;
@@ -465,6 +466,24 @@ class PenjualanController extends Controller
         }
 
         return $penjualan;
+    }
+
+    public function test(Request $request)
+    {
+        $detailPenjualan = DetailPenjualan::select('id', 'jumlah')->whereBetween('penjualan_id', [1772, 1816])->get();
+        foreach ($detailPenjualan as $key => $value) {
+            $data = DetailPenjualan::where('id', $value->id)
+                ->first();
+            $jumlah = $data->jumlah;
+            $jumlah = substr($jumlah, -3);
+            if ($jumlah != "0.0") {
+                $data->jumlah = str_replace("1.0", "0.0", $data->jumlah);
+                $data->save();
+            }
+            // $data->jumlah = round(($data->jumlah * 10 / 100) + $data->jumlah);
+            // $data->save();
+        }
+        return $detailPenjualan;
     }
 
     public function rekapPo(Request $request)

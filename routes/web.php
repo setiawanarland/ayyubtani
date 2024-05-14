@@ -109,6 +109,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/add-edit', [PenjualanController::class, 'addEdit'])->name('add-edit');
         Route::post('/update', [PenjualanController::class, 'update'])->name('penjualan-update');
         Route::delete('/delete/{id}', [PenjualanController::class, 'destroy'])->name('penjualan-delete');
+        Route::get('/test', [PenjualanController::class, 'test'])->name('test');
     });
 
     Route::prefix('piutang')->group(function () {
