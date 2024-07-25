@@ -401,7 +401,7 @@ class PenjualanController extends Controller
             $produk = Produk::select('nama_produk', 'kemasan')->where('id', $value->produk_id)->first();
             $value->nama_produk = $produk->nama_produk;
             $value->kemasan_produk = $produk->kemasan;
-            $hargaSatuan = $value->jumlah / intval(preg_replace("/\D/", "", $value->ket));
+            $hargaSatuan = ($value->jumlah / intval(preg_replace("/\D/", "", $value->ket))) / 1.11;
             $value->harga_jual = $hargaSatuan;
         }
 
