@@ -394,7 +394,7 @@ class PenjualanController extends Controller
         $data = [];
 
         $penjualan = Penjualan::where('id', $id)->first();
-        $kios = Kios::select('nama_kios', 'alamat', 'kabupaten')->where('id', $penjualan->kios_id)->first();
+        $kios = Kios::select('pemilik', 'nama_kios', 'alamat', 'kabupaten', 'npwp', 'nik')->where('id', $penjualan->kios_id)->first();
         $detailPenjualan = DetailPenjualan::where('penjualan_id', $penjualan->id)->get();
 
         foreach ($detailPenjualan as $key => $value) {
