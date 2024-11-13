@@ -664,29 +664,36 @@ class PenjualanController extends Controller
     {
         $penjualan = Penjualan::where('id', $request->id)->first();
         $penjualan->tanggal_jual = date('Y-m-d', strtotime($request->tanggal_jual));
-        $penjualan->grand_total = intval(preg_replace("/\D/", "", $request->grand_total));
+        $penjualan['bulan'] = date('m', strtotime($request->tanggal_jual));
+        $penjualan['tahun'] = date('Y', strtotime($request->tanggal_jual));
+        // return $penjualan;
+        // $penjualan->grand_total = intval(preg_replace("/\D/", "", $request->grand_total));
         $penjualan->save();
 
-        foreach ($request->produk_id as $key => $value) {
-            $detailPenjualan = DetailPenjualan::where('penjualan_id', $request->id)
-                ->where('produk_id', $value)
-                ->first();
+        // foreach ($request->produk_id as $key => $value) {
+        //     $detailPenjualan = DetailPenjualan::where('penjualan_id', $request->id)
+        //         ->where('produk_id', $value)
+        //         ->first();
 
-            $detailPenjualan->qty = $request->qty[$key];
-            $detailPenjualan->ket = $request->ket[$key];
-            $detailPenjualan->disc = floatval(preg_replace('/[^\d\.]+/', '', $request->disc[$key]));
-            $detailPenjualan->jumlah = intval(preg_replace("/\D/", "", $request->jumlah[$key]));
-            $detailPenjualan->save();
+        //     $detailPenjualan->qty = $request->qty[$key];
+        //     $detailPenjualan->ket = $request->ket[$key];
+        //     $detailPenjualan->disc = floatval(preg_replace('/[^\d\.]+/', '', $request->disc[$key]));
+        //     $detailPenjualan->jumlah = intval(preg_replace("/\D/", "", $request->jumlah[$key]));
+        //     $detailPenjualan->save();
 
-            $produk = Produk::where('id', $value)->first();
-            $marginStok = intval(preg_replace('/([^\-0-9\.,])/i', "", $request->margin_ket[$key]));
-            $produk->stok = $produk->stok - $marginStok;
-            $produk->save();
-        }
+        //     $produk = Produk::where('id', $value)->first();
+        //     $marginStok = intval(preg_replace('/([^\-0-9\.,])/i', "", $request->margin_ket[$key]));
+        //     $produk->stok = $produk->stok - $marginStok;
+        //     $produk->save();
+        // }
 
         $piutang = Piutang::where('penjualan_id', $request->id)->first();
-        $piutang->debet = $piutang->debet + intval(preg_replace('/([^\-0-9\.,])/i', "", $request->margin_grandtotal));
-        $piutang->sisa = $piutang->sisa + intval(preg_replace('/([^\-0-9\.,])/i', "", $request->margin_grandtotal));
+        $piutang->tanggal_piutang = date('Y-m-d', strtotime($request->tanggal_jual));
+        $piutang['bulan'] = date('m', strtotime($request->tanggal_jual));
+        $piutang['tahun'] = date('Y', strtotime($request->tanggal_jual));
+        // return $piutang;
+        // $piutang->debet = $piutang->debet + intval(preg_replace('/([^\-0-9\.,])/i', "", $request->margin_grandtotal));
+        // $piutang->sisa = $piutang->sisa + intval(preg_replace('/([^\-0-9\.,])/i', "", $request->margin_grandtotal));
         $piutang->save();
 
         if ($piutang) {
