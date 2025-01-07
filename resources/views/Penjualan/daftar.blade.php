@@ -1039,8 +1039,8 @@
             number = (number + '').replace(/[^0-9+\-Ee.]/g, '')
             var n = !isFinite(+number) ? 0 : +number
             var prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
-            var sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep
-            var dec = (typeof decPoint === 'undefined') ? '.' : decPoint
+            var sep = (typeof thousandsSep === 'undefined') ? '.' : thousandsSep
+            var dec = (typeof decPoint === 'undefined') ? ',' : decPoint
             var s = ''
 
             var toFixedFix = function(n, prec) {
