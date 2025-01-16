@@ -666,6 +666,7 @@ class PenjualanController extends Controller
         $penjualan->tanggal_jual = date('Y-m-d', strtotime($request->tanggal_jual));
         $penjualan['bulan'] = date('m', strtotime($request->tanggal_jual));
         $penjualan['tahun'] = date('Y', strtotime($request->tanggal_jual));
+        $penjualan->invoice = $request->invoice;
         // return $penjualan;
         // $penjualan->grand_total = intval(preg_replace("/\D/", "", $request->grand_total));
         $penjualan->save();
