@@ -464,7 +464,7 @@ class ProdukController extends Controller
         $res = [];
 
         foreach ($produks as $key => $value) {
-            if ($value->stok != 0) {
+            if ($value->qty != 0) {
 
                 $getStokBulanan = DB::table('stok_tahunans')
                     ->where('produk_id', $value->id)
@@ -478,7 +478,7 @@ class ProdukController extends Controller
                 $data = new StokTahunan();
                 $data->produk_id = $value->id;
                 $data->tahun = $request->tahun;
-                $data->jumlah = $value->stok;
+                $data->jumlah = $value->qty;
 
                 if ($value->stok > 0) {
                     $data->save();
