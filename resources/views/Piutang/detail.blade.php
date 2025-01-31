@@ -8,11 +8,10 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="header-title">Detail Piutang</h4>
-
                         <button type="button" class="btn btn-sm bayarPiutang pull-right mb-2" data-toggle="modal"
                             data-target="#bayarPiutangModal" data-id="{{ $kios->id }}"
-                            style="background-color:forestgreen">
-                            <i class="fa fa-money"></i>
+                            style="background-color:forestgreen" title="Bayar Piutang">
+                            <i style="color:#fff;" class="fa fa-money"></i>
                         </button>
 
                         <div class="data-tables">
@@ -27,10 +26,13 @@
                                     <tr>
                                         <th>No.</th>
                                         <th>Tgl. Transaksi</th>
-                                        <th>Keterangan</th>
+                                        <th>Invoice</th>
                                         <th>Debet</th>
-                                        <th>Kredit</th>
-                                        <th>Total</th>
+                                        <th>Ket.</th>
+                                        <th>Detail Bayar</th>
+                                        <th>Tgl. Bayar</th>
+                                        <th>Status</th>
+                                        <th>Sisa</th>
                                     </tr>
 
                                 </thead>
@@ -39,9 +41,45 @@
                                         <tr>
                                             <td>{{ ++$key }}</td>
                                             <td>{{ $value['tanggal_transaksi'] }}</td>
-                                            <td>{{ $value['keterangan'] }}</td>
+                                            <td>{{ $value['invoice'] }}</td>
                                             <td class="text-right">{{ number_format($value['debet']) }}</td>
-                                            <td class="text-right">{{ number_format($value['kredit']) }}</td>
+                                            <td>
+                                                @if ($value['count'] > 0)
+                                                    @foreach ($value['bayar_piutang'] as $item)
+                                                        {{ strtoupper($item['ket']) }}
+                                                        <br>
+                                                    @endforeach
+                                                @endif
+                                            </td>
+                                            <td class="text-right">
+                                                @if ($value['count'] > 0)
+                                                    @foreach ($value['bayar_piutang'] as $item)
+                                                        {{ number_format($item['total_bayar']) }}
+                                                        <br>
+                                                    @endforeach
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($value['count'] > 0)
+                                                    @foreach ($value['bayar_piutang'] as $item)
+                                                        {{ $item['tanggal_bayar'] }}
+                                                        <br>
+                                                    @endforeach
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($value['status_lunas'] == '1')
+                                                    <button type="button" class="btn btn-sm btn-success" title="Lunas"
+                                                        disabled>
+                                                        <i style="color:#fff;" class="fa fa-check"></i>
+                                                    </button>
+                                                @else
+                                                    <button type="button" class="btn btn-sm btn-danger" title="Belum"
+                                                        disabled>
+                                                        <i style="color:#fff;" class="fa fa-close"></i>
+                                                    </button>
+                                                @endif
+                                            </td>
                                             <td class="text-right">{{ number_format($value['total']) }}</td>
                                         </tr>
                                     @endforeach
@@ -76,6 +114,12 @@
                             value="{{ $kios->id }}">
 
                         <div class="form-group" style="margin-bottom: 0px;">
+                            <label for="totalPiutang" class="col-form-label">Total Piutang</label>
+                            <input type="text" class="form-control" id="totalPiutang" name="totalPiutang"
+                                value="{{ $totalPiutang }}" disabled>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0px;">
                             <label for="tanggal_bayar" class="col-form-label">Tanggal Bayar</label>
                             <input type="text" class="form-control" id="tanggal_bayar" name="tanggal_bayar">
                             <div class="invalid-feedback"></div>
@@ -92,8 +136,8 @@
                         </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" type="submit">Save</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" type="submit">Bayar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                 </div>
                 </form>
             </div>
@@ -236,6 +280,8 @@
                 todayHighlight: true,
             });
             $('#tanggal_bayar').datepicker("setDate", new Date());
+            let totalPiutang = $('#totalPiutang').val();
+            $('#totalPiutang').val(formatRupiah(totalPiutang, ''));
 
         });
     </script>
