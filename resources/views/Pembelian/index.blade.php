@@ -976,7 +976,14 @@
             console.log('ok');
             const url = `/pembelian/po`;
             window.open(url);
-        })
+        });
+
+        // auto
+        $(document).on('focus', '#ket, #grand_total', function(e) {
+            if ($(this).val() == 0) {
+                $(this).val('');
+            }
+        });
 
 
         $('#grand_total').on('keyup', function() {

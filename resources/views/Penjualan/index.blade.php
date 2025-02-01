@@ -1305,6 +1305,11 @@
         //     console.log('harga perdos');
         //     console.log(jumlahPerdos);
         // });
+        $(document).on('focus', '#ket', function(e) {
+            if ($(this).val() == 0) {
+                $(this).val('');
+            }
+        });
 
         // format rupiah
         $('#harga_satuan, #harga_perdos').on('keyup', function() {
