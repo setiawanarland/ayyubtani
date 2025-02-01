@@ -335,7 +335,7 @@ class PenjualanController extends Controller
             $piutang->tanggal_piutang = date('Y-m-d', strtotime($request->tanggal_jual));
             $piutang->bulan = $dataPiutang['bulan'];
             $piutang->tahun = $dataPiutang['tahun'];
-            $piutang->ket = $request->invoice;
+            $piutang->invoice = $request->invoice;
             $piutang->total = floatval(preg_replace('/[^\d\.]+/', '', $request->grand_total));
             $piutang->kredit = floatval(preg_replace('/[^\d\.]+/', '', 0));
             $piutang->sisa = floatval(preg_replace('/[^\d\.]+/', '', $request->grand_total));
