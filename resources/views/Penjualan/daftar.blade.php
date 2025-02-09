@@ -520,7 +520,7 @@
                         `</td>
                     </tr>
                 </table>
-                <table id="item">
+                <table id="item" class="table-hover">
                     <tr class="">
                         <th style="width: 1%;">No.</th>
                         <th colspan="2" style="width: 30%;">Nama Produk</th>
