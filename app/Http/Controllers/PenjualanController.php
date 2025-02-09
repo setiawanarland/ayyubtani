@@ -402,6 +402,7 @@ class PenjualanController extends Controller
             $value->nama_produk = $produk->nama_produk;
             $value->kemasan_produk = $produk->kemasan;
             $hargaSatuan = ($value->jumlah / intval(preg_replace("/\D/", "", $value->ket))) / 1.11;
+            $value->dppLain = 11 / 12 * ($value->jumlah / 1.11);
             $value->harga_jual = $hargaSatuan;
         }
 
