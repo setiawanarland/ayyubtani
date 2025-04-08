@@ -110,6 +110,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/update', [PenjualanController::class, 'update'])->name('penjualan-update');
         Route::delete('/delete/{id}', [PenjualanController::class, 'destroy'])->name('penjualan-delete');
         Route::get('/test', [PenjualanController::class, 'test'])->name('test');
+        Route::get('/export', [PenjualanController::class, 'export'])->name('export');
     });
 
     Route::prefix('piutang')->group(function () {

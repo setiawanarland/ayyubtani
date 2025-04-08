@@ -15,9 +15,12 @@ use App\Models\Pembayaran;
 use App\Models\Piutang;
 use App\Models\Produk;
 use DB;
+use DOMDocument;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Spatie\ArrayToXml\ArrayToXml;
+use Storage;
 
 class PenjualanController extends Controller
 {
@@ -744,5 +747,217 @@ class PenjualanController extends Controller
         } else {
             return (new GeneralResponse)->default_json(false, "Error", $data, 401);
         }
+    }
+
+    public function export(Request $request)
+    {
+        $data = Penjualan::select('penjualans.id', 'tanggal_jual', 'invoice', 'kios.npwp', 'kios.nik', 'kios.pemilik', 'kios.kabupaten')
+            ->join('kios', 'penjualans.kios_id', 'kios.id')
+            // ->where('tahun', session('tahun'))
+            // ->where('bulan', (int)session('bulan'))
+            ->whereIn('penjualans.id', explode(',', $request->data))
+            // ->where('penjualans.id', 5683)
+            // ->whereBetween('penjualans.id', [5654, 5703])
+            ->orderBy('tanggal_jual')
+            ->orderBy('invoice')
+            ->get();
+
+        // $inputFileName = Storage::disk('partitionE')->files('at\pajak\template xml coretax\Converter Faktur 20250122\TemplateExcel\FPK 1.xlsx');
+        // return $contents = Storage::disk('partitionE')->get($inputFileName);
+        /** Load $inputFileName to a Spreadsheet Object  **/
+        // return $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($contents);
+
+        return $this->spreadsheet($data, $request->jenis);
+    }
+
+
+    public function spreadsheet($data, $jenis)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $spreadsheet->getProperties()->setCreator('CV AYYUB TANI')
+            ->setLastModifiedBy('CV AYYUB TANI')
+            ->setTitle('Export hasil penjualan')
+            ->setSubject('Export hasil penjualan')
+            ->setDescription('Export hasil penjualan')
+            ->setKeywords('pdf php excel')
+            ->setCategory('Export hasil penjualan');
+
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+        $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_FOLIO);
+
+        $spreadsheet->getDefaultStyle()->getFont()->setName('Times New Roman');
+        $spreadsheet->getDefaultStyle()->getFont()->setSize(10);
+
+        $spreadsheet->getActiveSheet()->getPageSetup()->setHorizontalCentered(true);
+        $spreadsheet->getActiveSheet()->getPageSetup()->setVerticalCentered(false);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setTop(0.3);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setRight(0.3);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setLeft(0.3);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setBottom(0.3);
+
+        $sheet->setCellValue('A1', 'No');
+        $sheet->getColumnDimension('A')->setWidth(6);
+        $sheet->setCellValue('B1', 'Tanggal Faktur');
+        $sheet->getColumnDimension('B')->setWidth(12);
+        $sheet->setCellValue('C1', 'Jenis Faktur');
+        $sheet->getColumnDimension('C')->setWidth(10);
+        $sheet->setCellValue('D1', 'Kode Transaksi');
+        $sheet->getColumnDimension('D')->setWidth(5);
+        $sheet->setCellValue('E1', 'Ket. Tambahan');
+        $sheet->getColumnDimension('E')->setWidth(10);
+        $sheet->setCellValue('F1', 'Dok. Pendukung');
+        $sheet->getColumnDimension('F')->setWidth(10);
+        $sheet->setCellValue('G1', 'Invoice');
+        $sheet->getColumnDimension('G')->setWidth(15);
+        $sheet->setCellValue('H1', 'Cap Fasilitas');
+        $sheet->getColumnDimension('H')->setWidth(5);
+        $sheet->setCellValue('I1', 'IDTKU Penjual');
+        $sheet->getColumnDimension('I')->setWidth(30);
+        $sheet->setCellValue('J1', 'NPWP Pembeli');
+        $sheet->getColumnDimension('J')->setWidth(25);
+        $sheet->setCellValue('K1', 'Jenis ID Pembeli');
+        $sheet->getColumnDimension('K')->setWidth(8);
+        $sheet->setCellValue('L1', 'Negara Pembeli');
+        $sheet->getColumnDimension('L')->setWidth(8);
+        $sheet->setCellValue('M1', 'NIK Pembeli');
+        $sheet->getColumnDimension('M')->setWidth(25);
+        $sheet->setCellValue('N1', 'Nama Pembeli');
+        $sheet->getColumnDimension('N')->setWidth(25);
+        $sheet->setCellValue('O1', 'Alamat Pembeli');
+        $sheet->getColumnDimension('O')->setWidth(25);
+        $sheet->setCellValue('P1', 'Email Pembeli');
+        $sheet->getColumnDimension('P')->setWidth(5);
+        $sheet->setCellValue('Q1', 'IDTKU Pembeli');
+        $sheet->getColumnDimension('Q')->setWidth(5);
+
+        // sheet 2
+        $myWorkSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, 'Detail');
+        $spreadsheet->addSheet($myWorkSheet, 1);
+        $sheet2 = $spreadsheet->setActiveSheetIndex(1);
+
+        $sheet2->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+        $sheet2->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_FOLIO);
+
+        $sheet2->setCellValue('A1', 'No');
+        $sheet2->getColumnDimension('A')->setWidth(6);
+        $sheet2->setCellValue('B1', 'Barang/Jasa');
+        $sheet2->getColumnDimension('B')->setWidth(6);
+        $sheet2->setCellValue('C1', 'Kode');
+        $sheet2->getColumnDimension('C')->setWidth(10);
+        $sheet2->setCellValue('D1', 'Nama Barang');
+        $sheet2->getColumnDimension('D')->setWidth(35);
+        $sheet2->setCellValue('E1', 'Satuan');
+        $sheet2->getColumnDimension('E')->setWidth(10);
+        $sheet2->setCellValue('F1', 'Harga');
+        $sheet2->getColumnDimension('F')->setWidth(20);
+        $sheet2->setCellValue('G1', 'Jumlah');
+        $sheet2->getColumnDimension('G')->setWidth(6);
+        $sheet2->setCellValue('H1', 'Diskon');
+        $sheet2->getColumnDimension('H')->setWidth(5);
+        $sheet2->setCellValue('I1', 'DPP');
+        $sheet2->getColumnDimension('I')->setWidth(20);
+        $sheet2->setCellValue('J1', 'DPP Lain');
+        $sheet2->getColumnDimension('J')->setWidth(20);
+        $sheet2->setCellValue('K1', 'Tarif PPN');
+        $sheet2->getColumnDimension('K')->setWidth(6);
+        $sheet2->setCellValue('L1', 'PPN');
+        $sheet2->getColumnDimension('L')->setWidth(20);
+        $sheet2->setCellValue('M1', 'Tarif PPnBm');
+        $sheet2->getColumnDimension('M')->setWidth(6);
+        $sheet2->setCellValue('N1', 'PPnBm');
+        $sheet2->getColumnDimension('N')->setWidth(20);
+
+        $cell = 1;
+        $cell2 = 1;
+        foreach ($data as $index => $value) {
+            $cell++;
+
+            $sheet->setCellValue('A' . $cell, $cell - 1);
+            $sheet->setCellValue('B' . $cell, date("m/d/Y", strtotime($value->tanggal_jual)));
+            $sheet->setCellValue('C' . $cell, "Normal");
+            $sheet->setCellValue('D' . $cell, "04");
+            $sheet->setCellValue('E' . $cell, "");
+            $sheet->setCellValue('F' . $cell, "");
+            $sheet->setCellValue('G' . $cell, $value->invoice);
+            $sheet->setCellValue('H' . $cell, "");
+            $sheet->setCellValue('I' . $cell, "0801814260807000000000");
+            $sheet->setCellValue('J' . $cell, "" . preg_replace("/\D/", "", $value->npwp) . "");
+            $sheet->setCellValue('K' . $cell, "National ID");
+            $sheet->setCellValue('L' . $cell, "IDN");
+            $sheet->setCellValueExplicit('M' . $cell, $value->nik, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+            $sheet->setCellValue('N' . $cell, strtoupper($value->pemilik));
+            $sheet->setCellValue('O' . $cell, strtoupper($value->kabupaten));
+            $sheet->setCellValue('P' . $cell, "");
+            $sheet->setCellValue('Q' . $cell, "000000");
+
+            $detailPenjualan = DetailPenjualan::where('penjualan_id', $value->id)->get();
+            foreach ($detailPenjualan as $key => $val) {
+                $cell2++;
+                $produk = Produk::select('nama_produk', 'kemasan', 'jumlah_perdos', 'qty_perdos')->where('id', $val->produk_id)->first();
+                $val->nama_produk = strtoupper($produk->nama_produk) . " " . strtoupper($produk->kemasan);
+                $val->jumlah_perdos = $produk->jumlah_perdos;
+                $val->total = preg_replace("/\D/", "", $val->ket);
+                $val->kode = ($val->qty % $produk->qty_perdos == 0) ? "UM.0022" : "UM.0021";
+                $val->harga_satuan = (($val->jumlah / intval(preg_replace("/\D/", "", $val->ket))) / 1.11);
+                $val->dpp = $val->total * $val->harga_satuan;
+                $val->dppLain = 11 / 12 * ($val->jumlah / 1.11);
+                $val->ppn = $val->dppLain * 12 / 100;
+
+                $sheet2->setCellValue('A' . $cell2, $cell - 1);
+                $sheet2->setCellValue('B' . $cell2, "A");
+                $sheet2->setCellValueExplicit('C' . $cell2, "000000", \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                $sheet2->setCellValue('D' . $cell2, $val->nama_produk);
+                $sheet2->setCellValue('E' . $cell2, $val->kode);
+                $sheet2->setCellValue('F' . $cell2, $val->harga_satuan);
+                $sheet2->setCellValue('G' . $cell2, $val->total);
+                $sheet2->setCellValue('H' . $cell2, 0.0);
+                $sheet2->setCellValue('I' . $cell2, $val->dpp);
+                $sheet2->setCellValue('J' . $cell2, $val->dppLain);
+                $sheet2->setCellValue('K' . $cell2, 12);
+                $sheet2->setCellValue('L' . $cell2, $val->ppn);
+                $sheet2->setCellValue('M' . $cell2, 0);
+                $sheet2->setCellValue('N' . $cell2, 0);
+            }
+        }
+        // return $detailPenjualan;
+
+        $sheet->getStyle('A1:Q' . $cell)->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet->getStyle('A:Q')->getAlignment()->setWrapText(true);
+
+        $sheet2->getStyle('A1:N' . $cell2)->getAlignment()->setVertical('center')->setHorizontal('center');
+        $sheet2->getStyle('A:N')->getAlignment()->setWrapText(true);
+
+        $border = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['argb' => '0000000'],
+                ],
+            ],
+        ];
+
+        $sheet->getStyle('A1:Q' . $cell)->applyFromArray($border);
+        $sheet2->getStyle('A1:N' . $cell2)->applyFromArray($border);
+
+        if ($jenis == 'excel') {
+            // Untuk download 
+            $writer = new Xlsx($spreadsheet);
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="Rekapitulasi Laporan Penjualan CV. AYYUB TANI.xlsx"');
+        } else {
+            $spreadsheet->getActiveSheet()->getHeaderFooter()
+                ->setOddHeader('&C&H' . url()->current());
+            $spreadsheet->getActiveSheet()->getHeaderFooter()
+                ->setOddFooter('&L&B &RPage &P of &N');
+            $class = \PhpOffice\PhpSpreadsheet\Writer\Pdf\Mpdf::class;
+            \PhpOffice\PhpSpreadsheet\IOFactory::registerWriter('Pdf', $class);
+            header('Content-Type: application/pdf');
+            header('Cache-Control: max-age=0');
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Pdf');
+        }
+
+        $writer->save('php://output');
     }
 }

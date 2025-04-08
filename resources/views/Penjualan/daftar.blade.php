@@ -33,6 +33,8 @@
                                                 @endfor
                                             </div>
                                         </div>
+                                        <button type="button" class="btn btn-primary btn-sm ml-2 btn-edit" id="export"
+                                            data-id=""><i class="fa fa-file-excel-o"></i> Export</button>
                                 </li>
                             </ul>
                         </div>
@@ -51,6 +53,8 @@
                             <table id="daftarPenjualanTable" class="text-cente">
                                 <thead class="bg-light text-capitalize">
                                     <tr>
+                                        <th><input type="checkbox" name="checkall" class="select-checkall" id="checkall"
+                                                value=""></th>
                                         <th>Nama Kios</th>
                                         <th>invoice</th>
                                         <th>Tanggal Jual</th>
@@ -100,6 +104,9 @@
                     ordering: false,
                     ajax: "{{ route('penjualan-list') }}",
                     columns: [{
+                            data: 'id',
+                        },
+                        {
                             data: 'nama_kios',
                             render: function(data, type, row) {
                                 // console.log(row);
@@ -128,25 +135,31 @@
                             }
                         },
                         {
-                            data: 'id'
-                        }
-                    ],
-                    columnDefs: [{
-                        targets: -1,
-                        title: 'Actions',
-                        orderable: false,
-                        width: '10rem',
-                        class: "wrapok",
-                        render: function(data, type, row, full, meta) {
-                            return ``
-                                // <button type="button" class="btn btn-primary btn-sm penjualanShow" data-toggle="modal" data-target="#penjualanModal" data-id="${row.id}"><i class="fa fa-eye"></i></button>
-                                +
-                                `<button type="button" class="btn btn-danger btn-sm btn-edit penjualanDelete" data-id="${row.id}"><i class="fa fa-trash"></i></button>
+                            data: 'id',
+                            render: function(data, type, row, full, meta) {
+                                return ``
+                                    // <button type="button" class="btn btn-primary btn-sm penjualanShow" data-toggle="modal" data-target="#penjualanModal" data-id="${row.id}"><i class="fa fa-eye"></i></button>
+                                    +
+                                    `<button type="button" class="btn btn-danger btn-sm btn-edit penjualanDelete" data-id="${row.id}"><i class="fa fa-trash"></i></button>
                         <button type="button" class="btn btn-success btn-sm btn-print penjualanPrint" data-id="${row.id}"><i class="fa fa-print"></i></button>
                         <button type="button" class="btn btn-warning btn-sm btn-edit penjualanEdit" data-id="${row.id}"><i class="fa fa-edit"></i></button>
                         `;
+                            }
+                        }
+                    ],
+                    columnDefs: [{
+                        targets: 0,
+                        'checkboxes': {
+                            'selectRow': true
                         },
-                    }],
+                        render: function(data, type, row, full, meta) {
+                            return `<input type="checkbox" class="select_all" data-id="${row.id}">`;
+                        }
+                    }, ],
+                    select: {
+                        style: 'multi'
+                    }
+
                 });
 
             }
@@ -869,7 +882,6 @@
                 });
         });
 
-
         $(document).on('click', '.penjualanDelete', function(e) {
             e.preventDefault()
             let id = $(this).attr('data-id');
@@ -945,11 +957,28 @@
                 })
         });
 
-        // show penjualan
-        // $(document).on('click', '.penjualanEdit', function() {
-        //     console.log('ok');
-        // });
+        // export
+        $(document).on('click', '#export', function() {
+            var data = [];
+            $('.select_all').each(function(i, v) {
+                if ($(v).prop('checked')) {
+                    var dataCheck = $(v).data('id');
+                    data.push(dataCheck);
 
+                }
+            });
+
+            url = `/penjualan/export/?jenis=excel&data=${data}`;
+            window.open(url);
+        });
+
+        //Selecting all checkboxes that are not disabled
+        $("#checkall").on('click', function(e, v) {
+            var data = [];
+            $('#daftarPenjualanTable')
+                .find('input[type="checkbox"]:enabled:visible')
+                .prop('checked', this.checked);
+        });
 
 
         function number_format(number, decimals, decPoint, thousandsSep) {
