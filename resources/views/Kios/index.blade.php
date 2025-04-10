@@ -388,7 +388,7 @@
 
 
         // format npwp
-        $('#npwp').on('keyup', function() {
+        $('#npwpp').on('keyup', function() {
             $(this).val(formatNpwp($(this).val()));
 
 

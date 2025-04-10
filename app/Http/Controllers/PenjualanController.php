@@ -667,6 +667,7 @@ class PenjualanController extends Controller
     public function update(Request $request, Penjualan $penjualan)
     {
         $penjualan = Penjualan::where('id', $request->id)->first();
+        $penjualan->kios_id = $request->kios;
         $penjualan->tanggal_jual = date('Y-m-d', strtotime($request->tanggal_jual));
         $penjualan['bulan'] = date('m', strtotime($request->tanggal_jual));
         $penjualan['tahun'] = date('Y', strtotime($request->tanggal_jual));
